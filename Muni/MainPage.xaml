@@ -1,0 +1,68 @@
+﻿<phone:PhoneApplicationPage
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+    xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:maps="clr-namespace:Microsoft.Phone.Maps.Controls;assembly=Microsoft.Phone.Maps"
+    xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
+    xmlns:Primitives="clr-namespace:Microsoft.Phone.Controls.Primitives;assembly=Microsoft.Phone"
+    x:Class="NexMuni.MainPage"
+    mc:Ignorable="d"
+    d:DataContext="{d:DesignData SampleData/SampleData.xaml}"
+    FontFamily="{StaticResource PhoneFontFamilyNormal}"
+    FontSize="{StaticResource PhoneFontSizeNormal}"
+    Foreground="{StaticResource PhoneForegroundBrush}"
+    SupportedOrientations="Portrait"  Orientation="Portrait"
+    shell:SystemTray.IsVisible="True">
+
+
+    <!--LayoutRoot is the root grid where all page content is placed-->
+    <Grid x:Name="LayoutRoot" Background= "White">
+
+        <phone:Pivot Title="NexMUNI" Foreground="#FFB51D1D" Background="White" Loaded="Pivot_Loaded">
+            <!--Pivot item one-->
+            <phone:PivotItem Header="nearby">
+                <!--Double line list with text wrapping-->
+                <phone:LongListSelector Margin="0,0,0,0" ItemsSource="{Binding nearbyStops.nearbyStopsList}" LayoutMode="List" >
+                    <phone:LongListSelector.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Background="#FFB51D1D" Margin="0,0,0,20" Height="200">
+                                <StackPanel Margin="0,0,0,0">
+                                    <TextBlock Text="{Binding StopName}" Margin="10,0,0,0" FontSize="32" FontFamily="Segoe WP SemiLight"/>
+                                    <TextBlock Text="{Binding StopRoutes}" Margin="10,100,0,0" FontSize="24" FontFamily="Portable User Interface" />
+                                </StackPanel>
+                            </Grid>
+                        </DataTemplate>
+                    </phone:LongListSelector.ItemTemplate>
+                </phone:LongListSelector>
+            </phone:PivotItem>
+
+            <!--Pivot item two-->
+            <phone:PivotItem Header="favorites">
+                <!--Double line list no text wrapping-->
+                <StackPanel>
+                    <TextBlock Name="LocationText" Text="TEXT" />
+                    <TextBlock Name="SearchStopName" Text="Stop"/>
+                    <TextBlock Name="SearchStopLat" Text="Stop"/>
+                    <TextBlock Name="SearchStopLon" Text="Stop"/>
+                    <TextBlock Name="SearchStopTag" Text="Stop"/>
+                    <TextBlock Name="SearchStop" Text="Stop"/>
+                </StackPanel>
+            </phone:PivotItem>
+
+            <!--Map Pivot Item-->
+            <phone:PivotItem Header="map">
+                <Grid x:Name="MapPanel"
+                      Grid.Row="1"
+                      Margin="0,0,0,0" >
+
+                    <maps:Map Name="StopMap"/>
+                </Grid>
+            </phone:PivotItem>
+        </phone:Pivot>
+
+    </Grid>
+
+</phone:PhoneApplicationPage>

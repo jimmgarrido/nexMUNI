@@ -1,0 +1,165 @@
+using System.Data.Linq;
+using System.Data.Linq.Mapping;
+using System.ComponentModel;
+using System.Collections.ObjectModel;
+
+
+/*[Table]
+public partial class NexMuniDb : System.Data.Linq.DataContext
+{
+	
+	private static System.Data.Linq.Mapping.MappingSource mappingSource = new AttributeMappingSource();
+	
+  #region Extensibility Method Definitions
+  partial void OnCreated();
+  #endregion
+	
+	public NexMuniDb(string connection) : 
+			base(connection, mappingSource)
+	{
+		OnCreated();
+	}
+	
+//	public NexMuni(System.Data.IDbConnection connection) : 
+//			base(connection, mappingSource)
+//	{
+//		OnCreated();
+//	}
+	
+//	public NexMuni(string connection, System.Data.Linq.Mapping.MappingSource mappingSource) : 
+//			base(connection, mappingSource)
+//	{
+//		OnCreated();
+//	}
+	
+//	public NexMuni(System.Data.IDbConnection connection, System.Data.Linq.Mapping.MappingSource mappingSource) : 
+//			base(connection, mappingSource)
+//	{
+//		OnCreated();
+//	}
+	
+	public System.Data.Linq.Table<Stops> Stops
+	{
+		get
+		{
+			return this.GetTable<Stops>();
+		}
+	}
+}*/
+
+[Table(Name="stops")]
+public partial class Stops
+{
+	
+	private System.Nullable<long> __id;
+	
+	private string _Stop_name;
+	
+	private System.Nullable<double> _Stop_lat;
+	
+	private System.Nullable<double> _Stop_lon;
+	
+	private string _Stop_id;
+	
+	private string _Stop_tags;
+	
+	public Stops()
+	{
+	}
+	
+	[Column(Storage="__id", DbType="BigInt")]
+	public System.Nullable<long> _id
+	{
+		get
+		{
+			return this.__id;
+		}
+		set
+		{
+			if ((this.__id != value))
+			{
+				this.__id = value;
+			}
+		}
+	}
+	
+	[Column(Name="stop_name", Storage="_Stop_name", DbType="NText", UpdateCheck=UpdateCheck.Never)]
+	public string Stop_name
+	{
+		get
+		{
+			return this._Stop_name;
+		}
+		set
+		{
+			if ((this._Stop_name != value))
+			{
+				this._Stop_name = value;
+			}
+		}
+	}
+	
+	[Column(Name="stop_lat", Storage="_Stop_lat", DbType="Float")]
+	public System.Nullable<double> Stop_lat
+	{
+		get
+		{
+			return this._Stop_lat;
+		}
+		set
+		{
+			if ((this._Stop_lat != value))
+			{
+				this._Stop_lat = value;
+			}
+		}
+	}
+	
+	[Column(Name="stop_lon", Storage="_Stop_lon", DbType="Float")]
+	public System.Nullable<double> Stop_lon
+	{
+		get
+		{
+			return this._Stop_lon;
+		}
+		set
+		{
+			if ((this._Stop_lon != value))
+			{
+				this._Stop_lon = value;
+			}
+		}
+	}
+	
+	[Column(Name="stop_id", Storage="_Stop_id", DbType="NText", UpdateCheck=UpdateCheck.Never)]
+	public string Stop_id
+	{
+		get
+		{
+			return this._Stop_id;
+		}
+		set
+		{
+			if ((this._Stop_id != value))
+			{
+				this._Stop_id = value;
+			}
+		}
+	}
+	
+	[Column(Name="stop_tags", Storage="_Stop_tags", DbType="NText", UpdateCheck=UpdateCheck.Never)]
+	public string Stop_tags
+	{
+		get
+		{
+			return this._Stop_tags;
+		}
+		set
+		{
+			if ((this._Stop_tags != value))
+			{
+				this._Stop_tags = value;
+			}
+		}
+	}
+}
