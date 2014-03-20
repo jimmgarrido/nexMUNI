@@ -10,7 +10,5 @@ namespace NexMuni.ViewModels
     {
         public string StopName { get; set; }
         public string StopRoutes { get; set; }
-
-
     }
 }

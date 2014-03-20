@@ -8,12 +8,12 @@ namespace NexMuni.ViewModels
 {
     public class StopGroup
     {
+        public List<StopData> nearbyStopsList { get; set; }    
+
         public StopGroup()
         {
             nearbyStopsList = new List<StopData>();
         }
-
-        public List<StopData> nearbyStopsList { get; set; }    
 
     }
 }

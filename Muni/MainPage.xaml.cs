@@ -21,6 +21,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Shapes;
 using System.Windows.Media;
 using Microsoft.Phone.Maps.Controls;
+using NexMuni.ViewModels;
 
 namespace NexMuni
 {
@@ -54,9 +55,6 @@ namespace NexMuni
 
         void MainPage_Loaded(object sender, RoutedEventArgs e) 
         {
-            //SystemTray.ProgressIndicator = new ProgressIndicator();
-
-            //UpdateMap();
      
         }
 
@@ -126,7 +124,7 @@ namespace NexMuni
             ApplicationBar.MenuItems.Add(appBarMenuItem);
         }
 
-        private void Pivot_Loaded(object sender, RoutedEventArgs e)
+        private void StopSelected(object sender, SelectionChangedEventArgs e)
         {
 
         }

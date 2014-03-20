@@ -21,6 +21,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Shapes;
 using System.Windows.Media;
 using Microsoft.Phone.Maps.Controls;
+using NexMuni;
 
 namespace NexMuni.ViewModels
 {
@@ -43,12 +44,13 @@ namespace NexMuni.ViewModels
             StopGroup stopData = new StopGroup();
             SystemTray.ProgressIndicator = new ProgressIndicator();
 
-            UpdateNearby(stopData);
+            UpdateNearby();
+            GetNearby(stopData);
 
             return stopData;
         }
 
-        private async void UpdateNearby(StopGroup group)
+        private async void UpdateNearby()
         {
             //Get the user's location coordinates
             SetProgressIndicator(true);
@@ -70,7 +72,12 @@ namespace NexMuni.ViewModels
                     position.Coordinate.Latitude,
                     position.Coordinate.Longitude);
             SetProgressIndicator(false);
-            
+
+        }
+
+        private static void GetNearby(StopGroup group)
+        {
+
             //Open Muni Stops db
             StopsDbDataContext muniStops = new StopsDbDataContext(StopsDbDataContext.DBConnectionString);
 
@@ -86,9 +93,10 @@ namespace NexMuni.ViewModels
                 }
                 else
                     break;
-                
+
             }
 
+            group.nearbyStopsList.Add(new StopData { StopName = "Test" });
         }
 
         private static void SetProgressIndicator(bool isVisible)
