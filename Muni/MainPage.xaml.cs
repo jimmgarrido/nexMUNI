@@ -32,13 +32,10 @@ namespace NexMuni
         public MainPage()
         {
             InitializeComponent();
-
             Loaded += MainPage_Loaded;
 
-            // Set the data context of the listbox control to the sample data
             DataContext = App.ViewModel;
 
-            // Sample code to localize the ApplicationBar
             BuildLocalizedApplicationBar();
             
         }
@@ -55,63 +52,15 @@ namespace NexMuni
 
         void MainPage_Loaded(object sender, RoutedEventArgs e) 
         {
-     
+            SystemTray.ProgressIndicator = new ProgressIndicator();
+            nearbyList.ItemsSource = App.ViewModel.nearbyStops;
+            UpdateLocation();
+            
         }
-
-        private async void UpdateMap()
-        {
-            LocationText.Text="Getting location";
-            Geolocator geolocator = new Geolocator();
-            geolocator.DesiredAccuracyInMeters = 50;
-
-            //SetProgressIndicator(true);
-            SystemTray.ProgressIndicator.Text = "Getting location";
-
-            Geoposition position =
-                await geolocator.GetGeopositionAsync(
-                TimeSpan.FromMinutes(1),
-                TimeSpan.FromSeconds(30));
-
-            SystemTray.ProgressIndicator.Text = "Got it!";
-
-            var gpsCoorCenter =
-                new GeoCoordinate(
-                    position.Coordinate.Latitude,
-                    position.Coordinate.Longitude);
-
-            StopMap.SetView(gpsCoorCenter, 17);
-           // SetProgressIndicator(false);
-
-            // Create a small circle to mark the current location.
-            Ellipse myCircle = new Ellipse();
-            myCircle.Fill = new SolidColorBrush(Colors.Blue);
-            myCircle.Height = 20;
-            myCircle.Width = 20;
-            myCircle.Opacity = 50;
-
-            // Create a MapOverlay to contain the circle.
-            MapOverlay myLocationOverlay = new MapOverlay();
-            myLocationOverlay.Content = myCircle;
-            myLocationOverlay.PositionOrigin = new Point(0.5, 0.5);
-            myLocationOverlay.GeoCoordinate = gpsCoorCenter;
-
-            // Create a MapLayer to contain the MapOverlay.
-            MapLayer myLocationLayer = new MapLayer();
-            myLocationLayer.Add(myLocationOverlay);
-
-            // Add the MapLayer to the Map.
-            StopMap.Layers.Add(myLocationLayer);
-
-
-            LocationText.Text = String.Format("{0} , {1}", position.Coordinate.Latitude, position.Coordinate.Longitude);
-        }
-
         
 
-        // Sample code for building a localized ApplicationBar
         private void BuildLocalizedApplicationBar()
         {
-            // Set the page's ApplicationBar to a new instance of ApplicationBar.
             ApplicationBar = new ApplicationBar();
 
             // Create a new button and set the text value to the localized string from AppResources.
@@ -124,10 +73,39 @@ namespace NexMuni
             ApplicationBar.MenuItems.Add(appBarMenuItem);
         }
 
-        private void StopSelected(object sender, SelectionChangedEventArgs e)
+        public async void UpdateLocation()
         {
+            //Get the user's location coordinates
+            SetProgressIndicator(true);
+            SystemTray.ProgressIndicator.Text = "Getting location";
+            Geolocator geolocator = new Geolocator();
+            geolocator.DesiredAccuracyInMeters = 50;
 
+
+            Geoposition position =
+                await geolocator.GetGeopositionAsync(
+                TimeSpan.FromMinutes(1),
+                TimeSpan.FromSeconds(30));
+
+            SystemTray.ProgressIndicator.Text = "Got it!";
+
+
+            var gpsCoorCenter = new GeoCoordinate(
+                    position.Coordinate.Latitude,
+                    position.Coordinate.Longitude);
+
+            StopMap.SetView(gpsCoorCenter, 17);
+            App.ViewModel.GetNearby(gpsCoorCenter);
+
+            SetProgressIndicator(false);
         }
+
+        private static void SetProgressIndicator(bool isVisible)
+        {
+            SystemTray.ProgressIndicator.IsIndeterminate = isVisible;
+            SystemTray.ProgressIndicator.IsVisible = isVisible;
+        }
+
 
         
     }

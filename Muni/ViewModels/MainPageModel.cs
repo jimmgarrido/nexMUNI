@@ -27,56 +27,18 @@ namespace NexMuni.ViewModels
 {
     public class MainPageModel
     {
-        public StopGroup nearbyStops { get; set; }
+        public ObservableCollection<StopData> nearbyStops;
         public bool IsDataLoaded { get; set; }
 
         public void LoadData()
         {
-            //Load data
-            nearbyStops = CreateStopGroup();
-
+            nearbyStops = new ObservableCollection<StopData>();
             IsDataLoaded = true;
-
         }
 
-        private StopGroup CreateStopGroup()
+        public void GetNearby(GeoCoordinate location)
         {
-            StopGroup stopData = new StopGroup();
-            SystemTray.ProgressIndicator = new ProgressIndicator();
-
-            UpdateNearby();
-            GetNearby(stopData);
-
-            return stopData;
-        }
-
-        private async void UpdateNearby()
-        {
-            //Get the user's location coordinates
-            SetProgressIndicator(true);
-            SystemTray.ProgressIndicator.Text = "Getting location";
-            Geolocator geolocator = new Geolocator();
-            geolocator.DesiredAccuracyInMeters = 50;
-
-
-            Geoposition position =
-                await geolocator.GetGeopositionAsync(
-                TimeSpan.FromMinutes(1),
-                TimeSpan.FromSeconds(30));
-
-            SystemTray.ProgressIndicator.Text = "Got it!";
-
-
-            var gpsCoorCenter =
-                new GeoCoordinate(
-                    position.Coordinate.Latitude,
-                    position.Coordinate.Longitude);
-            SetProgressIndicator(false);
-
-        }
-
-        private static void GetNearby(StopGroup group)
-        {
+            
 
             //Open Muni Stops db
             StopsDbDataContext muniStops = new StopsDbDataContext(StopsDbDataContext.DBConnectionString);
@@ -88,23 +50,17 @@ namespace NexMuni.ViewModels
                 if (index < 10)
                 {
                     //cornersArray[index] = stopCorner.Stop_name;
-                    group.nearbyStopsList.Add(new StopData { StopName = stopCorner.Stop_name });
+                    nearbyStops.Add(new StopData (stopCorner.Stop_name ));
                     index++;
                 }
                 else
                     break;
-
+                    
             }
-
-            group.nearbyStopsList.Add(new StopData { StopName = "Test" });
+           
         }
 
-        private static void SetProgressIndicator(bool isVisible)
-        {
-            SystemTray.ProgressIndicator.IsIndeterminate = isVisible;
-            SystemTray.ProgressIndicator.IsVisible = isVisible;
-        }
-
+        
     }
 
     [Table(Name = "stops")]

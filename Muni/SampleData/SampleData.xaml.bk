@@ -1,0 +1,11 @@
+﻿<vm:MainPageModel
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:vm="clr-namespace:NexMuni.ViewModels">
+
+    <vm:MainPageModel.nearbyStops>
+        <vm:StopData Name="Geneva &amp; Mission"  Routes="14, 14L, 43, 8X, 54, 29"/>
+        <vm:StopData Name="Broad &amp; Plymouth" Routes="M, 54"/>
+    </vm:MainPageModel.nearbyStops>
+
+</vm:MainPageModel>

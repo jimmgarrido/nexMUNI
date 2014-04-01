@@ -106,7 +106,6 @@
     <None Include="ViewModels\NexMuniDb.cs.bk" />
     <Compile Include="ViewModels\SearchModel.cs" />
     <Compile Include="ViewModels\StopData.cs" />
-    <Compile Include="ViewModels\StopGroup.cs" />
     <Compile Include="ViewModels\MainPageModel.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -118,10 +117,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="SampleData\SampleData.xaml">
+    <None Include="SampleData\SampleData.xaml.bk">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -159,7 +158,6 @@
     <Content Include="nexmunilogo.png" />
     <Content Include="nexmunismall.png" />
     <Content Include="README_FIRST.txt" />
-    <Content Include="Resources\XMLFile1.xml" />
     <Content Include="Toolkit.Content\ApplicationBar.Add.png" />
     <Content Include="Toolkit.Content\ApplicationBar.Cancel.png" />
     <Content Include="Toolkit.Content\ApplicationBar.Check.png" />

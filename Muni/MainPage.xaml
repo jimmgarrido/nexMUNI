@@ -10,7 +10,7 @@
     xmlns:Primitives="clr-namespace:Microsoft.Phone.Controls.Primitives;assembly=Microsoft.Phone"
     x:Class="NexMuni.MainPage"
     mc:Ignorable="d"
-    d:DataContext="{d:DesignData SampleData/SampleData.xaml}"
+    
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
@@ -21,21 +21,21 @@
     <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid x:Name="LayoutRoot" Background= "White">
 
-       <phone:Pivot Title="NexMUNI" Foreground="#FFB51D1D" Background="White" Loaded="Pivot_Loaded">
+       <phone:Pivot Title="NexMUNI" Foreground="#FFB51D1D" Background="White">
             <!--Pivot item one-->
             <phone:PivotItem Header="nearby">
                 <!--Double line list with text wrapping-->
                 <phone:LongListSelector 
                     Margin="0,0,0,0" 
-                    ItemsSource="{Binding nearbyStops.nearbyStopsList}" 
+                    ItemsSource="{Binding}" 
                     LayoutMode="List"
-                    SelectionChanged="StopSelected" >
+                    Name="nearbyList">
                     <phone:LongListSelector.ItemTemplate>
                         <DataTemplate>
                             <Grid Background="#FFB51D1D" Margin="0,0,0,20" Height="200">
                                 <StackPanel Margin="0,0,0,0">
-                                    <TextBlock Text="{Binding StopName}" Margin="10,0,0,0" FontSize="32" FontFamily="Portable User Interface"/>
-                                    <TextBlock Text="{Binding StopRoutes}" Margin="10,100,0,0" FontSize="24" FontFamily="Portable User Interface" />
+                                    <TextBlock Text="{Binding Name}" Margin="10,0,0,0" FontSize="32" FontFamily="Portable User Interface"/>
+                                    <TextBlock Text="{Binding Routes}" Margin="10,100,0,0" FontSize="24" FontFamily="Portable User Interface" />
                                 </StackPanel>
                             </Grid>
                         </DataTemplate>
