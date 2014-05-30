@@ -1,0 +1,69 @@
+﻿<Page
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:nexMuni"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:Maps="using:Windows.UI.Xaml.Controls.Maps"
+    xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+    xmlns:Primitives="clr-namespace:Microsoft.Phone.Controls.Primitives;assembly=Microsoft.Phone"
+    
+    x:Class="nexMuni.MainPage"
+    mc:Ignorable="d"
+    FontFamily="{StaticResource PhoneFontFamilyNormal}"
+    Foreground="{StaticResource PhoneForegroundBrush}">
+    <Page.BottomAppBar>
+        <CommandBar Background="#b31b1b">
+            <CommandBar.PrimaryCommands>
+                <AppBarButton Icon="Refresh"  IsCompact="False" Label="refresh" Click="AppBarButton_Click"/>
+                <AppBarButton Icon="Find" IsCompact="False" Label="search"/>
+            </CommandBar.PrimaryCommands>
+            <CommandBar.SecondaryCommands>
+                <AppBarButton Label="settings"/>
+                    <AppBarButton Label="about"/>
+            </CommandBar.SecondaryCommands>
+        </CommandBar>
+    </Page.BottomAppBar>
+
+    <Grid>
+        <Pivot Title="nexMuni" Foreground="#FFB31B1B" Background="White">
+            <PivotItem Header="nearby">
+                <ListView x:Name="nearbyList" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top" ItemsSource="{Binding}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Background="#b31b1b" Margin="0,0,0,20" Height="140" Width="500">
+                                <StackPanel Margin="0,0,0,0">
+                                    <TextBlock Text="{Binding Name}" Margin="10,0" FontSize="22" Foreground="White"/>
+                                    <TextBlock Text="{Binding Routes}" Margin="10,75,0,0" FontSize="18" Foreground="White"/>
+                                </StackPanel>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </PivotItem>
+            <PivotItem Header="favorites">
+                <StackPanel>
+                    <TextBlock Name="LocationText" Text="TEXT" />
+                    <TextBlock Name="SearchStopName" Text="Stop"/>
+                    <TextBlock Name="SearchStopLat" Text="Stop"/>
+                    <TextBlock Name="SearchStopLon" Text="Stop"/>
+                    <TextBlock Name="SearchStopTag" Text="Stop"/>
+                    <TextBlock Name="SearchStop" Text="Stop"/>
+                </StackPanel>
+            </PivotItem>
+            <PivotItem Header="map">
+                <StackPanel HorizontalAlignment="Stretch"
+                Margin="0,0,0,0" VerticalAlignment="Stretch" >
+                    <Maps:MapControl
+            x:Name="locationMap"
+            MapServiceToken="ZSWSnuR4VWvlfBwfsGqUUQ"
+            Margin="0,0,0,0"
+                        Height="560"
+                        Width="400"/>
+                </StackPanel>
+            </PivotItem>
+        </Pivot>
+    </Grid>
+
+</Page>
+    
