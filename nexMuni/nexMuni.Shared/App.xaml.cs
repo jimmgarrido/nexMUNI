@@ -7,6 +7,7 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -15,6 +16,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
+
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=234227
 
@@ -90,6 +92,14 @@ namespace nexMuni
 
                 rootFrame.ContentTransitions = null;
                 rootFrame.Navigated += this.RootFrame_FirstNavigated;
+
+                var statusBar = Windows.UI.ViewManagement.StatusBar.GetForCurrentView();
+                statusBar.BackgroundColor = Color.FromArgb(100, 179, 27, 27);
+                statusBar.BackgroundOpacity = 1;
+                statusBar.ProgressIndicator.Text = "nexMuni";
+                statusBar.ProgressIndicator.ShowAsync();
+                statusBar.ProgressIndicator.ProgressValue = 0;
+
 #endif
 
                 // When the navigation stack isn't restored navigate to the first page,

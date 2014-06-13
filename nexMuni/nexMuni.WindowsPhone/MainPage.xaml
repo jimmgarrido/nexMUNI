@@ -8,62 +8,114 @@
     xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
     xmlns:Primitives="clr-namespace:Microsoft.Phone.Controls.Primitives;assembly=Microsoft.Phone"
     
+    xmlns:SampleData="using:Blend.SampleData.SampleStops"
+    
     x:Class="nexMuni.MainPage"
     mc:Ignorable="d"
-    FontFamily="{StaticResource PhoneFontFamilyNormal}"
-    Foreground="{StaticResource PhoneForegroundBrush}">
+    >
+	<Page.Resources>
+		<SampleData:SampleStops x:Key="SampleStops" d:IsDataSource="True"/>
+		<Thickness x:Key="PivotPortraitThemePadding">19,38,0,0</Thickness>
+		<Thickness x:Key="PivotLandscapeThemePadding">19,25,0,0</Thickness>
+		<Style x:Key="NearbyPivot" TargetType="Pivot">
+			<Setter Property="Margin" Value="0"/>
+			<Setter Property="Padding" Value="0"/>
+			<Setter Property="Foreground" Value="{ThemeResource PhoneForegroundBrush}"/>
+			<Setter Property="Background" Value="Transparent"/>
+			<Setter Property="ItemsPanel">
+				<Setter.Value>
+					<ItemsPanelTemplate>
+						<Grid/>
+					</ItemsPanelTemplate>
+				</Setter.Value>
+			</Setter>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="Pivot">
+						<Grid x:Name="RootElement" Background="{TemplateBinding Background}" HorizontalAlignment="{TemplateBinding HorizontalAlignment}" VerticalAlignment="{TemplateBinding VerticalAlignment}">
+							<Grid.RowDefinitions>
+								<RowDefinition Height="Auto"/>
+								<RowDefinition Height="*"/>
+							</Grid.RowDefinitions>
+							<VisualStateManager.VisualStateGroups>
+								<VisualStateGroup x:Name="Orientation">
+									<VisualState x:Name="Portrait"/>
+									<VisualState x:Name="Landscape"/>
+								</VisualStateGroup>
+							</VisualStateManager.VisualStateGroups>
+							<ScrollViewer x:Name="ScrollViewer" HorizontalSnapPointsAlignment="Center" HorizontalSnapPointsType="MandatorySingle" HorizontalScrollBarVisibility="Hidden" Margin="{TemplateBinding Padding}" Grid.Row="1" Template="{StaticResource ScrollViewerScrollBarlessTemplate}" VerticalSnapPointsType="None" VerticalScrollBarVisibility="Disabled" VerticalScrollMode="Disabled" VerticalContentAlignment="Stretch" ZoomMode="Disabled" Padding="0,30,0,0">
+								<PivotPanel x:Name="Panel" VerticalAlignment="Stretch">
+									<PivotHeaderPanel x:Name="Header">
+										<PivotHeaderPanel.RenderTransform>
+											<CompositeTransform x:Name="HeaderTranslateTransform" TranslateX="0"/>
+										</PivotHeaderPanel.RenderTransform>
+									</PivotHeaderPanel>
+									<ItemsPresenter x:Name="PivotItemPresenter" Margin="0,-13,0,0">
+										<ItemsPresenter.RenderTransform>
+											<TranslateTransform x:Name="ItemsPresenterTranslateTransform" X="0"/>
+										</ItemsPresenter.RenderTransform>
+									</ItemsPresenter>
+								</PivotPanel>
+							</ScrollViewer>
+						</Grid>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+	</Page.Resources>
+	<Page.FontFamily>
+		<StaticResource ResourceKey="PhoneFontFamilyNormal"/>
+	</Page.FontFamily>
+	<Page.Foreground>
+		<StaticResource ResourceKey="PhoneForegroundBrush"/>
+	</Page.Foreground>
     <Page.BottomAppBar>
         <CommandBar Background="#b31b1b">
-            <CommandBar.PrimaryCommands>
-                <AppBarButton Icon="Refresh"  IsCompact="False" Label="refresh" Click="AppBarButton_Click"/>
-                <AppBarButton Icon="Find" IsCompact="False" Label="search"/>
-            </CommandBar.PrimaryCommands>
             <CommandBar.SecondaryCommands>
                 <AppBarButton Label="settings"/>
                     <AppBarButton Label="about"/>
             </CommandBar.SecondaryCommands>
+        	<AppBarButton Icon="Refresh"  IsCompact="False" Label="refresh" Click="AppBarButton_Click"/>
+        	<AppBarButton Icon="Find" IsCompact="False" Label="search"/>
         </CommandBar>
     </Page.BottomAppBar>
 
-    <Grid>
-        <Pivot Title="nexMuni" Foreground="#FFB31B1B" Background="White">
-            <PivotItem Header="nearby">
-                <ListView x:Name="nearbyList" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top" ItemsSource="{Binding}">
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <Grid Background="#b31b1b" Margin="0,0,0,20" Height="140" Width="500">
-                                <StackPanel Margin="0,0,0,0">
-                                    <TextBlock Text="{Binding Name}" Margin="10,0" FontSize="22" Foreground="White"/>
-                                    <TextBlock Text="{Binding Routes}" Margin="10,75,0,0" FontSize="18" Foreground="White"/>
-                                </StackPanel>
-                            </Grid>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </PivotItem>
-            <PivotItem Header="favorites">
-                <StackPanel>
-                    <TextBlock Name="LocationText" Text="TEXT" />
-                    <TextBlock Name="SearchStopName" Text="Stop"/>
-                    <TextBlock Name="SearchStopLat" Text="Stop"/>
-                    <TextBlock Name="SearchStopLon" Text="Stop"/>
-                    <TextBlock Name="SearchStopTag" Text="Stop"/>
-                    <TextBlock Name="SearchStop" Text="Stop"/>
-                </StackPanel>
-            </PivotItem>
-            <PivotItem Header="map">
-                <StackPanel HorizontalAlignment="Stretch"
-                Margin="0,0,0,0" VerticalAlignment="Stretch" >
-                    <Maps:MapControl
-            x:Name="locationMap"
-            MapServiceToken="ZSWSnuR4VWvlfBwfsGqUUQ"
-            Margin="0,0,0,0"
-                        Height="560"
-                        Width="400"/>
-                </StackPanel>
-            </PivotItem>
-        </Pivot>
-    </Grid>
+	<Grid d:DataContext="{Binding Source={StaticResource SampleStops}}">
+		<Pivot Title="nexMuni" Foreground="#B31B1B" Background="White" Style="{StaticResource NearbyPivot}">
+			<PivotItem Header="nearby">
+				<ListView x:Name="nearbyListView" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top" ItemsSource="{Binding Items}">
+					<ListView.ItemTemplate>
+						<DataTemplate>
+							<Grid Background="#b31b1b" Margin="0,0,0,20" Height="140" Width="500">
+								<StackPanel Margin="0,0,0,0">
+									<TextBlock Text="{Binding Name}"  Margin="10,0" FontSize="22" Foreground="White"/>
+									<TextBlock Text="{Binding Routes}" Margin="10,75,0,0" FontSize="18" Foreground="White"/>
+								</StackPanel>
+							</Grid>
+						</DataTemplate>
+					</ListView.ItemTemplate>
+				</ListView>
+			</PivotItem>
+			<PivotItem Header="favorites">
+				<StackPanel>
+					<TextBlock x:Name="LocationText" Text="TEXT" />
+					<TextBlock x:Name="SearchStopName" Text="Stop"/>
+					<TextBlock x:Name="SearchStopLat" Text="Stop"/>
+					<TextBlock x:Name="SearchStopLon" Text="Stop"/>
+					<TextBlock x:Name="SearchStopTag" Text="Stop"/>
+					<TextBlock x:Name="SearchStop" Text="Stop"/>
+				</StackPanel>
+			</PivotItem>
+			<PivotItem Header="map">
+				<Grid Margin="-20,0">
+					<Maps:MapControl
+						x:Name="locationMap"
+						MapServiceToken="ZSWSnuR4VWvlfBwfsGqUUQ"
+						Margin="0,0" Padding="0" d:IsHidden="True"/>
+				</Grid>
+			</PivotItem>
+		</Pivot>
+	</Grid>
 
 </Page>
     

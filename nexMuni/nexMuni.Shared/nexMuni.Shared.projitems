@@ -19,6 +19,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)StopData.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)db\sorted.txt" />
     <Content Include="$(MSBuildThisFileDirectory)db\streetcorners.txt" />
   </ItemGroup>
 </Project>

@@ -41,10 +41,8 @@ namespace nexMuni
             if (!MainModel.IsDataLoaded)
             {
                 MainModel.LoadData();
+                nearbyListView.ItemsSource = MainModel.nearbyStops;
             }
-            nearbyList.ItemsSource = MainModel.nearbyStops;
-
-            UpdateLocation();
 
             // TODO: Prepare page for display here.
 
@@ -55,22 +53,9 @@ namespace nexMuni
             // this event is handled for you.
         }
 
-        private async void UpdateLocation()
-        {
-            Geolocator geolocator = new Geolocator();
-            geolocator.DesiredAccuracyInMeters = 50;
-
-
-            var position = await geolocator.GetGeopositionAsync();
-
-            await locationMap.TrySetViewAsync(position.Coordinate.Point, 17, 0, 0);
-
-            MainModel.GetNearby(position.Coordinate.Point);
-        }
-
         private void AppBarButton_Click(object sender, RoutedEventArgs e)
         {
-            UpdateLocation();
+            MainModel.UpdateLocation();
         }
     }
 }

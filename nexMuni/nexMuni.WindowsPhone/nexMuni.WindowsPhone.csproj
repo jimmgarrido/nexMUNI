@@ -15,6 +15,7 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{76F1466A-8B6D-4E39-A767-685A06062A39};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <SynthesizeLinkMetadata>true</SynthesizeLinkMetadata>
+    <ExpressionBlendVersion>12.0.50429.0</ExpressionBlendVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -80,9 +81,6 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Common\NavigationHelper.cs" />
     <Compile Include="Common\ObservableDictionary.cs" />
     <Compile Include="Common\RelayCommand.cs" />
@@ -91,6 +89,11 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SampleData\SampleStops\SampleStops.xaml.cs">
+      <DependentUpon>SampleStops.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SQLite.cs" />
+    <Compile Include="SQLiteAsync.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -102,12 +105,45 @@
     <Content Include="Assets\SmallLogo.scale-100.png" />
     <Content Include="Assets\SplashScreen.scale-100.png" />
     <Content Include="Assets\Square71x71Logo.scale-100.png" />
+    <DesignTimeOnly Include="SampleData\SampleStops\SampleStops_Files\image01.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </DesignTimeOnly>
+    <DesignTimeOnly Include="SampleData\SampleStops\SampleStops_Files\image02.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </DesignTimeOnly>
+    <DesignTimeOnly Include="SampleData\SampleStops\SampleStops_Files\image03.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </DesignTimeOnly>
+    <DesignTimeOnly Include="SampleData\SampleStops\SampleStops_Files\image04.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </DesignTimeOnly>
+    <DesignTimeOnly Include="SampleData\SampleStops\SampleStops_Files\image05.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </DesignTimeOnly>
   </ItemGroup>
   <ItemGroup>
     <Page Include="MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <DesignTimeOnly Include="SampleData\SampleStops\SampleStops.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </DesignTimeOnly>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <DesignTimeOnly Include="SampleData\SampleStops\SampleStops.xsd" />
+  </ItemGroup>
+  <ItemGroup>
+    <SDKReference Include="Microsoft.VCLibs, version=12.0">
+      <Name>Microsoft Visual C++ 2013 Runtime Package for Windows Phone</Name>
+    </SDKReference>
+    <SDKReference Include="SQLite.WP81, Version=3.8.5">
+      <Name>SQLite for Windows Phone 8.1</Name>
+    </SDKReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">
     <VisualStudioVersion>12.0</VisualStudioVersion>
