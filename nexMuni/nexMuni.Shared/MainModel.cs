@@ -54,30 +54,6 @@ namespace nexMuni
                     nearbyStops.Add(new StopData(split[0], split[3]));
                     counter++;
                 } while (!sRead.EndOfStream && (counter < 10));
-            
-
-            //nearbyStops.Add(new StopData("19th Ave & Holloway Ave", "F, M, KT"));
-
-            //nearbyStops.Add(new StopData("Daly City Bart", "F, M, KT"));
-            //nearbyStops.Add(new StopData("Geneva Ave & Mission St", "F, M, KT"));
-
-            //Open Muni Stops db
-            //StopsDbDataContext muniStops = new StopsDbDataContext(StopsDbDataContext.DBConnectionString);
-
-            //int index = 0;
-
-            //foreach (Stops stopCorner in muniStops.stopsTable)
-            //{
-            //    if (index < 10)
-            //    {
-            //        //cornersArray[index] = stopCorner.Stop_name;
-            //        nearbyStops.Add(new StopData(stopCorner.Stop_name));
-            //        index++;
-            //    }
-            //    else
-            //        break;
-
-            //}
         }
     }
 }

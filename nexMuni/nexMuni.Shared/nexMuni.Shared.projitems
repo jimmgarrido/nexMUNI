@@ -15,11 +15,15 @@
     <Compile Include="$(MSBuildThisFileDirectory)App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)DatabaseHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MainModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)StopData.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="$(MSBuildThisFileDirectory)db\sorted.txt" />
     <Content Include="$(MSBuildThisFileDirectory)db\streetcorners.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)db\muni.sqlite" />
   </ItemGroup>
 </Project>

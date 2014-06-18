@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -24,6 +25,8 @@ namespace nexMuni
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        public static ObservableCollection<StopData> Stopsss;
+
         public MainPage()
         {
             this.InitializeComponent();
@@ -53,9 +56,30 @@ namespace nexMuni
             // this event is handled for you.
         }
 
-        private void AppBarButton_Click(object sender, RoutedEventArgs e)
+        private void UpdateButton(object sender, RoutedEventArgs e)
         {
             MainModel.UpdateLocation();
+        }
+
+        private void CreateDB(object sender, RoutedEventArgs e)
+        {
+            DatabaseHelper.CreateDatabase();
+        }
+
+        private void CheckDB(object sender, RoutedEventArgs e)
+        {
+            IEnumerable<BusStop> results = DatabaseHelper.CheckDatabase();
+            Stopsss = new ObservableCollection<StopData>();
+            int counter = 0;
+            nearbyListView.ItemsSource = Stopsss;
+
+            foreach (BusStop d in results)
+            {
+                Stopsss.Add(new StopData(d.RouteTitle, d.Routes)); 
+                counter++;
+                if (counter > 10) break;
+            }
+                
         }
     }
 }
