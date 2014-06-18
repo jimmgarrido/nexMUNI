@@ -7,12 +7,7 @@ namespace nexMuni
 {
     class DatabaseHelper
     {
-        public static void CreateDatabase()
-        {
-            
-        }
-
-        public static IEnumerable<BusStop> CheckDatabase()
+        public static IEnumerable<BusStop> QueryDatabase()
         {
             var db = new SQLiteConnection("db/muni.sqlite");
 

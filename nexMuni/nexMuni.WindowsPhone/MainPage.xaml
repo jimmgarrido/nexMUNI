@@ -76,8 +76,7 @@
                     <AppBarButton Label="about"/>
             </CommandBar.SecondaryCommands>
         	<AppBarButton Icon="Refresh"  IsCompact="False" Label="refresh" Click="UpdateButton"/>
-        	<AppBarButton Icon="Find" IsCompact="False" Label="search"/>
-            <AppBarButton Icon="Add"  IsCompact="False" Label="new" Click="CreateDB"/>
+            <AppBarButton Icon="Find" IsCompact="False" Label="search"/>
             <AppBarButton Icon="ZeroBars"  IsCompact="False" Label="check" Click="CheckDB"/>
         </CommandBar>
     </Page.BottomAppBar>
@@ -98,25 +97,21 @@
 					</ListView.ItemTemplate>
 				</ListView>
 			</PivotItem>
-			<PivotItem Header="favorites">
-				<StackPanel>
-					<TextBlock x:Name="LocationText" Text="TEXT" />
-					<TextBlock x:Name="SearchStopName" Text="Stop"/>
-					<TextBlock x:Name="SearchStopLat" Text="Stop"/>
-					<TextBlock x:Name="SearchStopLon" Text="Stop"/>
-					<TextBlock x:Name="SearchStopTag" Text="Stop"/>
-					<TextBlock x:Name="SearchStop" Text="Stop"/>
-				</StackPanel>
-			</PivotItem>
-			<PivotItem Header="map">
-				<Grid Margin="-20,0">
-					<Maps:MapControl
-						x:Name="locationMap"
-						MapServiceToken="ZSWSnuR4VWvlfBwfsGqUUQ"
-						Margin="0,0" Padding="0" d:IsHidden="True"/>
-				</Grid>
-			</PivotItem>
-		</Pivot>
+            <PivotItem Header="favorites">
+                <ListView x:Name="favoritesListView" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top" ItemsSource="{Binding Items}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Background="#b31b1b" Margin="0,0,0,20" Height="140" Width="500">
+                                <StackPanel Margin="0,0,0,0">
+                                    <TextBlock Text="{Binding Name}"  Margin="10,0" FontSize="22" Foreground="White"/>
+                                    <TextBlock Text="{Binding Routes}" Margin="10,75,0,0" FontSize="18" Foreground="White"/>
+                                </StackPanel>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </PivotItem>
+        </Pivot>
 	</Grid>
 
 </Page>

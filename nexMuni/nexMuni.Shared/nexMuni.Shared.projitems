@@ -16,7 +16,8 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)DatabaseHelper.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)MainModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)LocationHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NearbyModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)StopData.cs" />
   </ItemGroup>
   <ItemGroup>

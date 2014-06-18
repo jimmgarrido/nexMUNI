@@ -25,8 +25,6 @@ namespace nexMuni
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        public static ObservableCollection<StopData> Stopsss;
-
         public MainPage()
         {
             this.InitializeComponent();
@@ -41,10 +39,11 @@ namespace nexMuni
         /// This parameter is typically used to configure the page.</param>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (!MainModel.IsDataLoaded)
+            if (!NearbyModel.IsDataLoaded)
             {
-                MainModel.LoadData();
-                nearbyListView.ItemsSource = MainModel.nearbyStops;
+                NearbyModel.LoadData();
+                nearbyListView.ItemsSource = NearbyModel.nearbyStops;
+                favoritesListView.ItemsSource = NearbyModel.favoritesStops;
             }
 
             // TODO: Prepare page for display here.
@@ -58,28 +57,11 @@ namespace nexMuni
 
         private void UpdateButton(object sender, RoutedEventArgs e)
         {
-            MainModel.UpdateLocation();
-        }
-
-        private void CreateDB(object sender, RoutedEventArgs e)
-        {
-            DatabaseHelper.CreateDatabase();
+            LocationHelper.UpdateNearbyList();
         }
 
         private void CheckDB(object sender, RoutedEventArgs e)
-        {
-            IEnumerable<BusStop> results = DatabaseHelper.CheckDatabase();
-            Stopsss = new ObservableCollection<StopData>();
-            int counter = 0;
-            nearbyListView.ItemsSource = Stopsss;
-
-            foreach (BusStop d in results)
-            {
-                Stopsss.Add(new StopData(d.RouteTitle, d.Routes)); 
-                counter++;
-                if (counter > 10) break;
-            }
-                
+        {       
         }
     }
 }
