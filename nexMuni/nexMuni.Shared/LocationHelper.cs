@@ -22,33 +22,65 @@ namespace nexMuni
 
         private static void FindNearby(Geopoint location)
         {
+            double latitude = location.Position.Latitude;
+            double longitude = location.Position.Longitude;
             //code to create bounds
+            double[][] bounds = new double[][] { Destination(latitude, longitude, 0.0),
+                                                 Destination(latitude, longitude, 90.0),
+                                                 Destination(latitude, longitude, 180.0),
+                                                 Destination(latitude, longitude, 270.0)};
+
             //query db with bounds
-            IEnumerable<BusStop> results = DatabaseHelper.QueryDatabase();
-            //StopResults = new ObservableCollection<StopData>();
-            int counter = 0;
+            IEnumerable<BusStop> results = DatabaseHelper.QueryDatabase(bounds);
+            //IEnumerable<BusStop> filtered = FilterResults(results);
+
+            //int counter = 0;
             NearbyModel.nearbyStops.Clear();
             foreach (BusStop d in results)
             {
-                NearbyModel.nearbyStops.Add(new StopData(d.RouteTitle, d.Routes));
-                counter++;
-                if (counter > 10) break;
+                d.Distance = Distance(latitude, longitude, d.Latitude, d.Longitude);
             }
+        }
 
-            //string contents;
-            //int counter = 0;
+        private static double[] Destination(double lat, double lon, double bearing)
+        {
+            double rLat = Deg2Rad(lat);
+            double rLon = Deg2Rad(lon);
+            double rBearing = Deg2Rad(bearing);
+            double rDist = 0.5 / 3963.19;
 
-            //StorageFile file = await StorageFile.GetFileFromApplicationUriAsync(new Uri(@"ms-appx:///db/sorted.txt"));
-            //using (StreamReader sRead = new StreamReader(await file.OpenStreamForReadAsync()))
+            double rLatBound = Math.Asin(Math.Sin(rLat) * Math.Cos(rDist) + Math.Cos(rLat) * Math.Sin(rDist) * Math.Cos(rBearing));
+            double rLonBound = rLon + Math.Atan2(Math.Sin(rBearing) * Math.Sin(rDist) * Math.Cos(rLat),
+                                                 Math.Cos(rDist) - (Math.Sin(rLat) * Math.Sin(rLatBound)));
 
-            //    do
-            //    {
-            //        contents = await sRead.ReadLineAsync();
+            double[] LatLon = new double[] { Rad2Deg(rLatBound), Rad2Deg(rLonBound) };
+            return LatLon;
+        }
 
-            //        string[] split = contents.Split('%');
-            //        NearbyModel.nearbyStops.Add(new StopData(split[0], split[3]));
-            //        counter++;
-            //    } while (!sRead.EndOfStream && (counter < 10));
+        private static double Deg2Rad(double degrees)
+        {
+            return (Math.PI / 180) * degrees;
+        }
+
+        private static double Rad2Deg(double radians)
+        {
+            return (180 / Math.PI) * radians;
+        }
+
+        //private static IEnumerable<BusStop> FilterResults(IEnumerable<BusStop> list)
+        //{
+            
+        //}
+
+        private static double Distance(double latA, double lonA, double latB, double lonB)
+        {
+            double rLatA = Deg2Rad(latA);
+            double rLatB = Deg2Rad(latB);
+            double rHalfDeltaLat = Deg2Rad((latB - latA) / 2.0);
+            double rHalfDeltaLon = Deg2Rad((lonB - lonA) / 2.0);
+
+            return (2 * 3963.19) * Math.Asin(Math.Sqrt(Math.Pow(Math.Sin(rHalfDeltaLat), 2) + Math.Cos(rLatA) * Math.Cos(rLatB) * Math.Pow(Math.Sin(rHalfDeltaLon), 2)));
+
         }
     }
 }
