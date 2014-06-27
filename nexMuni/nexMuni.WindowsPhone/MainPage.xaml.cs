@@ -41,6 +41,7 @@ namespace nexMuni
         {
             if (!NearbyModel.IsDataLoaded)
             {
+                
                 NearbyModel.LoadData();
                 nearbyListView.ItemsSource = NearbyModel.nearbyStops;
                 favoritesListView.ItemsSource = NearbyModel.favoritesStops;
@@ -60,8 +61,10 @@ namespace nexMuni
             LocationHelper.UpdateNearbyList();
         }
 
-        private void CheckDB(object sender, RoutedEventArgs e)
-        {       
+        private void StopClicked(object sender, ItemClickEventArgs e)
+        {
+           // StopData selected = e.ClickedItem as StopData;
+            this.Frame.Navigate(typeof(StopDetail), e.ClickedItem);
         }
     }
 }

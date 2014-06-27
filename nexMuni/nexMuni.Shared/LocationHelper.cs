@@ -12,42 +12,53 @@ namespace nexMuni
     {
         public static async void UpdateNearbyList()
         {
+#if WINDOWS_PHONE_APP
+            var systemTray = Windows.UI.ViewManagement.StatusBar.GetForCurrentView();
+            systemTray.ProgressIndicator.Text = "Getting Location";
+            systemTray.ProgressIndicator.ProgressValue = null;
+#endif
             Geolocator geolocator = new Geolocator();
             geolocator.DesiredAccuracyInMeters = 50;
 
             var position = await geolocator.GetGeopositionAsync();
 
-            FindNearby(position.Coordinate.Point);
+            FindNearby(position.Coordinate.Point, 0.5);
+
+#if WINDOWS_PHONE_APP           
+            systemTray.ProgressIndicator.ProgressValue = 0;
+            systemTray.ProgressIndicator.Text = "nexMuni";
+#endif
         }
 
-        private static void FindNearby(Geopoint location)
+        public static void FindNearby(Geopoint location, double dist)
         {
             double latitude = location.Position.Latitude;
             double longitude = location.Position.Longitude;
             //code to create bounds
-            double[][] bounds = new double[][] { Destination(latitude, longitude, 0.0),
-                                                 Destination(latitude, longitude, 90.0),
-                                                 Destination(latitude, longitude, 180.0),
-                                                 Destination(latitude, longitude, 270.0)};
+            double[][] bounds = new double[][] { Destination(latitude, longitude, 0.0, dist),
+                                                 Destination(latitude, longitude, 90.0, dist),
+                                                 Destination(latitude, longitude, 180.0, dist),
+                                                 Destination(latitude, longitude, 270.0, dist)};
 
             //query db with bounds
-            IEnumerable<BusStop> results = DatabaseHelper.QueryDatabase(bounds);
+            IList<BusStop> results = DatabaseHelper.QueryDatabase(bounds, location, dist);
             //IEnumerable<BusStop> filtered = FilterResults(results);
 
             //int counter = 0;
-            NearbyModel.nearbyStops.Clear();
+            //NearbyModel.nearbyStops.Clear();
             foreach (BusStop d in results)
             {
-                d.Distance = Distance(latitude, longitude, d.Latitude, d.Longitude);
+                 NearbyModel.nearbyStops.Add(new StopData(d.RouteTitle, d.Routes));
+                //d.Distance = Distance(latitude, longitude, d.Latitude, d.Longitude);
             }
         }
 
-        private static double[] Destination(double lat, double lon, double bearing)
+        private static double[] Destination(double lat, double lon, double bearing, double d)
         {
             double rLat = Deg2Rad(lat);
             double rLon = Deg2Rad(lon);
             double rBearing = Deg2Rad(bearing);
-            double rDist = 0.5 / 3963.19;
+            double rDist = d / 3963.19;
 
             double rLatBound = Math.Asin(Math.Sin(rLat) * Math.Cos(rDist) + Math.Cos(rLat) * Math.Sin(rDist) * Math.Cos(rBearing));
             double rLonBound = rLon + Math.Atan2(Math.Sin(rBearing) * Math.Sin(rDist) * Math.Cos(rLat),

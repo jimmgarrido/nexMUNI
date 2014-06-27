@@ -20,6 +20,7 @@ namespace nexMuni
 
         public static void LoadData()
         {
+            
             nearbyStops = new ObservableCollection<StopData>();
             favoritesStops = new ObservableCollection<StopData>();
             

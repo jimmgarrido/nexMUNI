@@ -7,8 +7,8 @@
         <ResourceDictionary>
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Default">
-                    <SolidColorBrush x:Key="PivotHeaderForegroundSelectedBrush" Color="#b31b1b"/>
-                    <SolidColorBrush x:Key="PivotHeaderForegroundUnselectedBrush" Color="#b31b1b" Opacity=".50"/>
+                    <SolidColorBrush x:Key="PivotHeaderForegroundSelectedBrush" Color="White"/>
+                    <SolidColorBrush x:Key="PivotHeaderForegroundUnselectedBrush" Color="White" Opacity=".50"/>
 					<x:Double  x:Key="PivotHeaderItemFontSize" >52</x:Double>
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>

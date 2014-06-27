@@ -2,19 +2,24 @@
 using System.Collections.Generic;
 using System.Text;
 using SQLite;
+using Windows.Devices.Geolocation;
 
 namespace nexMuni
 {
     class DatabaseHelper
     {
-        public static IEnumerable<BusStop> QueryDatabase(double[][] b)
+        public static IList<BusStop> QueryDatabase(double[][] b, Geopoint l, double d)
         {
             var db = new SQLiteConnection("db/muni.sqlite");
 
             string query = "SELECT * FROM BusStops WHERE Longitude BETWEEN " + b[3][1] + " AND " + b[1][1] + " AND Latitude BETWEEN " + b[2][0] + " AND " + b[0][0];
-            IEnumerable<BusStop> r = db.Query<BusStop>(query);
-            db.Close();
-
+            IList<BusStop> r = db.Query<BusStop>(query);
+            
+            if(r.Count == 0  || r.Count < 10)
+            {
+                LocationHelper.FindNearby(l, d += 0.50);
+            } else db.Close();
+            
             return r;
         }
     }
