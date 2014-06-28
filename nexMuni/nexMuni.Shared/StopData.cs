@@ -7,6 +7,7 @@ namespace nexMuni
     public class StopData
     {
         public string Name { get; set; }
+        public string [] RoutesSplit { get; set; }
         public string Routes { get; set; }
 
         public StopData() { }
@@ -14,7 +15,9 @@ namespace nexMuni
         public StopData(string stopName, string routes)
         {
             Name = stopName;
+            this.RoutesSplit = routes.Split(',');
             this.Routes = routes;
+            //this.Routes = routes;
         }
     }
 }

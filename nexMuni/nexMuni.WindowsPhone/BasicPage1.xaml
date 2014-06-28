@@ -1,0 +1,59 @@
+﻿<Page
+    x:Class="nexMuni.BasicPage1"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:nexMuni"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+	<Page.Background>
+		<SolidColorBrush Color="#FFB31B1B"/>
+	</Page.Background>
+
+    <Grid x:Name="LayoutRoot">
+
+        <Grid.ChildrenTransitions>
+            <TransitionCollection>
+                <EntranceThemeTransition/>
+            </TransitionCollection>
+        </Grid.ChildrenTransitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+    	<Hub Header="Mission St &amp; 24th St ">
+    		<HubSection Header="14 Mission">
+    			<DataTemplate>
+    				<Grid>
+						<StackPanel>
+							<Image Source="Assets/next.png" Height="55" Margin="-300,-30,0,0"/>
+							<TextBlock Text="to Downtown" FontSize="14" />
+							<TextBlock Text="3, 13, 20 min" Margin="170,-40,0,0" FontSize="26"/>
+						</StackPanel>
+						<StackPanel Margin="0,70,0,0">
+							<Image Source="Assets/back.png" Height="55" Margin="-300,-22,0,0"/>
+							<TextBlock Text="to Daly City" FontSize="14" />
+							<TextBlock Text="3, 13, 20 min" Margin="170,-40,0,0" FontSize="26"/>
+						</StackPanel>
+					</Grid>
+    			</DataTemplate>
+    		</HubSection>
+    		<HubSection Header="14 Mission Limited">
+    			<DataTemplate>
+    				<Grid/>
+    			</DataTemplate>
+    		</HubSection>
+			<HubSection Header="49 Van Ness">
+    			<DataTemplate>
+    				<Grid/>
+    			</DataTemplate>
+    		</HubSection>
+    	</Hub>
+    	
+
+        <!-- Title Panel -->
+
+        <!--TODO: Content should be placed within the following grid-->
+    </Grid>
+</Page>

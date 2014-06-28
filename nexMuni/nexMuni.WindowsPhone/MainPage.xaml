@@ -70,13 +70,13 @@
 		<SolidColorBrush Color="#FFFFFFFF"/>
 	</Page.Foreground>
     <Page.BottomAppBar>
-        <CommandBar Background="#b31b1b">
+        <CommandBar Background="#FF9B1414" ClosedDisplayMode="Minimal">
             <CommandBar.SecondaryCommands>
                 <AppBarButton Label="settings"/>
                     <AppBarButton Label="about"/>
             </CommandBar.SecondaryCommands>
-        	<AppBarButton Icon="Refresh"  IsCompact="False" Label="refresh" Click="UpdateButton"/>
-            <AppBarButton Icon="Find" IsCompact="False" Label="search"/>
+        	<AppBarButton Icon="refresh"  IsCompact="False" Label="refresh" Click="UpdateButton"/>
+            
         </CommandBar>
     </Page.BottomAppBar>
 

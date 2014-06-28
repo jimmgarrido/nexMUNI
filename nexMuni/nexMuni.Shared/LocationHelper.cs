@@ -22,7 +22,12 @@ namespace nexMuni
 
             var position = await geolocator.GetGeopositionAsync();
 
-            FindNearby(position.Coordinate.Point, 0.5);
+#if WINDOWS_PHONE_APP
+            systemTray.ProgressIndicator.ProgressValue = null;
+            systemTray.ProgressIndicator.Text = "Locating Stops";
+#endif
+
+            FindNearby(position.Coordinate.Point, 0.5, 0);
 
 #if WINDOWS_PHONE_APP           
             systemTray.ProgressIndicator.ProgressValue = 0;
@@ -30,27 +35,33 @@ namespace nexMuni
 #endif
         }
 
-        public static void FindNearby(Geopoint location, double dist)
+        public static void FindNearby(Geopoint location, double dist, int count)
         {
-            double latitude = location.Position.Latitude;
-            double longitude = location.Position.Longitude;
-            //code to create bounds
-            double[][] bounds = new double[][] { Destination(latitude, longitude, 0.0, dist),
+            if (count < 5)
+            {
+                double latitude = location.Position.Latitude;
+                double longitude = location.Position.Longitude;
+                //code to create bounds
+                double[][] bounds = new double[][] { Destination(latitude, longitude, 0.0, dist),
                                                  Destination(latitude, longitude, 90.0, dist),
                                                  Destination(latitude, longitude, 180.0, dist),
                                                  Destination(latitude, longitude, 270.0, dist)};
 
-            //query db with bounds
-            IList<BusStop> results = DatabaseHelper.QueryDatabase(bounds, location, dist);
-            //IEnumerable<BusStop> filtered = FilterResults(results);
+                //query db with bounds
+                IList<BusStop> results = DatabaseHelper.QueryDatabase(bounds, location, dist, count);
+                //IEnumerable<BusStop> filtered = FilterResults(results);
 
-            //int counter = 0;
-            //NearbyModel.nearbyStops.Clear();
-            foreach (BusStop d in results)
-            {
-                 NearbyModel.nearbyStops.Add(new StopData(d.RouteTitle, d.Routes));
-                //d.Distance = Distance(latitude, longitude, d.Latitude, d.Longitude);
+                //int counter = 0;
+                //if (NearbyModel.nearbyStops != null) 
+                //NearbyModel.nearbyStops.Clear();
+
+                foreach (BusStop d in results)
+                {
+                    NearbyModel.nearbyStops.Add(new StopData(d.RouteTitle, d.Routes));
+                    //d.Distance = Distance(latitude, longitude, d.Latitude, d.Longitude);
+                }
             }
+            else NearbyModel.nearbyStops.Add(new StopData("No Stops", ""));
         }
 
         private static double[] Destination(double lat, double lon, double bearing, double d)

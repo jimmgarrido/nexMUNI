@@ -20,15 +20,15 @@ using Windows.UI.Xaml.Navigation;
 
 namespace nexMuni
 {
-    
-
-    public sealed partial class StopDetail : Page
+    /// <summary>
+    /// An empty page that can be used on its own or navigated to within a Frame.
+    /// </summary>
+    public sealed partial class BasicPage1 : Page
     {
         private NavigationHelper navigationHelper;
         private ObservableDictionary defaultViewModel = new ObservableDictionary();
-        public StopData selectedStop;
 
-        public StopDetail()
+        public BasicPage1()
         {
             this.InitializeComponent();
 
@@ -67,13 +67,6 @@ namespace nexMuni
         /// session.  The state will be null the first time a page is visited.</param>
         private void NavigationHelper_LoadState(object sender, LoadStateEventArgs e)
         {
-            selectedStop = e.NavigationParameter as StopData;
-            StopHeader.Text = selectedStop.Name;
-
-            StopDetailModel.routeList = new System.Collections.ObjectModel.ObservableCollection<RouteData>();
-            RouteInfoList.ItemsSource = StopDetailModel.routeList;
-
-            StopDetailModel.LoadData(selectedStop);
         }
 
         /// <summary>
