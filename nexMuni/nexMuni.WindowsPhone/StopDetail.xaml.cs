@@ -69,11 +69,11 @@ namespace nexMuni
         {
             selectedStop = e.NavigationParameter as StopData;
             StopHeader.Text = selectedStop.Name;
-
-            StopDetailModel.routeList = new System.Collections.ObjectModel.ObservableCollection<RouteData>();
-            RouteInfoList.ItemsSource = StopDetailModel.routeList;
+            
+            
 
             StopDetailModel.LoadData(selectedStop);
+            RouteInfoList.ItemsSource = StopDetailModel.routeList;
         }
 
         /// <summary>

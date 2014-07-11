@@ -18,13 +18,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)DatabaseHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LocationHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)NearbyModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PredictionModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)RouteData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)StopData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)StopDetailModel.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="$(MSBuildThisFileDirectory)db\sorted.txt" />
-    <Content Include="$(MSBuildThisFileDirectory)db\streetcorners.txt" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="$(MSBuildThisFileDirectory)db\muni.sqlite" />

@@ -37,6 +37,8 @@ namespace nexMuni
 
         public static void FindNearby(Geopoint location, double dist, int count)
         {
+            int counter = 0;
+
             if (count < 5)
             {
                 double latitude = location.Position.Latitude;
@@ -54,10 +56,15 @@ namespace nexMuni
                 //int counter = 0;
                 //if (NearbyModel.nearbyStops != null) 
                 //NearbyModel.nearbyStops.Clear();
-
+                
                 foreach (BusStop d in results)
                 {
-                    NearbyModel.nearbyStops.Add(new StopData(d.RouteTitle, d.Routes));
+                    if (counter < 10)
+                    {
+                        NearbyModel.nearbyStops.Add(new StopData(d.RouteTitle, d.Routes, d.StopTags));
+                        counter++;
+                    }
+                    else break;
                     //d.Distance = Distance(latitude, longitude, d.Latitude, d.Longitude);
                 }
             }

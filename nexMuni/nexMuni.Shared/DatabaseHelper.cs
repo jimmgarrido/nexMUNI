@@ -35,7 +35,7 @@ namespace nexMuni
         public double Longitude { get; set; }
         public double Latitude { get; set; }
         public string Routes { get; set; }
-        public string StopIDs { get; set; }
+        public string StopTags { get; set; }
         public double Distance { get; set; }
     }
 
