@@ -68,9 +68,7 @@ namespace nexMuni
         private void NavigationHelper_LoadState(object sender, LoadStateEventArgs e)
         {
             selectedStop = e.NavigationParameter as StopData;
-            StopHeader.Text = selectedStop.Name;
-            
-            
+            StopHeader.Text = selectedStop.Name;          
 
             StopDetailModel.LoadData(selectedStop);
             RouteInfoList.ItemsSource = StopDetailModel.routeList;

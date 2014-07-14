@@ -11,11 +11,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nexMuni.Windows", "nexMuni\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nexMuni.WindowsPhone", "nexMuni\nexMuni.WindowsPhone\nexMuni.WindowsPhone.csproj", "{21A2852E-0604-4D65-A349-8F1C60A0CBD1}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{30127782-BDA7-43AA-8B85-4D6DCD278596}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\packages.config = .nuget\packages.config
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		nexMuni\nexMuni.Shared\nexMuni.Shared.projitems*{21a2852e-0604-4d65-a349-8f1c60a0cbd1}*SharedItemsImports = 4

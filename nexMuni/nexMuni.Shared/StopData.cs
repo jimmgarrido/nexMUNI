@@ -24,6 +24,7 @@ namespace nexMuni
         {
             Name = stopName;
             this.RoutesSplit = routes.Split(',');
+            RoutesSplit[0] = " " + RoutesSplit[0]; 
             this.Tags = _tags.Split(',');
             this.Routes = routes;
         }

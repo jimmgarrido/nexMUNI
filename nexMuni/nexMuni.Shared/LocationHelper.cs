@@ -17,6 +17,7 @@ namespace nexMuni
             systemTray.ProgressIndicator.Text = "Getting Location";
             systemTray.ProgressIndicator.ProgressValue = null;
 #endif
+
             Geolocator geolocator = new Geolocator();
             geolocator.DesiredAccuracyInMeters = 50;
 
@@ -43,6 +44,7 @@ namespace nexMuni
             {
                 double latitude = location.Position.Latitude;
                 double longitude = location.Position.Longitude;
+
                 //code to create bounds
                 double[][] bounds = new double[][] { Destination(latitude, longitude, 0.0, dist),
                                                  Destination(latitude, longitude, 90.0, dist),
@@ -51,11 +53,6 @@ namespace nexMuni
 
                 //query db with bounds
                 IList<BusStop> results = DatabaseHelper.QueryDatabase(bounds, location, dist, count);
-                //IEnumerable<BusStop> filtered = FilterResults(results);
-
-                //int counter = 0;
-                //if (NearbyModel.nearbyStops != null) 
-                //NearbyModel.nearbyStops.Clear();
                 
                 foreach (BusStop d in results)
                 {
@@ -95,11 +92,6 @@ namespace nexMuni
         {
             return (180 / Math.PI) * radians;
         }
-
-        //private static IEnumerable<BusStop> FilterResults(IEnumerable<BusStop> list)
-        //{
-            
-        //}
 
         private static double Distance(double latA, double lonA, double latB, double lonB)
         {
