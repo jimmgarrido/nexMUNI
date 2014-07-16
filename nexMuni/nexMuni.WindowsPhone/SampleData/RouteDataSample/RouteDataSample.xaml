@@ -5,15 +5,15 @@
 -->
 <SampleData:RouteDataSample xmlns:SampleData="using:Blend.SampleData.RouteDataSample" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
   <SampleData:RouteDataSample.Stops>
-    <SampleData:StopsItem RouteNum="43" times="Aenean aliquam nam" RouteName="Aliquam maecenas" />
-    <SampleData:StopsItem RouteNum="803" times="Sed mauris dis nullam" RouteName="Praesent class integer cras" />
-    <SampleData:StopsItem RouteNum="4" times="Integer maecenas" RouteName="Aenean accumsan quisque vivamus" />
-    <SampleData:StopsItem RouteNum="499" times="Aptent praesent" RouteName="Bibendum duis dictumst" />
-    <SampleData:StopsItem RouteNum="308" times="Auctor class accumsan" RouteName="Eleifend facilisi aliquam mauris" />
-    <SampleData:StopsItem RouteNum="214" times="Congue cras" RouteName="Faucibus curae nam" />
-    <SampleData:StopsItem RouteNum="781" times="Cursus est dictum" RouteName="Aliquet habitant" />
-    <SampleData:StopsItem RouteNum="125" times="Quisque vivamus duis bibendum" RouteName="Sed inceptos interdum" />
-    <SampleData:StopsItem RouteNum="358" times="Nunc hac aliquam curae" RouteName="Nunc lobortis nascetur" />
-    <SampleData:StopsItem RouteNum="172" times="Aliquet blandit lectus" RouteName="Dis pharetra" />
+    <SampleData:StopsItem RouteNum="43" inTimes="Class" RouteName="Aliquam maecenas" outTimes="Cras" inTitle="Class nam maecenas aenean" outTitle="Aliquam aenean cras" />
+    <SampleData:StopsItem RouteNum="803" inTimes="Curae" RouteName="Praesent class integer cras" outTimes="Duis" inTitle="Sed dis" outTitle="Nam maecenas mauris class" />
+    <SampleData:StopsItem RouteNum="4" inTimes="Donec" RouteName="Aenean accumsan quisque vivamus" outTimes="Nam" inTitle="Est mauris" outTitle="Curae duis" />
+    <SampleData:StopsItem RouteNum="499" inTimes="Cras" RouteName="Bibendum duis dictumst" outTimes="Nunc" inTitle="Curae hac praesent cras" outTitle="Praesent nullam sed donec" />
+    <SampleData:StopsItem RouteNum="308" inTimes="Nam" RouteName="Eleifend facilisi aliquam mauris" outTimes="Amet" inTitle="Aliquam leo accumsan nullam" outTitle="Etiam accumsan" />
+    <SampleData:StopsItem RouteNum="214" inTimes="Duis" RouteName="Faucibus curae nam" outTimes="Sed" inTitle="Donec duis aptent nunc" outTitle="Nunc fusce" />
+    <SampleData:StopsItem RouteNum="781" inTimes="Nunc" RouteName="Aliquet habitant" outTimes="Class" inTitle="Integer etiam quisque" outTitle="Dis amet" />
+    <SampleData:StopsItem RouteNum="125" inTimes="Sed" RouteName="Sed inceptos interdum" outTimes="Curae" inTitle="Amet bibendum dictumst" outTitle="Ante integer aptent est" />
+    <SampleData:StopsItem RouteNum="358" inTimes="Dis" RouteName="Nunc lobortis nascetur" outTimes="Donec" inTitle="Ante mus arcu" outTitle="Bibendum arcu quisque vivamus" />
+    <SampleData:StopsItem RouteNum="172" inTimes="Est" RouteName="Dis pharetra" outTimes="Etiam" inTitle="Fusce eleifend vivamus" outTitle="Diam dictumst hac lorem" />
   </SampleData:RouteDataSample.Stops>
 </SampleData:RouteDataSample>

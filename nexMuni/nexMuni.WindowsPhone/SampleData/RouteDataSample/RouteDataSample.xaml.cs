@@ -82,21 +82,21 @@ namespace Blend.SampleData.RouteDataSample
 			}
 		}
 
-		private string _times = string.Empty;
+		private string _inTimes = string.Empty;
 
-		public string times
+		public string inTimes
 		{
 			get
 			{
-				return this._times;
+				return this._inTimes;
 			}
 
 			set
 			{
-				if (this._times != value)
+				if (this._inTimes != value)
 				{
-					this._times = value;
-					this.OnPropertyChanged("times");
+					this._inTimes = value;
+					this.OnPropertyChanged("inTimes");
 				}
 			}
 		}
@@ -116,6 +116,63 @@ namespace Blend.SampleData.RouteDataSample
 				{
 					this._RouteName = value;
 					this.OnPropertyChanged("RouteName");
+				}
+			}
+		}
+
+		private string _outTimes = string.Empty;
+
+		public string outTimes
+		{
+			get
+			{
+				return this._outTimes;
+			}
+
+			set
+			{
+				if (this._outTimes != value)
+				{
+					this._outTimes = value;
+					this.OnPropertyChanged("outTimes");
+				}
+			}
+		}
+
+		private string _inTitle = string.Empty;
+
+		public string inTitle
+		{
+			get
+			{
+				return this._inTitle;
+			}
+
+			set
+			{
+				if (this._inTitle != value)
+				{
+					this._inTitle = value;
+					this.OnPropertyChanged("inTitle");
+				}
+			}
+		}
+
+		private string _outTitle = string.Empty;
+
+		public string outTitle
+		{
+			get
+			{
+				return this._outTitle;
+			}
+
+			set
+			{
+				if (this._outTitle != value)
+				{
+					this._outTitle = value;
+					this.OnPropertyChanged("outTitle");
 				}
 			}
 		}

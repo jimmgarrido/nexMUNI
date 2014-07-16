@@ -32,73 +32,98 @@ namespace nexMuni
 
         private static void GetPredictions(XDocument doc, StopData s)
         {
-            XNode node = doc.Root.FirstNode;
-            XElement el = node as XElement;
+            int i = 0;
+            IEnumerable<XElement> rootElements =
+                from e in doc.Descendants("predictions")
+                select e;
+            XElement currElement;
+            IEnumerable<XElement> predictionElements;
 
             string outbound, inbound;
             string title;
             string[] outTimes = new string[3];
             string[] inTimes = new string[3];
             string time;
-            bool outDir = true;
             int counter = 0;
+            int j = 0, x, y;
 
-            int i = 0;
-            while(i < s.RoutesSplit.Length)
+            while(i < rootElements.Count())
             {
-                if (outDir)
+                if (i % 2 == 0)
                 {
-                    title = el.Attribute("routeTitle").ToString();
+                    currElement = rootElements.ElementAt(i);
+                    title = currElement.Attribute("routeTitle").ToString();
+                    x = title.IndexOf('-') + 1;
+                    y = title.LastIndexOf('"');
+                    title = title.Substring(x, y - x);
 
-                    //node = node.NextNode;
-                    el = el.Element("direction");
-                    outbound = el.Attribute("title").ToString();
-
-                    int j = 0;
-                    while(j < 1)
+                    currElement = currElement.Element("direction");
+                    if (currElement != null)
                     {
-                        el = el.Element("prediction");
-                        //el = node as XElement;
-                        time = el.Attribute("minutes").ToString();
+                        outbound = currElement.Attribute("title").ToString();
+                        x = outbound.LastIndexOf('"');
+                        outbound = outbound.Substring(7, x - 7);
 
-                        outTimes[i] = time;
+                        predictionElements =
+                            from e in currElement.Descendants("prediction")
+                            select e;
+                    }
+                    else break;
+                    
+                    while (j < predictionElements.Count())
+                    {
+                        XElement element = predictionElements.ElementAt(j);
+                        time = element.Attribute("minutes").ToString();
+                        x = time.LastIndexOf('"');
+                        time = time.Substring(9, x - 9);
+
+                        if(j < 3)
+                        {
+                            outTimes[j] = time;
+                            
+                        }
                         j++;
                     }
 
-                    outDir = false;
-                    el = node.NextNode as XElement;
-                    StopDetailModel.routeList.Add(new RouteData(title.Substring(12), s.RoutesSplit[i], outbound, outTimes));
-                    //StopDetailModel.routeList[0].RouteName = title.Substring(12);
-                    //StopDetailModel.routeList[0].times = "fwefewf";
+                    StopDetailModel.routeList.Add(new RouteData(title, s.RoutesSplit[counter], outbound, outTimes));
+                    
                 }
                 else
                 {
-                    node = node.NextNode;
-                    el = node as XElement;
+                    currElement = rootElements.ElementAt(i).Element("direction");
 
-                    el = el.Element("direction");
-                    inbound = el.Attribute("title").ToString();
-
-                    int j = 0;
-                    while (j < 1)
+                    if (currElement != null)
                     {
-                        el = el.Element("prediction");
-                        time = el.Attribute("minutes").ToString();
+                        inbound = currElement.Attribute("title").ToString();
+                        x = inbound.LastIndexOf('"');
+                        inbound = inbound.Substring(7, x - 7);
 
-                        inTimes[i] = time;
+                        predictionElements =
+                            from e in currElement.Descendants("prediction")
+                            select e;
+                    }
+                    else break;
+
+                    j = 0;
+                    while (j < predictionElements.Count())
+                    {
+                        XElement element = predictionElements.ElementAt(j);
+                        time = element.Attribute("minutes").ToString();
+                        x = time.LastIndexOf('"');
+                        time = time.Substring(9, x - 9);
+
+                        if(j < 3)
+                        {
+                            inTimes[j] = time;
+                            
+                        }
                         j++;
                     }
 
-                    outDir = true;
-                    el = node.NextNode as XElement;
-                    StopDetailModel.routeList[0].GetIn(inbound, inTimes);
+                    StopDetailModel.routeList[counter].GetIn(inbound, inTimes);
                     counter++;
-                    i++;
-                    //StopDetailModel.routeList.Add(new RouteData(title.Substring(12), s.RoutesSplit[i], outbound, outTimes, inbound, inTimes));
-                    //StopDetailModel.routeList[0].RouteName = title.Substring(12);
-                    //StopDetailModel.routeList[0].times = "fwefewf";
                 }
-                
+                i++;
             }  
         }
     }

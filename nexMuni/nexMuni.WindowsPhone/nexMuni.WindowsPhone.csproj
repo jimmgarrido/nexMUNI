@@ -119,6 +119,8 @@
     </Content>
     <Content Include="Assets\SmallLogo.scale-100.png" />
     <Content Include="Assets\SplashScreen.scale-100.png" />
+    <Content Include="Assets\SplashScreen.scale-140.png" />
+    <Content Include="Assets\SplashScreen.scale-240.png" />
     <Content Include="Assets\Square71x71Logo.scale-100.png" />
     <DesignTimeOnly Include="SampleData\RouteDataSample\RouteDataSample_Files\image01.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -187,9 +189,7 @@
       <Name>SQLite for Windows Phone 8.1</Name>
     </SDKReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="SampleData\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <DesignTimeOnly Include="SampleData\RouteDataSample\RouteDataSample.xsd" />
   </ItemGroup>

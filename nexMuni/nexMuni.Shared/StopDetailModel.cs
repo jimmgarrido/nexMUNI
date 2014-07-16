@@ -30,15 +30,8 @@ namespace nexMuni
             }
 
             url = baseURL + cont.ToString();
-            //PredictionModel.SendToModel(routeList);
-            PredictionModel.GetXML(url, stop);
 
-            //i = 0;
-            //while (i < stop.RoutesSplit.Length)
-            //{
-            //    routeList.Add(new RouteData(stop.RoutesSplit[i]));
-            //    i++; 
-            //}    
+            PredictionModel.GetXML(url, stop); 
         }
     }
 }

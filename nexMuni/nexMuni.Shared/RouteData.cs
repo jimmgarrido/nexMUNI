@@ -20,13 +20,13 @@ namespace nexMuni
             RouteName = name;
             RouteNum = num;
             outTitle = _outTitle;
-            outTimes = _outTimes.ToString();
+            outTimes = String.Join(", ",_outTimes) + " mins";
         }
 
         public void GetIn(string _inTitle, string [] _inTimes)
         {
             inTitle = _inTitle;
-            inTimes = _inTimes.ToString();
+            inTimes = String.Join(", ",_inTimes) + " mins";
         }
     }
 }
