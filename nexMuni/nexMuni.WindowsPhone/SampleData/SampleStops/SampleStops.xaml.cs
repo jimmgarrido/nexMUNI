@@ -47,6 +47,10 @@ namespace Blend.SampleData.SampleStops
 		}
 	}
 
+	public class Items : System.Collections.ObjectModel.ObservableCollection<ItemsItem>
+	{ 
+	}
+
 	public class ItemsItem : INotifyPropertyChanged
 	{
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -96,10 +100,25 @@ namespace Blend.SampleData.SampleStops
 				}
 			}
 		}
-	}
 
-	public class Items : System.Collections.ObjectModel.ObservableCollection<ItemsItem>
-	{ 
+		private string _Distance = string.Empty;
+
+		public string Distance
+		{
+			get
+			{
+				return this._Distance;
+			}
+
+			set
+			{
+				if (this._Distance != value)
+				{
+					this._Distance = value;
+					this.OnPropertyChanged("Distance");
+				}
+			}
+		}
 	}
 #endif
 }

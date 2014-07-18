@@ -72,6 +72,7 @@ namespace nexMuni
 
             StopDetailModel.LoadData(selectedStop);
             RouteInfoList.ItemsSource = StopDetailModel.routeList;
+            
         }
 
         /// <summary>

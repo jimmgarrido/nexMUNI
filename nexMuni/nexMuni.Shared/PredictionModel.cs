@@ -13,13 +13,14 @@ namespace nexMuni
 {
     class PredictionModel
     {
-        public static void SendToModel(ObservableCollection<RouteData> list)
-        {
-            //GetXML(StopDetailModel.url);
-        }
-
         public static async void GetXML(string url, StopData stop)
         {
+#if WINDOWS_PHONE_APP
+            var systemTray = Windows.UI.ViewManagement.StatusBar.GetForCurrentView();
+            systemTray.ProgressIndicator.Text = "Getting Arrival Times";
+            systemTray.ProgressIndicator.ProgressValue = null;
+#endif
+
             HttpClient client = new HttpClient();
             XDocument xmlDoc = new XDocument();
             Stream xmlStream;
@@ -28,6 +29,11 @@ namespace nexMuni
             xmlDoc = XDocument.Load(xmlStream);
 
             GetPredictions(xmlDoc, stop);
+
+#if WINDOWS_PHONE_APP
+            systemTray.ProgressIndicator.ProgressValue = 0;
+            systemTray.ProgressIndicator.Text = "nexMuni";
+#endif
         }
 
         private static void GetPredictions(XDocument doc, StopData s)
@@ -52,7 +58,9 @@ namespace nexMuni
                 if (i % 2 == 0)
                 {
                     currElement = rootElements.ElementAt(i);
-                    title = currElement.Attribute("routeTitle").ToString();
+                    XAttribute titleAtt = currElement.Attribute("routeTitle");
+                    title = titleAtt.ToString();
+                    
                     x = title.IndexOf('-') + 1;
                     y = title.LastIndexOf('"');
                     title = title.Substring(x, y - x);

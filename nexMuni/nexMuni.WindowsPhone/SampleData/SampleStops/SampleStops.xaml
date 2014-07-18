@@ -5,15 +5,15 @@
 -->
 <SampleData:SampleStops xmlns:SampleData="using:Blend.SampleData.SampleStops" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
   <SampleData:SampleStops.Items>
-    <SampleData:ItemsItem Name="Maecenas praesent aliquam aenean" Routes="Cras class" />
-    <SampleData:ItemsItem Name="Sem lobortis ipsum" Routes="Nascetur justo luctus pharetra" />
-    <SampleData:ItemsItem Name="Per gravida sociis" Routes="Iaculis lacinia quam" />
-    <SampleData:ItemsItem Name="Leo mus" Routes="Luctus integer" />
-    <SampleData:ItemsItem Name="Ultrices sed" Routes="Vehicula volutpat orci" />
-    <SampleData:ItemsItem Name="Ante integer netus vel" Routes="Quisque faucibus nulla tempus" />
-    <SampleData:ItemsItem Name="Mauris quam" Routes="Feugiat gravida iaculis sagittis" />
-    <SampleData:ItemsItem Name="Est ligula eget" Routes="Aliquet blandit hac" />
-    <SampleData:ItemsItem Name="Primis sodales" Routes="Viverra sociosqu" />
-    <SampleData:ItemsItem Name="Egestas sed" Routes="Turpis varius aenean" />
+    <SampleData:ItemsItem Name="Maecenas praesent aliquam aenean" Routes="Cras class" Distance="Nam" />
+    <SampleData:ItemsItem Name="Sem lobortis ipsum" Routes="Nascetur justo luctus pharetra" Distance="Sed" />
+    <SampleData:ItemsItem Name="Per gravida sociis" Routes="Iaculis lacinia quam" Distance="Dis" />
+    <SampleData:ItemsItem Name="Leo mus" Routes="Luctus integer" Distance="Est" />
+    <SampleData:ItemsItem Name="Ultrices sed" Routes="Vehicula volutpat orci" Distance="Hac" />
+    <SampleData:ItemsItem Name="Ante integer netus vel" Routes="Quisque faucibus nulla tempus" Distance="Leo" />
+    <SampleData:ItemsItem Name="Mauris quam" Routes="Feugiat gravida iaculis sagittis" Distance="Mus" />
+    <SampleData:ItemsItem Name="Est ligula eget" Routes="Aliquet blandit hac" Distance="Nec" />
+    <SampleData:ItemsItem Name="Primis sodales" Routes="Viverra sociosqu" Distance="Non" />
+    <SampleData:ItemsItem Name="Egestas sed" Routes="Turpis varius aenean" Distance="Per" />
   </SampleData:SampleStops.Items>
 </SampleData:SampleStops>

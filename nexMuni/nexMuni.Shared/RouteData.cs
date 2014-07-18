@@ -20,12 +20,16 @@ namespace nexMuni
             RouteName = name;
             RouteNum = num;
             outTitle = _outTitle;
+            if (outTitle.Contains("via Downtown")) outTitle = outTitle.Replace("via Downtown", "");
+            if (outTitle.Contains("&amp;")) outTitle = outTitle.Replace("&amp;", "&");
             outTimes = String.Join(", ",_outTimes) + " mins";
         }
 
         public void GetIn(string _inTitle, string [] _inTimes)
         {
             inTitle = _inTitle;
+            if (inTitle.Contains("via Downtown")) inTitle = inTitle.Replace("via Downtown", "");
+            if (inTitle.Contains("&amp;")) inTitle = inTitle.Replace("&amp;", "&");
             inTimes = String.Join(", ",_inTimes) + " mins";
         }
     }

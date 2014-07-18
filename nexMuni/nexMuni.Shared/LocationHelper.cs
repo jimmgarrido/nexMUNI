@@ -5,6 +5,7 @@ using System.Text;
 using Windows.Devices.Geolocation;
 using Windows.Storage;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace nexMuni
 {
@@ -24,7 +25,6 @@ namespace nexMuni
             var position = await geolocator.GetGeopositionAsync();
 
 #if WINDOWS_PHONE_APP
-            systemTray.ProgressIndicator.ProgressValue = null;
             systemTray.ProgressIndicator.Text = "Locating Stops";
 #endif
 
@@ -52,17 +52,25 @@ namespace nexMuni
                                                  Destination(latitude, longitude, 270.0, dist)};
 
                 //query db with bounds
-                IList<BusStop> results = DatabaseHelper.QueryDatabase(bounds, location, dist, count);
+                List<BusStop> results = DatabaseHelper.QueryDatabase(bounds, location, dist, count);
+
+                foreach (BusStop stop in results)
+                {
+                    stop.Distance = Distance(latitude, longitude, stop.Latitude, stop.Longitude);
+                }
+                IEnumerable<BusStop> sortedList =
+                    from s in results
+                    orderby s.Distance
+                    select s;
                 
-                foreach (BusStop d in results)
+                foreach (BusStop d in sortedList)
                 {
                     if (counter < 10)
                     {
-                        NearbyModel.nearbyStops.Add(new StopData(d.RouteTitle, d.Routes, d.StopTags));
+                        NearbyModel.nearbyStops.Add(new StopData(d.StopName, d.Routes, d.StopTags, d.Distance));
                         counter++;
                     }
                     else break;
-                    //d.Distance = Distance(latitude, longitude, d.Latitude, d.Longitude);
                 }
             }
             else NearbyModel.nearbyStops.Add(new StopData("No Stops", ""));
