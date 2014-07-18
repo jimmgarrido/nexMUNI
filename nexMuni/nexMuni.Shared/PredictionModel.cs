@@ -32,7 +32,7 @@ namespace nexMuni
 
 #if WINDOWS_PHONE_APP
             systemTray.ProgressIndicator.ProgressValue = 0;
-            systemTray.ProgressIndicator.Text = "nexMuni";
+            systemTray.ProgressIndicator.Text = "nexMuni";    
 #endif
         }
 
@@ -45,26 +45,23 @@ namespace nexMuni
             XElement currElement;
             IEnumerable<XElement> predictionElements;
 
-            string outbound, inbound;
-            string title;
+            string outbound, inbound, title, currTag ="0", time;
             string[] outTimes = new string[3];
             string[] inTimes = new string[3];
-            string time;
-            int counter = 0;
-            int j = 0, x, y;
+            int counter = 0, j, x, y;
 
             while(i < rootElements.Count())
             {
-                if (i % 2 == 0)
-                {
-                    currElement = rootElements.ElementAt(i);
-                    XAttribute titleAtt = currElement.Attribute("routeTitle");
-                    title = titleAtt.ToString();
-                    
-                    x = title.IndexOf('-') + 1;
-                    y = title.LastIndexOf('"');
-                    title = title.Substring(x, y - x);
+                currElement = rootElements.ElementAt(i);
+                XAttribute titleAtt = currElement.Attribute("routeTitle");
+                title = titleAtt.ToString();
+                x = title.IndexOf('-') + 1;
+                y = title.LastIndexOf('"');
+                title = title.Substring(x, y - x);
 
+                if (!currElement.Attribute("routeTag").ToString().Equals(currTag))
+                {          
+                    currTag = currElement.Attribute("routeTag").ToString();
                     currElement = currElement.Element("direction");
                     if (currElement != null)
                     {
@@ -75,26 +72,23 @@ namespace nexMuni
                         predictionElements =
                             from e in currElement.Descendants("prediction")
                             select e;
-                    }
-                    else break;
-                    
-                    while (j < predictionElements.Count())
-                    {
-                        XElement element = predictionElements.ElementAt(j);
-                        time = element.Attribute("minutes").ToString();
-                        x = time.LastIndexOf('"');
-                        time = time.Substring(9, x - 9);
 
-                        if(j < 3)
+                        j = 0;
+                        outTimes = new string[3];
+                        while (j < predictionElements.Count())
                         {
-                            outTimes[j] = time;
                             
-                        }
-                        j++;
-                    }
+                            XElement element = predictionElements.ElementAt(j);
+                            time = element.Attribute("minutes").ToString();
+                            x = time.LastIndexOf('"');
+                            time = time.Substring(9, x - 9);
 
-                    StopDetailModel.routeList.Add(new RouteData(title, s.RoutesSplit[counter], outbound, outTimes));
-                    
+                            if (j < 3) outTimes[j] = time;
+                            j++;
+                        }
+                        StopDetailModel.routeList.Add(new RouteData(title, s.RoutesSplit[counter], outbound, outTimes));
+                        counter++;
+                    }  
                 }
                 else
                 {
@@ -109,27 +103,21 @@ namespace nexMuni
                         predictionElements =
                             from e in currElement.Descendants("prediction")
                             select e;
-                    }
-                    else break;
 
-                    j = 0;
-                    while (j < predictionElements.Count())
-                    {
-                        XElement element = predictionElements.ElementAt(j);
-                        time = element.Attribute("minutes").ToString();
-                        x = time.LastIndexOf('"');
-                        time = time.Substring(9, x - 9);
-
-                        if(j < 3)
+                        j = 0;
+                        inTimes = new string[3];
+                        while (j < predictionElements.Count())
                         {
-                            inTimes[j] = time;
-                            
-                        }
-                        j++;
-                    }
+                            XElement element = predictionElements.ElementAt(j);
+                            time = element.Attribute("minutes").ToString();
+                            x = time.LastIndexOf('"');
+                            time = time.Substring(9, x - 9);
 
-                    StopDetailModel.routeList[counter].GetIn(inbound, inTimes);
-                    counter++;
+                            if (j < 3) inTimes[j] = time;
+                            j++;
+                        }
+                        StopDetailModel.routeList[counter - 1].AddDir2(inbound, inTimes); 
+                    }     
                 }
                 i++;
             }  

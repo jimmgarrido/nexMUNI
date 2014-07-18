@@ -18,7 +18,9 @@ namespace nexMuni
 
         public static void LoadData(StopData stop)
         {
-            StopDetailModel.routeList = new ObservableCollection<RouteData>();
+            if (routeList == null) StopDetailModel.routeList = new ObservableCollection<RouteData>();
+            else if (routeList != null) routeList.Clear();
+            
             baseURL = "http://webservices.nextbus.com/service/publicXMLFeed?command=predictionsForMultiStops&a=sf-muni";
             StringBuilder cont = new StringBuilder();
             

@@ -82,21 +82,21 @@ namespace Blend.SampleData.RouteDataSample
 			}
 		}
 
-		private string _inTimes = string.Empty;
+		private string _Times1 = string.Empty;
 
-		public string inTimes
+		public string Times1
 		{
 			get
 			{
-				return this._inTimes;
+				return this._Times1;
 			}
 
 			set
 			{
-				if (this._inTimes != value)
+				if (this._Times1 != value)
 				{
-					this._inTimes = value;
-					this.OnPropertyChanged("inTimes");
+					this._Times1 = value;
+					this.OnPropertyChanged("Times1");
 				}
 			}
 		}
@@ -120,59 +120,59 @@ namespace Blend.SampleData.RouteDataSample
 			}
 		}
 
-		private string _outTimes = string.Empty;
+		private string _Times2 = string.Empty;
 
-		public string outTimes
+		public string Times2
 		{
 			get
 			{
-				return this._outTimes;
+				return this._Times2;
 			}
 
 			set
 			{
-				if (this._outTimes != value)
+				if (this._Times2 != value)
 				{
-					this._outTimes = value;
-					this.OnPropertyChanged("outTimes");
+					this._Times2 = value;
+					this.OnPropertyChanged("Times2");
 				}
 			}
 		}
 
-		private string _inTitle = string.Empty;
+		private string _Dir1 = string.Empty;
 
-		public string inTitle
+		public string Dir1
 		{
 			get
 			{
-				return this._inTitle;
+				return this._Dir1;
 			}
 
 			set
 			{
-				if (this._inTitle != value)
+				if (this._Dir1 != value)
 				{
-					this._inTitle = value;
-					this.OnPropertyChanged("inTitle");
+					this._Dir1 = value;
+					this.OnPropertyChanged("Dir1");
 				}
 			}
 		}
 
-		private string _outTitle = string.Empty;
+		private string _Dir2 = string.Empty;
 
-		public string outTitle
+		public string Dir2
 		{
 			get
 			{
-				return this._outTitle;
+				return this._Dir2;
 			}
 
 			set
 			{
-				if (this._outTitle != value)
+				if (this._Dir2 != value)
 				{
-					this._outTitle = value;
-					this.OnPropertyChanged("outTitle");
+					this._Dir2 = value;
+					this.OnPropertyChanged("Dir2");
 				}
 			}
 		}

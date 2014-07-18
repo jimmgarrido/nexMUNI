@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest" xmlns:m3="http://schemas.microsoft.com/appx/2014/manifest" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest">
-  <Identity Name="f84f0141-403c-481c-858e-fc9fef3faceb" Publisher="CN=Jimmy" Version="0.7.0.0" />
+  <Identity Name="f84f0141-403c-481c-858e-fc9fef3faceb" Publisher="CN=Jimmy" Version="0.7.5.0" />
   <mp:PhoneIdentity PhoneProductId="6ea89ad0-a859-48dd-a977-eb97bcfad4c0" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>nexMuni.WindowsPhone</DisplayName>
