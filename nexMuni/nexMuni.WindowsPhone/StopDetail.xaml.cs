@@ -35,6 +35,7 @@ namespace nexMuni
             this.navigationHelper = new NavigationHelper(this);
             this.navigationHelper.LoadState += this.NavigationHelper_LoadState;
             this.navigationHelper.SaveState += this.NavigationHelper_SaveState;
+            //StopDetailModel.routeList.CollectionChanged += PredictionModel.CollectionChanged;
         }
 
         /// <summary>
@@ -68,11 +69,12 @@ namespace nexMuni
         private void NavigationHelper_LoadState(object sender, LoadStateEventArgs e)
         {
             selectedStop = e.NavigationParameter as StopData;
-            StopHeader.Text = selectedStop.Name;          
-
+            StopHeader.Text = selectedStop.Name;
+            if (StopDetailModel.routeList == null) StopDetailModel.routeList = new System.Collections.ObjectModel.ObservableCollection<RouteData>();
+            else if (StopDetailModel.routeList != null) StopDetailModel.routeList.Clear();
+            RouteInfoList.ItemsSource = StopDetailModel.routeList; 
             StopDetailModel.LoadData(selectedStop);
-            RouteInfoList.ItemsSource = StopDetailModel.routeList;
-            
+              
         }
 
         /// <summary>
@@ -85,6 +87,11 @@ namespace nexMuni
         /// serializable state.</param>
         private void NavigationHelper_SaveState(object sender, SaveStateEventArgs e)
         {
+        }
+
+        private void RefreshTimes(object sender, RoutedEventArgs e)
+        {
+            PredictionModel.UpdateTimes();
         }
 
         #region NavigationHelper registration
@@ -109,6 +116,7 @@ namespace nexMuni
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
+            StopDetailModel.routeList.Clear();
             this.navigationHelper.OnNavigatedFrom(e);
         }
 

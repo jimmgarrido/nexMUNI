@@ -1,17 +1,54 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace nexMuni
 {
-    public class RouteData
+    public class RouteData : INotifyPropertyChanged
     {
+        private string predictions1 = String.Empty;
+        private string predictions2 = String.Empty;
+        private string temp;
+
         public string RouteNum { get; set; }
         public string RouteName { get; set; }
         public string Dir1 { get; set; }
-        public string Times1 { get; set; }
         public string Dir2 { get; set; }
-        public string Times2 { get; set; }
+
+        public string Times1 {
+            get
+            {
+                return this.predictions1;
+            }
+
+            set
+            {
+                if (value != this.predictions1)
+                {
+                    this.predictions1 = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public string Times2 {
+            get
+            {
+                return this.predictions2;
+            }
+
+            set
+            {
+                if (value != this.predictions2)
+                {
+                    this.predictions2 = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public RouteData() { }
 
@@ -28,10 +65,11 @@ namespace nexMuni
             {
                 while (i < _times.Length - 1)
                 {
-                    Times1 = Times1 + _times[i] + ", ";
+                    temp = temp + _times[i] + ", ";
                     i++;
                 }
-                Times1 = Times1 + _times[i] + " mins";
+                Times1 = temp + _times[i] + " mins";
+                temp = string.Empty;
             }
             else Times1 = _times + " mins";
         }
@@ -47,12 +85,21 @@ namespace nexMuni
             {
                 while (i < _times.Length - 1)
                 {
-                    Times2 = Times2 + _times[i] + ", ";
+                    temp = temp + _times[i] + ", ";
                     i++;
                 }
-                Times2 = Times2 + _times[i] + " mins";
+                Times2 = temp + _times[i] + " mins";
+                temp = string.Empty;
             }
             else Times2 = _times[0] + " mins";  
+        }
+
+        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
     }
 }

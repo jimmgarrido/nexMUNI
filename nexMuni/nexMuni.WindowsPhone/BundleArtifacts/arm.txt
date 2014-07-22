@@ -1,0 +1,4 @@
+MainPackage=C:\Users\Jimmy\Documents\GitHub\nexMuni\nexMuni\nexMuni.WindowsPhone\bin\ARM\Release\nexMuni.WindowsPhone_0.7.8.0_Bundle\nexMuni.WindowsPhone_0.7.8.0_ARM.appx
+SymbolPackage=C:\Users\Jimmy\Documents\GitHub\nexMuni\nexMuni\nexMuni.WindowsPhone\AppPackages\nexMuni.WindowsPhone_0.7.8.0_Test\nexMuni.WindowsPhone_0.7.8.0_ARM.appxsym
+ResourcePack=C:\Users\Jimmy\Documents\GitHub\nexMuni\nexMuni\nexMuni.WindowsPhone\bin\ARM\Release\nexMuni.WindowsPhone_0.7.8.0_Bundle\nexMuni.WindowsPhone_0.7.8.0_scale-100.appx
+ResourcePack=C:\Users\Jimmy\Documents\GitHub\nexMuni\nexMuni\nexMuni.WindowsPhone\bin\ARM\Release\nexMuni.WindowsPhone_0.7.8.0_Bundle\nexMuni.WindowsPhone_0.7.8.0_scale-140.appx

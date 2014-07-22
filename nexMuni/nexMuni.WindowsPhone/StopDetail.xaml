@@ -11,7 +11,13 @@
 		<SampleData:RouteDataSample x:Key="RouteDataSample" d:IsDataSource="True"/>
 	</Page.Resources>
 
-	<Grid x:Name="LayoutRoot" Background="#FFB31B1B">
+    <Page.BottomAppBar>
+        <CommandBar Background="#FF9B1414">
+            <AppBarButton Icon="refresh"  IsCompact="true" Label="refresh" Click="RefreshTimes"/>
+        </CommandBar>
+    </Page.BottomAppBar>
+
+    <Grid x:Name="LayoutRoot" Background="#FFB31B1B">
 
 		<Grid.ChildrenTransitions>
 			<TransitionCollection>

@@ -4,15 +4,21 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using System.IO;
-using System.Net.Http;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Linq;
+using System.Net;
+using Windows.Web.Http;
+using Windows.Web.Http.Headers;
 
 namespace nexMuni
 {
     class PredictionModel
     {
+        public static string URLstring {get; set;}
+        public static StopData selectedStop { get; set; }
+        public static HttpResponseMessage saved { get; set; }
+
         public static async void GetXML(string url, StopData stop)
         {
 #if WINDOWS_PHONE_APP
@@ -20,15 +26,28 @@ namespace nexMuni
             systemTray.ProgressIndicator.Text = "Getting Arrival Times";
             systemTray.ProgressIndicator.ProgressValue = null;
 #endif
+            URLstring = url;
+            selectedStop = stop;
 
-            HttpClient client = new HttpClient();
+            var response = new HttpResponseMessage();
+            var client = new HttpClient();
             XDocument xmlDoc = new XDocument();
-            Stream xmlStream;
+            string reader;
 
-            xmlStream = await client.GetStreamAsync(url);
-            xmlDoc = XDocument.Load(xmlStream);
+            if (saved != null) response = saved;
+            
+            response.Headers.CacheControl.Add(new HttpNameValueHeaderValue("max-age", "1"));
+            client.DefaultRequestHeaders.CacheControl.Add(new HttpNameValueHeaderValue("max-age", "1"));
+            if (response.Content != null) client.DefaultRequestHeaders.IfModifiedSince = response.Content.Headers.Expires;
+            response = await client.GetAsync(new Uri(URLstring));
+            response.Content.Headers.Expires = System.DateTime.Now;
+            
+            saved = response;
 
-            GetPredictions(xmlDoc, stop);
+            reader = await response.Content.ReadAsStringAsync();
+            xmlDoc = XDocument.Parse(reader);
+
+            GetPredictions(xmlDoc, selectedStop);
 
 #if WINDOWS_PHONE_APP
             systemTray.ProgressIndicator.ProgressValue = 0;
@@ -121,6 +140,12 @@ namespace nexMuni
                 }
                 i++;
             }  
+        }
+
+        internal static void UpdateTimes()
+        {
+            StopDetailModel.routeList.Clear();
+            GetXML(URLstring, selectedStop);
         }
     }
 }

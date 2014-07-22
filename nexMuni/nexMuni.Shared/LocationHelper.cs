@@ -65,7 +65,7 @@ namespace nexMuni
                 
                 foreach (BusStop d in sortedList)
                 {
-                    if (counter < 10)
+                    if (counter < 15)
                     {
                         NearbyModel.nearbyStops.Add(new StopData(d.StopName, d.Routes, d.StopTags, d.Distance));
                         counter++;

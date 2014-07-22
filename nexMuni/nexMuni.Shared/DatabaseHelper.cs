@@ -16,7 +16,7 @@ namespace nexMuni
             string query = "SELECT * FROM BusStops WHERE Longitude BETWEEN " + b[3][1] + " AND " + b[1][1] + " AND Latitude BETWEEN " + b[2][0] + " AND " + b[0][0];
             List<BusStop> r = db.Query<BusStop>(query);
             
-            if((r.Count == 0  || r.Count < 10))
+            if((r.Count == 0  || r.Count < 15))
             {
                 c++;
                 LocationHelper.FindNearby(l, d += 0.50, c);

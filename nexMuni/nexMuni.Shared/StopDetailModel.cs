@@ -2,7 +2,6 @@
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Text;
-using System.Collections.ObjectModel;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -17,10 +16,7 @@ namespace nexMuni
         public static string baseURL {get; set;}
 
         public static void LoadData(StopData stop)
-        {
-            if (routeList == null) StopDetailModel.routeList = new ObservableCollection<RouteData>();
-            else if (routeList != null) routeList.Clear();
-            
+        {            
             baseURL = "http://webservices.nextbus.com/service/publicXMLFeed?command=predictionsForMultiStops&a=sf-muni";
             StringBuilder cont = new StringBuilder();
             
