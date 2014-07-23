@@ -12,7 +12,7 @@ using System.IO;
 
 namespace nexMuni
 {
-    class NearbyModel
+    class MainPageModel
     {
         public static ObservableCollection<StopData> nearbyStops;
         public static ObservableCollection<StopData> favoritesStops;

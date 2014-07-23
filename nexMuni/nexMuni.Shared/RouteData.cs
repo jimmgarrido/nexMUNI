@@ -60,6 +60,7 @@ namespace nexMuni
             Dir1 = dir;
             if (Dir1.Contains("via Downtown")) Dir1 = Dir1.Replace("via Downtown", "");
             if (Dir1.Contains("&amp;")) Dir1 = Dir1.Replace("&amp;", "&");
+            if (Dir1.Contains("Daly City BART Station")) Dir1 = Dir1.Replace("( Daly City BART Station 4pm-7pm)", "BART");
 
             if (_times.Length > 1)
             {
@@ -80,6 +81,7 @@ namespace nexMuni
             Dir2 = _inTitle;
             if (Dir2.Contains("via Downtown")) Dir2 = Dir2.Replace("via Downtown", "");
             if (Dir2.Contains("&amp;")) Dir2 = Dir2.Replace("&amp;", "&");
+            if (Dir2.Contains("Daly City BART Station")) Dir2 = Dir2.Replace("( Daly City BART Station 4pm-7pm)", "BART");
 
             if (_times.Length > 1)
             {

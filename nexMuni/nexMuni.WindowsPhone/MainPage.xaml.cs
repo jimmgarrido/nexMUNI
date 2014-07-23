@@ -16,8 +16,6 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Shapes;
 
-// The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
-
 namespace nexMuni
 {
     public sealed partial class MainPage : Page
@@ -29,35 +27,19 @@ namespace nexMuni
             this.NavigationCacheMode = NavigationCacheMode.Required;
         }
 
-        /// <summary>
-        /// Invoked when this page is about to be displayed in a Frame.
-        /// </summary>
-        /// <param name="e">Event data that describes how this page was reached.
-        /// This parameter is typically used to configure the page.</param>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (!NearbyModel.IsDataLoaded)
+            if (!MainPageModel.IsDataLoaded)
             {
-                
-                NearbyModel.LoadData();
-                nearbyListView.ItemsSource = NearbyModel.nearbyStops;
-                favoritesListView.ItemsSource = NearbyModel.favoritesStops;
+                MainPageModel.LoadData();
+                nearbyListView.ItemsSource = MainPageModel.nearbyStops;
+                favoritesListView.ItemsSource = MainPageModel.favoritesStops;
             }
-
-            // TODO: Prepare page for display here.
-
-            // TODO: If your application contains multiple pages, ensure that you are
-            // handling the hardware Back button by registering for the
-            // Windows.Phone.UI.Input.HardwareButtons.BackPressed event.
-            // If you are using the NavigationHelper provided by some templates,
-            // this event is handled for you.
         }
 
         private void UpdateButton(object sender, RoutedEventArgs e)
         {
-            //if (NearbyModel.nearbyStops != null) 
-            NearbyModel.nearbyStops.Clear();
-
+            MainPageModel.nearbyStops.Clear();
             LocationHelper.UpdateNearbyList();
         }
 
@@ -65,6 +47,11 @@ namespace nexMuni
         {
             StopData selected = e.ClickedItem as StopData;
             this.Frame.Navigate(typeof(StopDetail), e.ClickedItem);
+        }
+
+        private void GoToAbout(object sender, RoutedEventArgs e)
+        {
+            this.Frame.Navigate(typeof(AboutPage));
         }
     }
 }

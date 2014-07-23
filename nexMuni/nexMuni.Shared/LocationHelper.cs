@@ -67,13 +67,13 @@ namespace nexMuni
                 {
                     if (counter < 15)
                     {
-                        NearbyModel.nearbyStops.Add(new StopData(d.StopName, d.Routes, d.StopTags, d.Distance));
+                        MainPageModel.nearbyStops.Add(new StopData(d.StopName, d.Routes, d.StopTags, d.Distance));
                         counter++;
                     }
                     else break;
                 }
             }
-            else NearbyModel.nearbyStops.Add(new StopData("No Stops", ""));
+            else MainPageModel.nearbyStops.Add(new StopData("No Stops", ""));
         }
 
         private static double[] Destination(double lat, double lon, double bearing, double d)
