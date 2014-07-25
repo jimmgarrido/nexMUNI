@@ -13,7 +13,8 @@
 
     <Page.BottomAppBar>
         <CommandBar Background="#FF9B1414">
-            <AppBarButton Icon="refresh"  IsCompact="true" Label="refresh" Click="RefreshTimes"/>
+            <AppBarButton Icon="Refresh"  IsCompact="true" Label="refresh" Click="RefreshTimes"/>
+            <AppBarButton Icon="Favorite" IsCompact="True" Label="favorite" Click="FavoriteStop"/>
         </CommandBar>
     </Page.BottomAppBar>
 

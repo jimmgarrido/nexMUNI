@@ -21,9 +21,19 @@ namespace nexMuni
             StringBuilder cont = new StringBuilder();
             
             int i = 0;
-            while (i < stop.Tags.Length)
+            if(stop.TagsSplit == null)
             {
-                cont.Append("&stops=" + stop.Tags[i]);
+                stop.TagsSplit = stop.Tags.Split(',');
+            }
+
+            if (stop.RoutesSplit == null)
+            {
+                stop.RoutesSplit = stop.Routes.Split(',');
+            }
+
+            while (i < stop.TagsSplit.Length)
+            {
+                cont.Append("&stops=" + stop.TagsSplit[i]);
                 i++;
             }
 

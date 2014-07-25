@@ -23,7 +23,8 @@ namespace nexMuni
             
             nearbyStops = new ObservableCollection<StopData>();
             favoritesStops = new ObservableCollection<StopData>();
-            
+
+            DatabaseHelper.LoadFavorites();
             LocationHelper.UpdateNearbyList();
             IsDataLoaded = true; 
         }

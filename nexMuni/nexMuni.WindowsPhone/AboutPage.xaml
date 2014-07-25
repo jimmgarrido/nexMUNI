@@ -44,7 +44,10 @@
 					nexmuni@nexdev.co
 					</Underline>
 				</Paragraph>
-			</RichTextBlock>
+                <Paragraph Margin="0,200,0,0" FontSize="17">
+                    Version: 0.9.0
+                </Paragraph>
+            </RichTextBlock>
         </Grid>
     </Grid>
 </Page>

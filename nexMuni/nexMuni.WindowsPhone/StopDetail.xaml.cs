@@ -20,13 +20,12 @@ using Windows.UI.Xaml.Navigation;
 
 namespace nexMuni
 {
-    
-
     public sealed partial class StopDetail : Page
     {
         private NavigationHelper navigationHelper;
         private ObservableDictionary defaultViewModel = new ObservableDictionary();
         public StopData selectedStop;
+        public BusStop stop;
 
         public StopDetail()
         {
@@ -73,8 +72,7 @@ namespace nexMuni
             if (StopDetailModel.routeList == null) StopDetailModel.routeList = new System.Collections.ObjectModel.ObservableCollection<RouteData>();
             else if (StopDetailModel.routeList != null) StopDetailModel.routeList.Clear();
             RouteInfoList.ItemsSource = StopDetailModel.routeList; 
-            StopDetailModel.LoadData(selectedStop);
-              
+            StopDetailModel.LoadData(selectedStop);       
         }
 
         /// <summary>
@@ -92,6 +90,11 @@ namespace nexMuni
         private void RefreshTimes(object sender, RoutedEventArgs e)
         {
             PredictionModel.UpdateTimes();
+        }
+
+        private void FavoriteStop(object sender, RoutedEventArgs e)
+        {
+            DatabaseHelper.AddFavorite(selectedStop);
         }
 
         #region NavigationHelper registration
