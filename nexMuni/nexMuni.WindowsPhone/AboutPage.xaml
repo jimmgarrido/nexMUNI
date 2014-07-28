@@ -33,7 +33,7 @@
 					nexMuni is developed as a hobby project is therefore provided for free
 				</Paragraph>
 				<Paragraph Margin="0,50,0,0">
-					Real time data provided by the
+					Real time data is provided by the
                     <Bold>
                         nextbus api
 					</Bold>
@@ -44,8 +44,11 @@
 					nexmuni@nexdev.co
 					</Underline>
 				</Paragraph>
-                <Paragraph Margin="0,200,0,0" FontSize="17">
-                    Version: 0.9.0
+                <Paragraph Margin="0,50,0,0">
+                    nexMuni is open source and can be checked out on
+                    <Underline x:Name="github" FontWeight="Bold">
+                        GitHub
+                    </Underline>
                 </Paragraph>
             </RichTextBlock>
         </Grid>

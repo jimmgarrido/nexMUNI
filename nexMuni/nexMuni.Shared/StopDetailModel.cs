@@ -29,6 +29,7 @@ namespace nexMuni
             if (stop.RoutesSplit == null)
             {
                 stop.RoutesSplit = stop.Routes.Split(',');
+                stop.RoutesSplit[0] = " " + stop.RoutesSplit[0];
             }
 
             while (i < stop.TagsSplit.Length)

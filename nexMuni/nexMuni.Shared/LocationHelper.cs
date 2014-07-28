@@ -11,6 +11,9 @@ namespace nexMuni
 {
     class LocationHelper
     {
+        private static double PhoneLat { get; set; }
+        private static double PhoneLong { get; set; }
+
         public static async void UpdateNearbyList()
         {
 #if WINDOWS_PHONE_APP
@@ -42,21 +45,21 @@ namespace nexMuni
 
             if (count < 5)
             {
-                double latitude = location.Position.Latitude;
-                double longitude = location.Position.Longitude;
+                PhoneLat = location.Position.Latitude;
+                PhoneLong = location.Position.Longitude;
 
                 //code to create bounds
-                double[][] bounds = new double[][] { Destination(latitude, longitude, 0.0, dist),
-                                                 Destination(latitude, longitude, 90.0, dist),
-                                                 Destination(latitude, longitude, 180.0, dist),
-                                                 Destination(latitude, longitude, 270.0, dist)};
+                double[][] bounds = new double[][] { Destination(PhoneLat, PhoneLong, 0.0, dist),
+                                                 Destination(PhoneLat, PhoneLong, 90.0, dist),
+                                                 Destination(PhoneLat, PhoneLong, 180.0, dist),
+                                                 Destination(PhoneLat, PhoneLong, 270.0, dist)};
 
                 //query db with bounds
                 List<BusStop> results = DatabaseHelper.QueryDatabase(bounds, location, dist, count);
 
                 foreach (BusStop stop in results)
                 {
-                    stop.Distance = Distance(latitude, longitude, stop.Latitude, stop.Longitude);
+                    stop.Distance = Distance(stop.Latitude, stop.Longitude);
                 }
                 IEnumerable<BusStop> sortedList =
                     from s in results
@@ -68,6 +71,7 @@ namespace nexMuni
                     if (counter < 15)
                     {
                         MainPageModel.nearbyStops.Add(new StopData(d.StopName, d.Routes, d.StopTags, d.Distance));
+                        MainPageModel.nearbyStops[counter].AddCoordinates(d.Latitude, d.Longitude);
                         counter++;
                     }
                     else break;
@@ -101,15 +105,34 @@ namespace nexMuni
             return (180 / Math.PI) * radians;
         }
 
-        private static double Distance(double latA, double lonA, double latB, double lonB)
+        private static double Distance(double latB, double lonB)
         {
-            double rLatA = Deg2Rad(latA);
+            double rLatA = Deg2Rad(PhoneLat);
             double rLatB = Deg2Rad(latB);
-            double rHalfDeltaLat = Deg2Rad((latB - latA) / 2.0);
-            double rHalfDeltaLon = Deg2Rad((lonB - lonA) / 2.0);
+            double rHalfDeltaLat = Deg2Rad((latB - PhoneLat) / 2.0);
+            double rHalfDeltaLon = Deg2Rad((lonB - PhoneLong) / 2.0);
 
             return (2 * 3963.19) * Math.Asin(Math.Sqrt(Math.Pow(Math.Sin(rHalfDeltaLat), 2) + Math.Cos(rLatA) * Math.Cos(rLatB) * Math.Pow(Math.Sin(rHalfDeltaLon), 2)));
 
+        }
+
+        internal static void SortFavorites()
+        {
+            foreach (StopData d in MainPageModel.favoritesStops)
+            {
+                d.TrueDistance = Distance(d.Lat, d.Lon);
+            }
+            IEnumerable<StopData> sortedList =
+                    from s in MainPageModel.favoritesStops
+                    orderby s.TrueDistance
+                    select s;
+
+            MainPageModel.favoritesStops.Clear();
+
+            foreach (StopData s in sortedList)
+            {
+                MainPageModel.favoritesStops.Add(new StopData(s.Name, s.Routes, s.TrueDistance, s.Tags, s.FavID));
+            }
         }
     }
 }

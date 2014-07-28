@@ -24,7 +24,7 @@ namespace nexMuni
     {
         private NavigationHelper navigationHelper;
         private ObservableDictionary defaultViewModel = new ObservableDictionary();
-        public StopData selectedStop;
+        public static StopData selectedStop;
         public BusStop stop;
 
         public StopDetail()
@@ -34,7 +34,6 @@ namespace nexMuni
             this.navigationHelper = new NavigationHelper(this);
             this.navigationHelper.LoadState += this.NavigationHelper_LoadState;
             this.navigationHelper.SaveState += this.NavigationHelper_SaveState;
-            //StopDetailModel.routeList.CollectionChanged += PredictionModel.CollectionChanged;
         }
 
         /// <summary>
@@ -69,10 +68,16 @@ namespace nexMuni
         {
             selectedStop = e.NavigationParameter as StopData;
             StopHeader.Text = selectedStop.Name;
+
             if (StopDetailModel.routeList == null) StopDetailModel.routeList = new System.Collections.ObjectModel.ObservableCollection<RouteData>();
             else if (StopDetailModel.routeList != null) StopDetailModel.routeList.Clear();
-            RouteInfoList.ItemsSource = StopDetailModel.routeList; 
-            StopDetailModel.LoadData(selectedStop);       
+            RouteInfoList.ItemsSource = StopDetailModel.routeList;
+
+            if (MainPageModel.favoritesStops.Contains(selectedStop)) removeBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            else favBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
+
+            //noTimes.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            StopDetailModel.LoadData(selectedStop);
         }
 
         /// <summary>
@@ -95,6 +100,14 @@ namespace nexMuni
         private void FavoriteStop(object sender, RoutedEventArgs e)
         {
             DatabaseHelper.AddFavorite(selectedStop);
+            favBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            //removeBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
+        }
+
+        private void RemoveStop(object sender, RoutedEventArgs e)
+        {
+            DatabaseHelper.RemoveFavorite(selectedStop);
+            removeBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
         }
 
         #region NavigationHelper registration

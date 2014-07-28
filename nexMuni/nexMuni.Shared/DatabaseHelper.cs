@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using System.Linq;
 using SQLite;
 using Windows.Devices.Geolocation;
 using Windows.Storage;
@@ -34,6 +35,7 @@ namespace nexMuni
         public static async void LoadFavorites()
         {
             StorageFile file = null;
+            if(MainPageModel.favoritesStops != null) MainPageModel.favoritesStops.Clear();
             try
             {
                 file = await ApplicationData.Current.LocalFolder.GetFileAsync("favorites.sqlite");
@@ -42,11 +44,17 @@ namespace nexMuni
                 var favDB = new SQLiteConnection(path);
                 string query = "SELECT * FROM FavoriteData";
                 List<FavoriteData> r = favDB.Query<FavoriteData>(query);
+
                 if (r.Count != 0)
                 {
-                    foreach (FavoriteData s in r)
+                    IEnumerable<FavoriteData> sortedList =
+                    from s in r
+                    orderby s.Distance
+                    select s;
+                    
+                    foreach (FavoriteData s in sortedList)
                     {
-                        MainPageModel.favoritesStops.Add(new StopData(s.Name, s.Routes, s.Tags, s.Distance));
+                        MainPageModel.favoritesStops.Add(new StopData(s.Name, s.Routes, s.Tags, s.Id));
                     }
                 }
                 favDB.Close();
@@ -70,15 +78,34 @@ namespace nexMuni
 
         public static void AddFavorite(StopData stop)
         {
-            var favDB = new SQLiteConnection(path);
+            var favDB = new SQLiteConnection(path); 
             var s = favDB.Insert(new FavoriteData
                 {
                     Name = stop.Name,
                     Routes = stop.Routes,
                     Tags = stop.Tags,
-                    Distance = stop.Distance
+                    Distance = stop.Distance,
+                    Lat = stop.Lat,
+                    Lon = stop.Lon
                 });
+            //string q = "SELECT * FROM FavoriteData WHERE Id = last_row";
+            //List<FavoriteData> list = favDB.Query<FavoriteData>(q);
+            //TableMapping table = favDB.<FavoriteData>();
+            //var i = table.;
             favDB.Close();
+            //StopDetail.selectedStop.FavID = list[0].Id.ToString();
+            DatabaseHelper.LoadFavorites();
+        }
+
+        public static void RemoveFavorite(StopData stop)
+        {
+            //FavoriteData item = new FavoriteData(stop.Name, stop.Routes, stop.Tags, stop.Distance);
+            var favDB = new SQLiteConnection(path);
+            string q = "DELETE FROM FavoriteData WHERE Id IS " + stop.FavID;
+            favDB.Query<FavoriteData>(q);
+            //var d = favDB.Delete<FavoriteData>(list[0]);
+            favDB.Close();
+            DatabaseHelper.LoadFavorites();
         }
     }
 
@@ -92,5 +119,27 @@ namespace nexMuni
         public string Routes { get; set; }
         public string StopTags { get; set; }
         public double Distance { get; set; }
+    }
+
+    public class FavoriteData
+    {
+        [PrimaryKey, AutoIncrement]
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Routes { get; set; }
+        public string Distance { get; set; }
+        public string Tags { get; set; }
+        public double Lat { get; set; }
+        public double Lon { get; set; }
+
+        public FavoriteData() { }
+
+        public FavoriteData(string stopName, string routes, string _tags, string d)
+        {
+            Name = stopName;
+            this.Tags = _tags;
+            this.Routes = routes;
+            Distance = d;
+        }
     }
 }

@@ -16,7 +16,6 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)DatabaseHelper.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)FavoriteData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LocationHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MainPageModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PredictionModel.cs" />

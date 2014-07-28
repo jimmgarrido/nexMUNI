@@ -70,16 +70,17 @@
 		<SolidColorBrush Color="#FFFFFFFF"/>
 	</Page.Foreground>
     <Page.BottomAppBar>
-        <CommandBar Background="#FF9B1414" ClosedDisplayMode="Minimal">
+        <CommandBar x:Name="appBar" Background="#FF9B1414" ClosedDisplayMode="Minimal">
             <CommandBar.SecondaryCommands>
                 <AppBarButton Label="about" Click="GoToAbout"/>
             </CommandBar.SecondaryCommands>
-        	<AppBarButton Icon="refresh"  IsCompact="False" Label="refresh" Click="UpdateButton"/>
+        	<AppBarButton x:Name="refreshBtn" Icon="refresh"  IsCompact="False" Label="refresh" Click="UpdateButton"/>
+            <!--<AppBarButton x:Name="sortBtn" Icon="sort"  IsCompact="False" Label="sort" Click="SortFavorites" Visibility="Collapsed"/>-->
         </CommandBar>
     </Page.BottomAppBar>
 
     <Grid d:DataContext="{Binding Source={StaticResource SampleStops}}" Background="#b31b1b">
-		<Pivot Title="nexMuni" Background="White" Style="{StaticResource NearbyPivot}" Margin="0,25,0,0" Padding="0,-30,0,0">
+		<Pivot x:Name="pivotControl" Title="nexMuni" Background="White" Style="{StaticResource NearbyPivot}" Margin="0,25,0,0" Padding="0,-30,0,0">
 			<PivotItem Header="nearby" Padding="0" Margin="10,13,10,0">
 				<ListView x:Name="nearbyListView" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Top" 
                           ItemsSource="{Binding Items}" SelectionMode="None" IsItemClickEnabled="True" ItemClick="StopClicked" Padding="0,10,0,0">

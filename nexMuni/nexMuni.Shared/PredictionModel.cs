@@ -64,7 +64,7 @@ namespace nexMuni
             XElement currElement;
             IEnumerable<XElement> predictionElements;
 
-            string outbound, inbound, title, currTag ="0", time;
+            string outbound, inbound, title, currTag ="0", time, route, fullTitle;
             string[] outTimes = new string[3];
             string[] inTimes = new string[3];
             int counter = 0, j, x, y;
@@ -72,11 +72,14 @@ namespace nexMuni
             while(i < rootElements.Count())
             {
                 currElement = rootElements.ElementAt(i);
-                XAttribute titleAtt = currElement.Attribute("routeTitle");
-                title = titleAtt.ToString();
-                x = title.IndexOf('-') + 1;
-                y = title.LastIndexOf('"');
-                title = title.Substring(x, y - x);
+                fullTitle = currElement.Attribute("routeTitle").ToString();
+
+                x = fullTitle.IndexOf('-');
+                y = fullTitle.LastIndexOf('"');
+                title = fullTitle.Substring(x + 1, y - (x + 1));
+                y = fullTitle.IndexOf('"');
+                route = fullTitle.Substring(y + 1, x - (y + 1)); 
+
 
                 if (!currElement.Attribute("routeTag").ToString().Equals(currTag))
                 {          
@@ -105,7 +108,7 @@ namespace nexMuni
                             if (j < 3) outTimes[j] = time;
                             j++;
                         }
-                        StopDetailModel.routeList.Add(new RouteData(title, s.RoutesSplit[counter], outbound, outTimes));
+                        StopDetailModel.routeList.Add(new RouteData(title, route, outbound, outTimes));
                         counter++;
                     }  
                 }
@@ -135,7 +138,12 @@ namespace nexMuni
                             if (j < 3) inTimes[j] = time;
                             j++;
                         }
-                        StopDetailModel.routeList[counter - 1].AddDir2(inbound, inTimes); 
+                        if (counter == 0)
+                        {
+                            StopDetailModel.routeList.Add(new RouteData(title, route, inbound, inTimes));
+                            counter++;
+                        }
+                        else StopDetailModel.routeList[counter - 1].AddDir2(inbound, inTimes);              
                     }     
                 }
                 i++;

@@ -109,7 +109,10 @@ namespace nexMuni
             {
                 await Launcher.LaunchUriAsync(new Uri("mailto:nexmuni@nexdev.co"));
             }
-
+            if (underline.Name == "email")
+            {
+                await Launcher.LaunchUriAsync(new Uri("https://github.com/jimmgarrido/nexMuni"));
+            }
         }
 
 
