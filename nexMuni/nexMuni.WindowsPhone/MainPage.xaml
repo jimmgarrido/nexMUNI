@@ -82,36 +82,42 @@
     <Grid d:DataContext="{Binding Source={StaticResource SampleStops}}" Background="#b31b1b">
 		<Pivot x:Name="pivotControl" Title="nexMuni" Background="White" Style="{StaticResource NearbyPivot}" Margin="0,25,0,0" Padding="0,-30,0,0">
 			<PivotItem Header="nearby" Padding="0" Margin="10,13,10,0">
-				<ListView x:Name="nearbyListView" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Top" 
-                          ItemsSource="{Binding Items}" SelectionMode="None" IsItemClickEnabled="True" ItemClick="StopClicked" Padding="0,10,0,0">
-					<ListView.ItemTemplate>
-						<DataTemplate>
-							<Grid Background="#b31b1b" Margin="0,0,0,11	" Height="120" Width="500">
-								<StackPanel Margin="0,0,0,0">
-									<TextBlock Text="{Binding Name}"  Margin="10,0,0,0" FontSize="22" Foreground="White"/>
-									<TextBlock Text="{Binding Distance}" Margin="10,0,0,0" FontSize="16" Foreground="White"/>
-									<TextBlock Text="{Binding Routes}" Margin="10,40,0,0" FontSize="18" Foreground="White"/>
-								</StackPanel>
-							</Grid>
-						</DataTemplate>
-					</ListView.ItemTemplate>
-				</ListView>
+				<Grid>
+                    <TextBlock x:Name="noStops" Text="No stops found" Foreground="#b31b1b" TextAlignment="Center" FontSize="21" Margin="0,220,0,0" Visibility="Collapsed"/>
+					<ListView x:Name="nearbyListView" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Top" 
+							  ItemsSource="{Binding Items}" SelectionMode="None" IsItemClickEnabled="True" ItemClick="StopClicked" Padding="0,10,0,0">
+						<ListView.ItemTemplate>
+							<DataTemplate>
+								<Grid Background="#b31b1b" Margin="0,0,0,11	" Height="120" Width="500">
+									<StackPanel Margin="0,0,0,0">
+										<TextBlock Text="{Binding Name}"  Margin="10,0,0,0" FontSize="22" Foreground="White"/>
+										<TextBlock Text="{Binding Distance}" Margin="10,0,0,0" FontSize="16" Foreground="White"/>
+										<TextBlock Text="{Binding Routes}" Margin="10,40,0,0" FontSize="18" Foreground="White"/>
+									</StackPanel>
+								</Grid>
+							</DataTemplate>
+						</ListView.ItemTemplate>
+					</ListView>
+				</Grid>
 			</PivotItem>
             <PivotItem Header="favorites" Padding="0" Margin="10,13,10,0">
-                <ListView x:Name="favoritesListView" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Top" 
-                          ItemsSource="{Binding Items}" SelectionMode="None" IsItemClickEnabled="True" ItemClick="StopClicked" Padding="0,10,0,0">
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <Grid Background="#b31b1b" Margin="0,0,0,11	" Height="120" Width="500">
-                                <StackPanel Margin="0,0,0,0">
-                                    <TextBlock Text="{Binding Name}"  Margin="10,0,0,0" FontSize="22" Foreground="White"/>
-                                    <TextBlock Text="{Binding Distance}" Margin="10,0,0,0" FontSize="16" Foreground="White"/>
-                                    <TextBlock Text="{Binding Routes}" Margin="10,40,0,0" FontSize="18" Foreground="White"/>
-                                </StackPanel>
-                            </Grid>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
+                <Grid>
+                    <TextBlock x:Name="noFav" Text="Add favorites by pressing &#xE00A; on a stop" Foreground="#b31b1b" TextAlignment="Center" FontFamily="Segoe UI Symbol" FontSize="21" Margin="0,220,0,0" Visibility="Collapsed" Width="250" TextWrapping="Wrap"/>
+                    <ListView x:Name="favoritesListView" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Top" 
+                              ItemsSource="{Binding Items}" SelectionMode="None" IsItemClickEnabled="True" ItemClick="StopClicked" Padding="0,10,0,0">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Background="#b31b1b" Margin="0,0,0,11	" Height="120" Width="500">
+                                    <StackPanel Margin="0,0,0,0">
+                                        <TextBlock Text="{Binding Name}"  Margin="10,0,0,0" FontSize="22" Foreground="White"/>
+                                        <TextBlock Text="{Binding Distance}" Margin="10,0,0,0" FontSize="16" Foreground="White"/>
+                                        <TextBlock Text="{Binding Routes}" Margin="10,40,0,0" FontSize="18" Foreground="White"/>
+                                    </StackPanel>
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
             </PivotItem>
             <!--<PivotItem Header="search" Padding="-20,-10,-20,0">
                 <Grid HorizontalAlignment="Left" Width="400" Margin="0,0,0,0">

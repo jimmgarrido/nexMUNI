@@ -51,12 +51,13 @@ namespace nexMuni
                     from s in r
                     orderby s.Distance
                     select s;
-                    
+
                     foreach (FavoriteData s in sortedList)
                     {
                         MainPageModel.favoritesStops.Add(new StopData(s.Name, s.Routes, s.Tags, s.Id));
                     }
                 }
+                else MainPage.favText.Visibility = Windows.UI.Xaml.Visibility.Visible;
                 favDB.Close();
             }
             catch (FileNotFoundException)
@@ -78,6 +79,7 @@ namespace nexMuni
 
         public static void AddFavorite(StopData stop)
         {
+            if (MainPage.favText.Visibility != Windows.UI.Xaml.Visibility.Collapsed) MainPage.favText.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
             var favDB = new SQLiteConnection(path); 
             var s = favDB.Insert(new FavoriteData
                 {

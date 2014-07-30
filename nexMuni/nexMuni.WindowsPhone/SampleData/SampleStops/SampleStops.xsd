@@ -10,6 +10,7 @@
     <xs:sequence>
       <xs:element name="Items" type="tns:Items" />
     </xs:sequence>
+    <xs:attribute name="ttt" type="xs:string" />
   </xs:complexType>
   <xs:complexType name="Items">
     <xs:sequence>

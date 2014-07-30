@@ -20,6 +20,9 @@ namespace nexMuni
 {
     public sealed partial class MainPage : Page
     {
+        public static TextBlock nearbyText { get; set; }
+        public static TextBlock favText { get; set; }
+
         public MainPage()
         {
             this.InitializeComponent();
@@ -32,10 +35,18 @@ namespace nexMuni
             //pivotControl.SelectionChanged += pivotControl_SelectionChanged;
             if (!MainPageModel.IsDataLoaded)
             {
+                nearbyText = new TextBlock();
+                favText = new TextBlock();
+                nearbyText = noStops;
+                favText = noFav;
                 MainPageModel.LoadData();
+                
+
                 nearbyListView.ItemsSource = MainPageModel.nearbyStops;
                 favoritesListView.ItemsSource = MainPageModel.favoritesStops;
-            }
+
+                
+            }           
         }
 
         //void pivotControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -58,6 +69,7 @@ namespace nexMuni
         private void UpdateButton(object sender, RoutedEventArgs e)
         {
             MainPageModel.nearbyStops.Clear();
+            nearbyText.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
             LocationHelper.UpdateNearbyList();
         }
 

@@ -30,9 +30,6 @@
         <Grid Grid.Row="1" x:Name="ContentRoot" Margin="19,9.5,19,0">
             <RichTextBlock FontSize="21" FontFamily="Segoe WP SemiLight" Tapped="OnClicked" IsTextSelectionEnabled="False">
 				<Paragraph>
-					nexMuni is developed as a hobby project is therefore provided for free
-				</Paragraph>
-				<Paragraph Margin="0,50,0,0">
 					Real time data is provided by the
                     <Bold>
                         nextbus api
@@ -44,6 +41,12 @@
 					nexmuni@nexdev.co
 					</Underline>
 				</Paragraph>
+                <Paragraph Margin="0,50,0,0">
+                    Follow
+                    <Underline x:Name="twitter" FontWeight="Bold">
+                        @nex_dev
+                    </Underline> for news and announcements 
+                </Paragraph>
                 <Paragraph Margin="0,50,0,0">
                     nexMuni is open source and can be checked out on
                     <Underline x:Name="github" FontWeight="Bold">

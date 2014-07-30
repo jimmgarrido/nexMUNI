@@ -65,7 +65,7 @@ namespace nexMuni
                     from s in results
                     orderby s.Distance
                     select s;
-                
+
                 foreach (BusStop d in sortedList)
                 {
                     if (counter < 15)
@@ -77,7 +77,7 @@ namespace nexMuni
                     else break;
                 }
             }
-            else MainPageModel.nearbyStops.Add(new StopData("No Stops", ""));
+            else MainPage.nearbyText.Visibility = Windows.UI.Xaml.Visibility.Visible;
         }
 
         private static double[] Destination(double lat, double lon, double bearing, double d)

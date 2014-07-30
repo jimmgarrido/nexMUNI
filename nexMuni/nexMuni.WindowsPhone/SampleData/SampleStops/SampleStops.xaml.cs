@@ -45,6 +45,25 @@ namespace Blend.SampleData.SampleStops
 				return this._Items;
 			}
 		}
+
+		private string _ttt = string.Empty;
+
+		public string ttt
+		{
+			get
+			{
+				return this._ttt;
+			}
+
+			set
+			{
+				if (this._ttt != value)
+				{
+					this._ttt = value;
+					this.OnPropertyChanged("ttt");
+				}
+			}
+		}
 	}
 
 	public class Items : System.Collections.ObjectModel.ObservableCollection<ItemsItem>

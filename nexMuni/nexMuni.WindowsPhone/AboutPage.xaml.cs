@@ -113,6 +113,10 @@ namespace nexMuni
             {
                 await Launcher.LaunchUriAsync(new Uri("https://github.com/jimmgarrido/nexMuni"));
             }
+            if (underline.Name == "twitter")
+            {
+                await Launcher.LaunchUriAsync(new Uri("https://twitter.com/nex_dev"));
+            }
         }
 
 
