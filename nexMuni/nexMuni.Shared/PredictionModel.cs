@@ -147,7 +147,8 @@ namespace nexMuni
                     }     
                 }
                 i++;
-            }  
+            }
+            if (StopDetailModel.routeList.Count == 0) StopDetail.noTimeText.Visibility = Windows.UI.Xaml.Visibility.Visible;
         }
 
         internal static void UpdateTimes()

@@ -16,19 +16,13 @@ namespace nexMuni
     {
         public static ObservableCollection<StopData> nearbyStops = new ObservableCollection<StopData>();
         public static ObservableCollection<StopData> favoritesStops = new ObservableCollection<StopData>();
-
-        //public static bool nearbyEmpty { get; set; }
-        //public  bool favEmpty { get; set; }
         public static bool IsDataLoaded { get; set; }
 
         public static void LoadData()
         {
-            //nearbyEmpty = false;
-
             DatabaseHelper.LoadFavorites();
             LocationHelper.UpdateNearbyList();
 
-            //MainPage.nearbyText.Text = "DONE";
             IsDataLoaded = true; 
         }
     }

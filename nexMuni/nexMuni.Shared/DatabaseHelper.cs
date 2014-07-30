@@ -90,12 +90,7 @@ namespace nexMuni
                     Lat = stop.Lat,
                     Lon = stop.Lon
                 });
-            //string q = "SELECT * FROM FavoriteData WHERE Id = last_row";
-            //List<FavoriteData> list = favDB.Query<FavoriteData>(q);
-            //TableMapping table = favDB.<FavoriteData>();
-            //var i = table.;
             favDB.Close();
-            //StopDetail.selectedStop.FavID = list[0].Id.ToString();
             DatabaseHelper.LoadFavorites();
         }
 

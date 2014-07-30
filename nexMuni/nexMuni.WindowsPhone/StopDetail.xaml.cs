@@ -26,6 +26,7 @@ namespace nexMuni
         private ObservableDictionary defaultViewModel = new ObservableDictionary();
         public static StopData selectedStop;
         public BusStop stop;
+        public static TextBlock noTimeText { get; set; }
 
         public StopDetail()
         {
@@ -68,13 +69,21 @@ namespace nexMuni
         {
             selectedStop = e.NavigationParameter as StopData;
             StopHeader.Text = selectedStop.Name;
+            removeBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            favBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            noTimeText = new TextBlock();
+            noTimeText = noTimes;
+            noTimes.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
 
             if (StopDetailModel.routeList == null) StopDetailModel.routeList = new System.Collections.ObjectModel.ObservableCollection<RouteData>();
             else if (StopDetailModel.routeList != null) StopDetailModel.routeList.Clear();
             RouteInfoList.ItemsSource = StopDetailModel.routeList;
 
-            if (MainPageModel.favoritesStops.Contains(selectedStop)) removeBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
-            else favBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            if (MainPageModel.favoritesStops.Any(stop => stop.Name == selectedStop.Name))
+            {
+                removeBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                favBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            }
 
             //noTimes.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
             StopDetailModel.LoadData(selectedStop);
