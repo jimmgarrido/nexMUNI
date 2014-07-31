@@ -36,6 +36,7 @@ namespace nexMuni
 
             if (saved != null) response = saved;
             
+            //Make sure to ppull from network not cache everytime predictions are refreshed 
             response.Headers.CacheControl.Add(new HttpNameValueHeaderValue("max-age", "1"));
             client.DefaultRequestHeaders.CacheControl.Add(new HttpNameValueHeaderValue("max-age", "1"));
             if (response.Content != null) client.DefaultRequestHeaders.IfModifiedSince = response.Content.Headers.Expires;
@@ -64,39 +65,47 @@ namespace nexMuni
             XElement currElement;
             IEnumerable<XElement> predictionElements;
 
-            string outbound, inbound, title, currTag ="0", time, route, fullTitle;
-            string[] outTimes = new string[3];
-            string[] inTimes = new string[3];
-            int counter = 0, j, x, y;
+            string dirTitle1, dirTitle2, title, time, route, fullTitle;
+            string[] times1 = new string[3];
+            string[] times2 = new string[3];
+            int j, x, y;
 
             while(i < rootElements.Count())
             {
                 currElement = rootElements.ElementAt(i);
                 fullTitle = currElement.Attribute("routeTitle").ToString();
 
-                x = fullTitle.IndexOf('-');
-                y = fullTitle.LastIndexOf('"');
-                title = fullTitle.Substring(x + 1, y - (x + 1));
-                y = fullTitle.IndexOf('"');
-                route = fullTitle.Substring(y + 1, x - (y + 1)); 
+                if (fullTitle.Contains('-'))
+                {
+                    x = fullTitle.IndexOf('-');   
+                    y = fullTitle.LastIndexOf('"');
+                    title = fullTitle.Substring(x + 1, y - (x + 1));
+                    y = fullTitle.IndexOf('"');
+                    route = fullTitle.Substring(y + 1, x - (y + 1));
+                } else
+                {
+                    x = fullTitle.IndexOf('"');
+                    title = fullTitle.Substring(x + 1, (fullTitle.Length - (x+2)));
+                    route = currElement.Attribute("routeTag").ToString();
+                    route = route.Substring(10, route.Length - 11);
+                }
 
-
-                if (!currElement.Attribute("routeTag").ToString().Equals(currTag))
+                //Check to see if the route has already been added to the collection
+                if (!StopDetailModel.routeList.Any(z => z.RouteNum == route))
                 {          
-                    currTag = currElement.Attribute("routeTag").ToString();
                     currElement = currElement.Element("direction");
                     if (currElement != null)
                     {
-                        outbound = currElement.Attribute("title").ToString();
-                        x = outbound.LastIndexOf('"');
-                        outbound = outbound.Substring(7, x - 7);
+                        dirTitle1 = currElement.Attribute("title").ToString();
+                        x = dirTitle1.LastIndexOf('"');
+                        dirTitle1 = dirTitle1.Substring(7, x - 7);
 
                         predictionElements =
                             from e in currElement.Descendants("prediction")
                             select e;
 
                         j = 0;
-                        outTimes = new string[3];
+                        times1 = new string[3];
                         while (j < predictionElements.Count())
                         {
                             
@@ -105,11 +114,10 @@ namespace nexMuni
                             x = time.LastIndexOf('"');
                             time = time.Substring(9, x - 9);
 
-                            if (j < 3) outTimes[j] = time;
+                            if (j < 3) times1[j] = time;
                             j++;
                         }
-                        StopDetailModel.routeList.Add(new RouteData(title, route, outbound, outTimes));
-                        counter++;
+                        StopDetailModel.routeList.Add(new RouteData(title, route, dirTitle1, times1));
                     }  
                 }
                 else
@@ -118,16 +126,16 @@ namespace nexMuni
 
                     if (currElement != null)
                     {
-                        inbound = currElement.Attribute("title").ToString();
-                        x = inbound.LastIndexOf('"');
-                        inbound = inbound.Substring(7, x - 7);
+                        dirTitle2 = currElement.Attribute("title").ToString();
+                        x = dirTitle2.LastIndexOf('"');
+                        dirTitle2 = dirTitle2.Substring(7, x - 7);
 
                         predictionElements =
                             from e in currElement.Descendants("prediction")
                             select e;
 
                         j = 0;
-                        inTimes = new string[3];
+                        times2 = new string[3];
                         while (j < predictionElements.Count())
                         {
                             XElement element = predictionElements.ElementAt(j);
@@ -135,15 +143,17 @@ namespace nexMuni
                             x = time.LastIndexOf('"');
                             time = time.Substring(9, x - 9);
 
-                            if (j < 3) inTimes[j] = time;
+                            if (j < 3) times2[j] = time;
                             j++;
                         }
-                        if (counter == 0)
+                        
+                        foreach (RouteData r in StopDetailModel.routeList)
                         {
-                            StopDetailModel.routeList.Add(new RouteData(title, route, inbound, inTimes));
-                            counter++;
-                        }
-                        else StopDetailModel.routeList[counter - 1].AddDir2(inbound, inTimes);              
+                            if (r.RouteNum == route)
+                            {
+                                r.AddDir2(dirTitle2, times2);
+                            }
+                        }         
                     }     
                 }
                 i++;

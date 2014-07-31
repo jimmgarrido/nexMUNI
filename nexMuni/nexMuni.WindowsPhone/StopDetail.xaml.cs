@@ -79,8 +79,12 @@ namespace nexMuni
             else if (StopDetailModel.routeList != null) StopDetailModel.routeList.Clear();
             RouteInfoList.ItemsSource = StopDetailModel.routeList;
 
-            if (MainPageModel.favoritesStops.Any(stop => stop.Name == selectedStop.Name))
+            if (MainPageModel.favoritesStops.Any(x => x.Name == selectedStop.Name))
             {
+                foreach(StopData s in MainPageModel.favoritesStops)
+                {
+                    if(s.Name == selectedStop.Name) selectedStop.FavID = s.FavID;
+                }
                 removeBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
                 favBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
             }
@@ -110,13 +114,14 @@ namespace nexMuni
         {
             DatabaseHelper.AddFavorite(selectedStop);
             favBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-            //removeBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            removeBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
         }
 
         private void RemoveStop(object sender, RoutedEventArgs e)
         {
             DatabaseHelper.RemoveFavorite(selectedStop);
             removeBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            favBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
         }
 
         #region NavigationHelper registration

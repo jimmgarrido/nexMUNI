@@ -75,7 +75,7 @@
                 <AppBarButton Label="about" Click="GoToAbout"/>
             </CommandBar.SecondaryCommands>
         	<AppBarButton x:Name="refreshBtn" Icon="refresh"  IsCompact="False" Label="refresh" Click="UpdateButton"/>
-            <!--<AppBarButton x:Name="sortBtn" Icon="sort"  IsCompact="False" Label="sort" Click="SortFavorites" Visibility="Collapsed"/>-->
+            <AppBarButton x:Name="sortBtn" Icon="sort"  IsCompact="False" Label="sort" Click="SortFavorites" Visibility="Collapsed"/>
         </CommandBar>
     </Page.BottomAppBar>
 

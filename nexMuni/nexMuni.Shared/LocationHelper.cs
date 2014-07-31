@@ -70,8 +70,7 @@ namespace nexMuni
                 {
                     if (counter < 15)
                     {
-                        MainPageModel.nearbyStops.Add(new StopData(d.StopName, d.Routes, d.StopTags, d.Distance));
-                        MainPageModel.nearbyStops[counter].AddCoordinates(d.Latitude, d.Longitude);
+                        MainPageModel.nearbyStops.Add(new StopData(d.StopName, d.Routes, d.StopTags, d.Distance, d.Latitude, d.Longitude));
                         counter++;
                     }
                     else break;
@@ -118,20 +117,22 @@ namespace nexMuni
 
         internal static void SortFavorites()
         {
-            foreach (StopData d in MainPageModel.favoritesStops)
-            {
-                d.TrueDistance = Distance(d.Lat, d.Lon);
-            }
-            IEnumerable<StopData> sortedList =
-                    from s in MainPageModel.favoritesStops
-                    orderby s.TrueDistance
-                    select s;
+            FavoritesDistance();
+
+            ObservableCollection<StopData> tempCollection = new ObservableCollection<StopData>(MainPageModel.favoritesStops.OrderBy(z => z.DoubleDist));
 
             MainPageModel.favoritesStops.Clear();
-
-            foreach (StopData s in sortedList)
+            foreach (StopData s in tempCollection)
             {
-                MainPageModel.favoritesStops.Add(new StopData(s.Name, s.Routes, s.TrueDistance, s.Tags, s.FavID));
+                MainPageModel.favoritesStops.Add(new StopData(s.Name, s.Routes, s.Tags, s.DoubleDist, s.Lat, s.Lon, s.FavID));
+            }
+        }
+
+        public static void FavoritesDistance()
+        {
+            foreach (StopData stop in MainPageModel.favoritesStops)
+            {
+                stop.DoubleDist = Distance(stop.Lat, stop.Lon);
             }
         }
     }

@@ -32,7 +32,7 @@ namespace nexMuni
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            //pivotControl.SelectionChanged += pivotControl_SelectionChanged;
+            pivotControl.SelectionChanged += pivotControl_SelectionChanged;
             if (!MainPageModel.IsDataLoaded)
             {
                 nearbyText = new TextBlock();
@@ -43,28 +43,26 @@ namespace nexMuni
                 
 
                 nearbyListView.ItemsSource = MainPageModel.nearbyStops;
-                favoritesListView.ItemsSource = MainPageModel.favoritesStops;
-
-                
+                favoritesListView.ItemsSource = MainPageModel.favoritesStops;    
             }           
         }
 
-        //void pivotControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        //{
-        //    switch (((Pivot)sender).SelectedIndex)
-        //    {
-        //        case 0:
-        //            refreshBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
-        //            appBar.ClosedDisplayMode = AppBarClosedDisplayMode.Minimal;
-        //            sortBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-        //            break;
-        //        case 1:
-        //            appBar.ClosedDisplayMode = AppBarClosedDisplayMode.Compact;
-        //            sortBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
-        //            refreshBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-        //            break;
-        //    }
-        //}
+        void pivotControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            switch (((Pivot)sender).SelectedIndex)
+            {
+                case 0:
+                    refreshBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                    appBar.ClosedDisplayMode = AppBarClosedDisplayMode.Minimal;
+                    sortBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                    break;
+                case 1:
+                    appBar.ClosedDisplayMode = AppBarClosedDisplayMode.Compact;
+                    sortBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                    refreshBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                    break;
+            }
+        }
 
         private void UpdateButton(object sender, RoutedEventArgs e)
         {
@@ -75,7 +73,6 @@ namespace nexMuni
 
         private void StopClicked(object sender, ItemClickEventArgs e)
         {
-            //StopData selected = e.ClickedItem as StopData;
             this.Frame.Navigate(typeof(StopDetail), e.ClickedItem);
         }
 
