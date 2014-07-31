@@ -46,6 +46,7 @@ namespace nexMuni
             Lat = _lat;
             Lon = _lon;
             FavID = _id;
+            if (d != 0.000) Distance = d.ToString("F") + " mi";        
         }
     }
 }

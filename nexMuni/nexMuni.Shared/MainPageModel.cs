@@ -20,7 +20,7 @@ namespace nexMuni
 
         public static void LoadData()
         {
-            DatabaseHelper.LoadFavorites();
+            DatabaseHelper.LoadFavoritesDB();
             LocationHelper.UpdateNearbyList();
 
             IsDataLoaded = true; 

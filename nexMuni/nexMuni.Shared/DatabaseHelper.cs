@@ -32,43 +32,48 @@ namespace nexMuni
             return r;
         }
 
-        public static async void LoadFavorites()
+        public static async void LoadFavoritesDB()
         {
             StorageFile file = null;
-            if(MainPageModel.favoritesStops != null) MainPageModel.favoritesStops.Clear();
             try
             {
                 file = await ApplicationData.Current.LocalFolder.GetFileAsync("favorites.sqlite");
                 path = file.Path;
                 DateTimeOffset created = file.DateCreated;
-                DateTimeOffset compare = new DateTimeOffset(new DateTime(2014,07,30)); 
-          
-                
-                var favDB = new SQLiteConnection(path);
+                DateTimeOffset compare = new DateTimeOffset(new DateTime(2014, 07, 30));
 
-                if(created < compare)
+                if (created <= compare)
                 {
-                    favDB.DropTable<FavoriteData>();
-                    favDB.CreateTable<FavoriteData>();
+                    await file.DeleteAsync();
+                    file = await ApplicationData.Current.LocalFolder.GetFileAsync("favorites.sqlite");
                 }
 
-                string query = "SELECT * FROM FavoriteData";
-                List<FavoriteData> favList = favDB.Query<FavoriteData>(query);
-
-                if (favList.Count > 0)
-                {
-                    foreach (FavoriteData s in favList)
-                    {
-                        MainPageModel.favoritesStops.Add(new StopData(s.Name, s.Routes, s.Tags, 0.0, s.Lat, s.Lon, s.Id.ToString()));
-                    }
-                }
-                else MainPage.favText.Visibility = Windows.UI.Xaml.Visibility.Visible;
-                favDB.Close();
+                LoadFavorites();
             }
             catch (FileNotFoundException)
             {
                 MakeFavDB(file);
             }
+        }
+
+        public static void LoadFavorites()
+        {
+            if (MainPageModel.favoritesStops != null) MainPageModel.favoritesStops.Clear();
+
+            var favDB = new SQLiteConnection(path);
+
+            string query = "SELECT * FROM FavoriteData";
+            List<FavoriteData> favList = favDB.Query<FavoriteData>(query);
+
+            if (favList.Count > 0)
+            {
+                foreach (FavoriteData s in favList)
+                {
+                    MainPageModel.favoritesStops.Add(new StopData(s.Name, s.Routes, s.Tags, 0.000, s.Lat, s.Lon, s.Id.ToString()));
+                }
+            }
+            else MainPage.favText.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            favDB.Close();
 
             SyncIDS();
         }
@@ -77,7 +82,7 @@ namespace nexMuni
         {
             await ApplicationData.Current.LocalFolder.CreateFileAsync("favorites.sqlite");
             f = await ApplicationData.Current.LocalFolder.GetFileAsync("favorites.sqlite");
-           path = f.Path;
+            path = f.Path;
 
             var favDB = new SQLiteConnection(path);
             favDB.CreateTable<FavoriteData>();
@@ -98,7 +103,6 @@ namespace nexMuni
                 });
             favDB.Close();
             LoadFavorites();
-            //SyncIDS();
         }
 
         public static void RemoveFavorite(StopData stop)
@@ -108,7 +112,6 @@ namespace nexMuni
             favDB.Query<FavoriteData>(q);
             favDB.Close();
             LoadFavorites();
-            //SyncIDS();
         }
 
         public static void SyncIDS()
