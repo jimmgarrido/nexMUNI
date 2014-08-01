@@ -61,6 +61,20 @@ namespace nexMuni
                     sortBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
                     refreshBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
                     break;
+                case 2:
+                    appBar.ClosedDisplayMode = AppBarClosedDisplayMode.Minimal;
+                    sortBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                    refreshBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+
+                    if (!SearchModel.IsDataLoaded)
+                    {
+                        SearchModel.LoadStops();
+                        routesBox.ItemsSource = SearchModel.RoutesCollection;
+                        dirBox.ItemsSource = SearchModel.DirCollection;
+                        routesBox.SelectionChanged += SearchModel.RouteSelected;
+                        dirBox.SelectionChanged += SearchModel.DirSelected;
+                    }
+                    break;
             }
         }
 

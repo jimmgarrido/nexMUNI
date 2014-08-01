@@ -17,7 +17,6 @@ namespace nexMuni
         public static List<BusStop> QueryDatabase(double[][] b, Geopoint l, double d, int c)
         {
             var db = new SQLiteConnection("db/muni.sqlite");
-
             string query = "SELECT * FROM BusStops WHERE Longitude BETWEEN " + b[3][1] + " AND " + b[1][1] + " AND Latitude BETWEEN " + b[2][0] + " AND " + b[0][0];
             List<BusStop> r = db.Query<BusStop>(query);
 
@@ -30,6 +29,24 @@ namespace nexMuni
             else db.Close();
 
             return r;
+        }
+
+        public static List<Routes> QueryForRoutes()
+        {
+            var db = new SQLiteConnection("db/muni.sqlite");
+            string query = "SELECT * FROM Routes";
+
+            List<Routes> list = db.Query<Routes>(query);
+            return list;
+        }
+
+        public static List<BusStop> QueryForStops()
+        {
+            var db = new SQLiteConnection("db/muni.sqlite");
+            string query = "SELECT * FROM Routes";
+
+            List<BusStop> list = db.Query<BusStop>(query);
+            return list;
         }
 
         public static async void LoadFavoritesDB()
@@ -87,6 +104,7 @@ namespace nexMuni
             var favDB = new SQLiteConnection(path);
             favDB.CreateTable<FavoriteData>();
             favDB.Close();
+            LoadFavoritesDB();
         }
 
         public static void AddFavorite(StopData stop)
@@ -159,5 +177,12 @@ namespace nexMuni
             this.Tags = _tags;
             this.Routes = routes;
         }
+    }
+
+    public class Routes
+    {
+        [PrimaryKey, AutoIncrement]
+        public int Id { get; set; }
+        public string Title { get; set; }
     }
 }

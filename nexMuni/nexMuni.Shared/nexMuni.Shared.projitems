@@ -20,6 +20,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)MainPageModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PredictionModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)RouteData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SearchModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)StopData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)StopDetailModel.cs" />
   </ItemGroup>

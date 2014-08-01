@@ -119,34 +119,20 @@
                     </ListView>
                 </Grid>
             </PivotItem>
-            <!--<PivotItem Header="search" Padding="-20,-10,-20,0">
+            <PivotItem Header="search" Padding="-20,-10,-20,0">
                 <Grid HorizontalAlignment="Left" Width="400" Margin="0,0,0,0">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="180"/>
+                        <RowDefinition Height="190"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
                     <StackPanel Grid.Row="0" Background="#b31b1b" Canvas.ZIndex="1">
-                        <ComboBox Width="350" HorizontalAlignment="Center" PlaceholderText="Select Route">
-                            <ComboBoxItem>Test</ComboBoxItem>
-                        </ComboBox>
-                        <ComboBox Width="350" HorizontalAlignment="Center" PlaceholderText="Select Direction">
-                            <ComboBoxItem>Test</ComboBoxItem>
-                            <ComboBoxItem>Test</ComboBoxItem>
-                            <ComboBoxItem>Test</ComboBoxItem>
-                        </ComboBox>
-                        <ComboBox Width="350" HorizontalAlignment="Center" PlaceholderText="Select Stop">
-                            <ComboBoxItem>Test</ComboBoxItem>
-                            <ComboBoxItem>Test</ComboBoxItem>
-                            <ComboBoxItem>Test</ComboBoxItem>
-                            <ComboBoxItem>Test</ComboBoxItem>
-                            <ComboBoxItem>Test</ComboBoxItem>
-                            <ComboBoxItem>Test</ComboBoxItem>
-                            <ComboBoxItem>Test</ComboBoxItem>
-                        </ComboBox>
+                        <ComboBox x:Name="routesBox" Width="350" HorizontalAlignment="Center" PlaceholderText="Select Route"/>
+                        <ComboBox x:Name="dirBox" Width="350" HorizontalAlignment="Center" PlaceholderText="Select Direction"/>
+                        <ComboBox x:Name="stopsBox" Width="350" HorizontalAlignment="Center" PlaceholderText="Select Stop"/>
                     </StackPanel>
                 </Grid>
-            </PivotItem>-->
+            </PivotItem>
         </Pivot>
 	</Grid>
 
