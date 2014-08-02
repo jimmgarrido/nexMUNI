@@ -22,6 +22,7 @@ namespace nexMuni
     {
         public static TextBlock nearbyText { get; set; }
         public static TextBlock favText { get; set; }
+        public static ComboBox dirComboBox { get; set; }
 
         public MainPage()
         {
@@ -40,7 +41,6 @@ namespace nexMuni
                 nearbyText = noStops;
                 favText = noFav;
                 MainPageModel.LoadData();
-                
 
                 nearbyListView.ItemsSource = MainPageModel.nearbyStops;
                 favoritesListView.ItemsSource = MainPageModel.favoritesStops;    
@@ -68,6 +68,7 @@ namespace nexMuni
 
                     if (!SearchModel.IsDataLoaded)
                     {
+                        dirComboBox = new ComboBox();
                         SearchModel.LoadStops();
                         routesBox.ItemsSource = SearchModel.RoutesCollection;
                         dirBox.ItemsSource = SearchModel.DirCollection;

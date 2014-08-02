@@ -67,7 +67,7 @@ namespace nexMuni
             reader = await response.Content.ReadAsStringAsync();
             xmlDoc = XDocument.Parse(reader);
 
-            GetDirections(xmlDoc);
+            GetDirections(xmlDoc);            
         }
 
         private static void GetDirections(XDocument doc)
