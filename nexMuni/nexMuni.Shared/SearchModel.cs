@@ -14,18 +14,22 @@ namespace nexMuni
     {
         public static bool IsDataLoaded { get; set; }
         public static ObservableCollection<string> RoutesCollection { get; set; }
-        public static ObservableCollection<string> DirCollection { get; set; }
-        public static ObservableCollection<string> StopCollection { get; set; }
+        public static ObservableCollection<string> DirectionCollection { get; set; }
+        public static ObservableCollection<Stop> StopCollection { get; set; }
         public static HttpResponseMessage saved { get; set; }
+        public static List<string> outboundStops = new List<string>();
+        public static List<string> inboundStops = new List<string>();
+        public static List<Stop> StopsList = new List<Stop>();
         public static List<Routes> RoutesList;
-        public static List<BusStop> StopsList;
+        public static List<Stop> FoundStops = new List<Stop>();
+        public static string title, stopID, lat, lon, tag;
 
         public static void LoadStops()
         {
             RoutesList = DatabaseHelper.QueryForRoutes();
             RoutesCollection = new ObservableCollection<string>();
-
-            if (DirCollection == null) DirCollection = new ObservableCollection<string>();
+            DirectionCollection = new ObservableCollection<string>();
+            StopCollection = new ObservableCollection<Stop>();
 
             foreach (Routes s in RoutesList)
             {
@@ -38,6 +42,8 @@ namespace nexMuni
         public static void RouteSelected(object sender, SelectionChangedEventArgs e)
         {
             string selectedRoute = ((ComboBox)sender).SelectedItem.ToString();
+            MainPage.dirComboBox.ClearValue();
+            if (DirectionCollection.Count != 0) DirectionCollection.Clear();
             LoadDirections(selectedRoute);
         }
 
@@ -72,29 +78,113 @@ namespace nexMuni
 
         private static void GetDirections(XDocument doc)
         {
+            IEnumerable<XElement> tagElements;
             IEnumerable<XElement> rootElement =
                 from e in doc.Descendants("route")
                 select e;
             IEnumerable<XElement> elements = 
+                from d in rootElement.ElementAt(0).Elements("stop")
+                select d;
+
+            //Add all route's stops to a collection
+            foreach (XElement el in elements)
+            {
+                title = el.Attribute("title").Value;
+                stopID = el.Attribute("stopId").Value;
+                lon = el.Attribute("lon").Value;
+                lat = el.Attribute("lat").Value;
+                tag = el.Attribute("tag").Value;
+
+                StopsList.Add(new Stop(title, stopID, tag, lon, lat));
+            }
+
+            //Move to direction element
+            elements =
                 from d in rootElement.ElementAt(0).Elements("direction")
                 select d;
 
-            DirCollection.Clear();
             foreach (XElement el in elements)
-            {
-                DirCollection.Add(el.Attribute("title").Value);
+            {   
+                //Add direction title
+                DirectionCollection.Add(el.Attribute("title").Value);
+
+                if(el.Attribute("name").Value == "Inbound")
+                {
+                    //Get all stop elements under direction element
+                    tagElements =
+                        from x in el.Elements("stop")
+                        select x;
+
+                    if (inboundStops.Count != 0) inboundStops.Clear();
+                    //Add tags for direction to a collection
+                    foreach (XElement y in tagElements)
+                    {
+                        inboundStops.Add(y.Attribute("tag").Value);
+                    }
+                } else if (el.Attribute("name").Value == "Outbound")
+                {
+                    //Get all stop elements under direction element
+                    tagElements =
+                        from x in el.Elements("stop")
+                        select x;
+
+                    if (outboundStops.Count != 0) outboundStops.Clear();
+                    //Add tags for direction to a collection
+                    foreach (XElement y in tagElements)
+                    {
+                        outboundStops.Add(y.Attribute("tag").Value);
+                    }
+                }
             }
         }
 
         public static void DirSelected(object sender, SelectionChangedEventArgs e)
         {
             string selectedDir = ((ComboBox)sender).SelectedItem.ToString();
+            if (StopCollection.Count != 0) StopCollection.Clear();
             LoadStops(selectedDir);
         }
 
         private static void LoadStops(string _dir)
         {
-            StopsList = DatabaseHelper.QueryForStops();
+            if(StopCollection.Count != 0) StopCollection.Clear();
+
+            if(_dir.Contains("Inbound"))
+            {
+                foreach(string s in inboundStops)
+                {
+                    FoundStops = StopsList.FindAll(z => z.tag == s);
+                    StopCollection.Add(new Stop(FoundStops[0].title, FoundStops[0].stopID, FoundStops[0].tag, FoundStops[0].lon, FoundStops[0].lat));
+                }
+            }
+            else if(_dir.Contains("Outbound"))
+            {
+                foreach(string s in outboundStops)
+                {
+                    FoundStops = StopsList.FindAll(z => z.tag == s);
+                    StopCollection.Add(new Stop(FoundStops[0].title, FoundStops[0].stopID, FoundStops[0].tag, FoundStops[0].lon, FoundStops[0].lat));
+                }
+            }
+        }
+    }
+
+    public class Stop
+    {
+        public string title { get; set; }
+        public string stopID;
+        public string lon;
+        public string lat;
+        public string tag;
+
+        public Stop() {}
+
+        public Stop(string _title, string _id, string _tag, string _lon, string _lat)
+        {
+            title = _title;
+            stopID = _id;
+            lat = _lat;
+            lon = _lon;
+            tag = _tag;
         }
     }
 }

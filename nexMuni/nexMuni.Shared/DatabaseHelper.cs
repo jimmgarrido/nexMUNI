@@ -40,15 +40,6 @@ namespace nexMuni
             return list;
         }
 
-        public static List<BusStop> QueryForStops()
-        {
-            var db = new SQLiteConnection("db/muni.sqlite");
-            string query = "SELECT * FROM Routes";
-
-            List<BusStop> list = db.Query<BusStop>(query);
-            return list;
-        }
-
         public static async void LoadFavoritesDB()
         {
             StorageFile file = null;

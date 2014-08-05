@@ -71,7 +71,9 @@ namespace nexMuni
                         dirComboBox = new ComboBox();
                         SearchModel.LoadStops();
                         routesBox.ItemsSource = SearchModel.RoutesCollection;
-                        dirBox.ItemsSource = SearchModel.DirCollection;
+                        dirBox.ItemsSource = SearchModel.DirectionCollection;
+                        stopsBox.ItemsSource = SearchModel.StopCollection;
+                        stopsBox.DisplayMemberPath = "title";
                         routesBox.SelectionChanged += SearchModel.RouteSelected;
                         dirBox.SelectionChanged += SearchModel.DirSelected;
                     }
