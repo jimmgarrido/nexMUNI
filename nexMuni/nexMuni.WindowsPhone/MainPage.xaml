@@ -120,17 +120,20 @@
                 </Grid>
             </PivotItem>
             <PivotItem Header="search" Padding="-20,-10,-20,0">
-                <Grid HorizontalAlignment="Left" Width="400" Margin="0,0,0,0">
+                <Grid HorizontalAlignment="Center" Width="500" Margin="0,0,0,0">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="190"/>
-                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="260"/>
+						<RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
-                    <StackPanel Grid.Row="0" Background="#b31b1b" Canvas.ZIndex="1">
+                    <StackPanel Grid.Row="0" Background="#b31b1b" >
                         <ComboBox x:Name="routesBox" Width="350" HorizontalAlignment="Center" PlaceholderText="Select Route"/>
                         <ComboBox x:Name="dirBox" Width="350" HorizontalAlignment="Center" PlaceholderText="Select Direction"/>
                         <ComboBox x:Name="stopsBox" Width="350" HorizontalAlignment="Center" PlaceholderText="Select Stop"/>
+                        <TextBlock x:Name="searchTimes" HorizontalAlignment="Center" Margin="15" FontSize="32" Text="1, 12, 25 mins"/>
                     </StackPanel>
+
+                    <Maps:MapControl x:Name="searchMapControl" HorizontalAlignment="Center" Margin="0,0,0,0" Grid.Row="1" VerticalAlignment="Center" MapServiceToken="jjA5Pn6AN4an5lgqKNN_Rg" Height="500" Width="500" ZoomLevel="12"/>
                 </Grid>
             </PivotItem>
         </Pivot>

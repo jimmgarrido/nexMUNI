@@ -166,5 +166,10 @@ namespace nexMuni
             StopDetailModel.routeList.Clear();
             GetXML(URLstring, selectedStop);
         }
+
+        internal static void GetSearchPredictions(Stop selectedStop, string route, string url)
+        {
+            
+        }
     }
 }

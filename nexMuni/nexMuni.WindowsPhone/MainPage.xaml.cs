@@ -9,6 +9,7 @@ using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Maps;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
@@ -23,6 +24,7 @@ namespace nexMuni
         public static TextBlock nearbyText { get; set; }
         public static TextBlock favText { get; set; }
         public static ComboBox dirComboBox { get; set; }
+        public static MapControl searchMap { get; set; }
 
         public MainPage()
         {
@@ -43,7 +45,8 @@ namespace nexMuni
                 MainPageModel.LoadData();
 
                 nearbyListView.ItemsSource = MainPageModel.nearbyStops;
-                favoritesListView.ItemsSource = MainPageModel.favoritesStops;    
+                favoritesListView.ItemsSource = MainPageModel.favoritesStops;
+                searchMapControl.TrySetViewAsync(new Geopoint(new BasicGeoposition() { Latitude = 37.7599, Longitude = -122.437 }));
             }           
         }
 
@@ -68,14 +71,20 @@ namespace nexMuni
 
                     if (!SearchModel.IsDataLoaded)
                     {
-                        dirComboBox = new ComboBox();
+                        //dirComboBox = new ComboBox();
+                        searchMap = new MapControl();
+                        searchMap = searchMapControl;
                         SearchModel.LoadStops();
+
                         routesBox.ItemsSource = SearchModel.RoutesCollection;
                         dirBox.ItemsSource = SearchModel.DirectionCollection;
                         stopsBox.ItemsSource = SearchModel.StopCollection;
                         stopsBox.DisplayMemberPath = "title";
+
                         routesBox.SelectionChanged += SearchModel.RouteSelected;
                         dirBox.SelectionChanged += SearchModel.DirSelected;
+                        stopsBox.SelectionChanged += SearchModel.StopSelected;
+                        
                     }
                     break;
             }

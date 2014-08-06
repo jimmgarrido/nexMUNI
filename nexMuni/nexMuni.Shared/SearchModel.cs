@@ -7,6 +7,7 @@ using System.Xml.Linq;
 using Windows.UI.Xaml.Controls;
 using Windows.Web.Http;
 using Windows.Web.Http.Headers;
+using Windows.Devices.Geolocation;
 
 namespace nexMuni
 {
@@ -23,6 +24,7 @@ namespace nexMuni
         public static List<Routes> RoutesList;
         public static List<Stop> FoundStops = new List<Stop>();
         public static string title, stopID, lat, lon, tag;
+        private static string selectedRoute;
 
         public static void LoadStops()
         {
@@ -42,7 +44,7 @@ namespace nexMuni
         public static void RouteSelected(object sender, SelectionChangedEventArgs e)
         {
             string selectedRoute = ((ComboBox)sender).SelectedItem.ToString();
-            MainPage.dirComboBox.ClearValue();
+            //MainPage.dirComboBox
             if (DirectionCollection.Count != 0) DirectionCollection.Clear();
             LoadDirections(selectedRoute);
         }
@@ -52,6 +54,7 @@ namespace nexMuni
             string URL = "http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=sf-muni&r=";
             int i = _route.IndexOf('-');
             _route = _route.Substring(0, i);
+            selectedRoute = _route;
             URL = URL + _route;
 
             var response = new HttpResponseMessage();
@@ -154,7 +157,7 @@ namespace nexMuni
                 foreach(string s in inboundStops)
                 {
                     FoundStops = StopsList.FindAll(z => z.tag == s);
-                    StopCollection.Add(new Stop(FoundStops[0].title, FoundStops[0].stopID, FoundStops[0].tag, FoundStops[0].lon, FoundStops[0].lat));
+                    StopCollection.Add(new Stop(FoundStops[0].title, FoundStops[0].stopID, FoundStops[0].tag, FoundStops[0].lon.ToString(), FoundStops[0].lat.ToString()));
                 }
             }
             else if(_dir.Contains("Outbound"))
@@ -162,9 +165,18 @@ namespace nexMuni
                 foreach(string s in outboundStops)
                 {
                     FoundStops = StopsList.FindAll(z => z.tag == s);
-                    StopCollection.Add(new Stop(FoundStops[0].title, FoundStops[0].stopID, FoundStops[0].tag, FoundStops[0].lon, FoundStops[0].lat));
+                    StopCollection.Add(new Stop(FoundStops[0].title, FoundStops[0].stopID, FoundStops[0].tag, FoundStops[0].lon.ToString(), FoundStops[0].lat.ToString()));
                 }
             }
+        }
+
+        public static async void StopSelected(object sender, SelectionChangedEventArgs e)
+        {
+            Stop selectedStop = ((ComboBox)sender).SelectedItem as Stop;
+            string url = "http://webservices.nextbus.com/service/publicXMLFeed?command=predictions&a=sf-muni&stopId=" + selectedStop.stopID + "&routeTag=" + selectedRoute;
+
+            await MainPage.searchMap.TrySetViewAsync(new Geopoint(new BasicGeoposition() { Latitude = selectedStop.lat, Longitude = selectedStop.lon }), 16.0);
+            PredictionModel.GetSearchPredictions(selectedStop, selectedRoute, url);
         }
     }
 
@@ -172,8 +184,8 @@ namespace nexMuni
     {
         public string title { get; set; }
         public string stopID;
-        public string lon;
-        public string lat;
+        public double lon;
+        public double lat;
         public string tag;
 
         public Stop() {}
@@ -182,8 +194,8 @@ namespace nexMuni
         {
             title = _title;
             stopID = _id;
-            lat = _lat;
-            lon = _lon;
+            lat = double.Parse(_lat);
+            lon = double.Parse(_lon);
             tag = _tag;
         }
     }
