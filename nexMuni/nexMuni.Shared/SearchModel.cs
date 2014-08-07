@@ -8,6 +8,8 @@ using Windows.UI.Xaml.Controls;
 using Windows.Web.Http;
 using Windows.Web.Http.Headers;
 using Windows.Devices.Geolocation;
+using Windows.UI.Xaml.Controls.Maps;
+using Windows.Foundation;
 
 namespace nexMuni
 {
@@ -44,8 +46,18 @@ namespace nexMuni
         public static void RouteSelected(object sender, SelectionChangedEventArgs e)
         {
             string selectedRoute = ((ComboBox)sender).SelectedItem.ToString();
-            //MainPage.dirComboBox
-            if (DirectionCollection.Count != 0) DirectionCollection.Clear();
+            if (DirectionCollection.Count != 0)
+            {
+                MainPage.dirComboBox.SelectedIndex = -1;
+                DirectionCollection.Clear();
+            }
+            if (StopCollection.Count != 0)
+            {
+                MainPage.stopsComboBox.SelectedIndex = -1;
+                StopCollection.Clear();
+            }
+            MainPage.searchText.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+
             LoadDirections(selectedRoute);
         }
 
@@ -139,13 +151,18 @@ namespace nexMuni
                     }
                 }
             }
+            MainPage.dirComboBox.SelectedIndex = 0;
         }
 
         public static void DirSelected(object sender, SelectionChangedEventArgs e)
         {
-            string selectedDir = ((ComboBox)sender).SelectedItem.ToString();
-            if (StopCollection.Count != 0) StopCollection.Clear();
-            LoadStops(selectedDir);
+            if(((ComboBox)sender).SelectedIndex != -1)
+            {
+                MainPage.stopsComboBox.SelectedIndex = -1;
+                string selectedDir = ((ComboBox)sender).SelectedItem.ToString();
+                LoadStops(selectedDir);
+            }
+            MainPage.searchText.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
         }
 
         private static void LoadStops(string _dir)
@@ -172,11 +189,25 @@ namespace nexMuni
 
         public static async void StopSelected(object sender, SelectionChangedEventArgs e)
         {
-            Stop selectedStop = ((ComboBox)sender).SelectedItem as Stop;
-            string url = "http://webservices.nextbus.com/service/publicXMLFeed?command=predictions&a=sf-muni&stopId=" + selectedStop.stopID + "&routeTag=" + selectedRoute;
+            if (((ComboBox)sender).SelectedIndex != -1)
+            {
+                Stop selectedStop = ((ComboBox)sender).SelectedItem as Stop;
+                string url = "http://webservices.nextbus.com/service/publicXMLFeed?command=predictions&a=sf-muni&stopId=" + selectedStop.stopID + "&routeTag=" + selectedRoute;
 
-            await MainPage.searchMap.TrySetViewAsync(new Geopoint(new BasicGeoposition() { Latitude = selectedStop.lat, Longitude = selectedStop.lon }), 16.0);
-            PredictionModel.GetSearchPredictions(selectedStop, selectedRoute, url);
+                //AddMapIcon(selectedStop.lat, selectedStop.lon);
+                await MainPage.searchMap.TrySetViewAsync(new Geopoint(new BasicGeoposition() { Latitude = selectedStop.lat, Longitude = selectedStop.lon }), 16.0);
+                if (MainPage.searchText.Visibility == Windows.UI.Xaml.Visibility.Visible) MainPage.searchText.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                PredictionModel.GetSearchPredictions(selectedStop, selectedRoute, url);
+            }
+            MainPage.searchText.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+        }
+
+        private static void AddMapIcon(double lat, double lon)
+        {
+            MapIcon icon = new MapIcon();
+            icon.Location = new Geopoint(new BasicGeoposition() { Latitude = lat, Longitude = lon });
+            icon.Title = "THIS IS A STOP";
+            MainPage.searchMap.MapElements.Add(icon);
         }
     }
 

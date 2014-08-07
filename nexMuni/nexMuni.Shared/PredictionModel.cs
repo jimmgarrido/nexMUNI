@@ -161,15 +161,83 @@ namespace nexMuni
             if (StopDetailModel.routeList.Count == 0) StopDetail.noTimeText.Visibility = Windows.UI.Xaml.Visibility.Visible;
         }
 
+        private static void GetSearchPredictions(XDocument doc)
+        {
+            string [] searchTimes = new string[5];
+            int i = 0;
+            string times = null;
+
+            IEnumerable<XElement> elements =
+                from e in doc.Descendants("predictions").Descendants("direction").Descendants("prediction")
+                select e;
+
+            foreach (XElement el in elements)
+            {
+                if(i < 5)
+                {
+                    searchTimes[i] = el.Attribute("minutes").Value;
+                    i++;
+                }  
+            }
+
+            i = 0;
+            while(i < searchTimes.Length)
+            {
+                if (i == 0)
+                {
+                    times = searchTimes[0];
+                    i++;
+                }
+                else if (searchTimes[i] != null)
+                {
+                    times = times + ", " + searchTimes[i];
+                    i++;
+                }
+            }
+
+            times = times + " mins";
+            MainPage.searchText.Text = times;
+            MainPage.searchText.Visibility = Windows.UI.Xaml.Visibility.Visible;
+        }
+
         internal static void UpdateTimes()
         {
             StopDetailModel.routeList.Clear();
             GetXML(URLstring, selectedStop);
         }
 
-        internal static void GetSearchPredictions(Stop selectedStop, string route, string url)
+        internal static async void GetSearchPredictions(Stop selectedStop, string route, string url)
         {
-            
+#if WINDOWS_PHONE_APP
+            var systemTray = Windows.UI.ViewManagement.StatusBar.GetForCurrentView();
+            systemTray.ProgressIndicator.Text = "Getting Arrival Times";
+            systemTray.ProgressIndicator.ProgressValue = null;
+#endif
+
+            var response = new HttpResponseMessage();
+            var client = new HttpClient();
+            XDocument xmlDoc = new XDocument();
+            string reader;
+
+            if (saved != null) response = saved;
+
+            //Make sure to ppull from network not cache everytime predictions are refreshed 
+            response.Headers.CacheControl.Add(new HttpNameValueHeaderValue("max-age", "1"));
+            client.DefaultRequestHeaders.CacheControl.Add(new HttpNameValueHeaderValue("max-age", "1"));
+            if (response.Content != null) client.DefaultRequestHeaders.IfModifiedSince = response.Content.Headers.Expires;
+            response = await client.GetAsync(new Uri(url));
+            response.Content.Headers.Expires = System.DateTime.Now;
+
+            saved = response;
+            reader = await response.Content.ReadAsStringAsync();
+            xmlDoc = XDocument.Parse(reader);
+
+            GetSearchPredictions(xmlDoc);
+
+#if WINDOWS_PHONE_APP
+            systemTray.ProgressIndicator.ProgressValue = 0;
+            systemTray.ProgressIndicator.Text = "nexMuni";
+#endif
         }
     }
 }
