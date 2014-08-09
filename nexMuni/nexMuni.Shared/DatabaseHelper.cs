@@ -37,6 +37,7 @@ namespace nexMuni
             string query = "SELECT * FROM Routes";
 
             List<Routes> list = db.Query<Routes>(query);
+            db.Close();
             return list;
         }
 

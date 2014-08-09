@@ -181,7 +181,8 @@ namespace nexMuni
             }
 
             i = 0;
-            while(i < searchTimes.Length)
+
+            while(i < searchTimes.Length && searchTimes[i] != null)
             {
                 if (i == 0)
                 {
@@ -195,7 +196,9 @@ namespace nexMuni
                 }
             }
 
-            times = times + " mins";
+            if (times == null) times = "No busses at this time";
+            else times = times + " mins";
+            
             MainPage.searchText.Text = times;
             MainPage.searchText.Visibility = Windows.UI.Xaml.Visibility.Visible;
         }
@@ -208,12 +211,6 @@ namespace nexMuni
 
         internal static async void GetSearchPredictions(Stop selectedStop, string route, string url)
         {
-#if WINDOWS_PHONE_APP
-            var systemTray = Windows.UI.ViewManagement.StatusBar.GetForCurrentView();
-            systemTray.ProgressIndicator.Text = "Getting Arrival Times";
-            systemTray.ProgressIndicator.ProgressValue = null;
-#endif
-
             var response = new HttpResponseMessage();
             var client = new HttpClient();
             XDocument xmlDoc = new XDocument();
@@ -233,11 +230,6 @@ namespace nexMuni
             xmlDoc = XDocument.Parse(reader);
 
             GetSearchPredictions(xmlDoc);
-
-#if WINDOWS_PHONE_APP
-            systemTray.ProgressIndicator.ProgressValue = 0;
-            systemTray.ProgressIndicator.Text = "nexMuni";
-#endif
         }
     }
 }

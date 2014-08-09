@@ -16,7 +16,7 @@ namespace nexMuni
     class SearchModel
     {
         public static bool IsDataLoaded { get; set; }
-        public static ObservableCollection<string> RoutesCollection { get; set; }
+        public static List<string> RoutesCollection { get; set; }
         public static ObservableCollection<string> DirectionCollection { get; set; }
         public static ObservableCollection<Stop> StopCollection { get; set; }
         public static HttpResponseMessage saved { get; set; }
@@ -28,10 +28,10 @@ namespace nexMuni
         public static string title, stopID, lat, lon, tag;
         private static string selectedRoute;
 
-        public static void LoadStops()
+        public static void LoadRoutes()
         {
             RoutesList = DatabaseHelper.QueryForRoutes();
-            RoutesCollection = new ObservableCollection<string>();
+            RoutesCollection = new List<string>();
             DirectionCollection = new ObservableCollection<string>();
             StopCollection = new ObservableCollection<Stop>();
 
@@ -40,11 +40,17 @@ namespace nexMuni
                 RoutesCollection.Add(s.Title);
             }
 
+            MainPage.routesComboBox.ItemsSource = RoutesCollection;
             IsDataLoaded = true;
         }
 
         public static void RouteSelected(object sender, SelectionChangedEventArgs e)
         {
+            #if WINDOWS_PHONE_APP
+                        var systemTray = Windows.UI.ViewManagement.StatusBar.GetForCurrentView();
+                        systemTray.ProgressIndicator.ProgressValue = null;
+            #endif
+
             string selectedRoute = ((ComboBox)sender).SelectedItem.ToString();
             if (DirectionCollection.Count != 0)
             {
@@ -59,6 +65,10 @@ namespace nexMuni
             MainPage.searchText.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
 
             LoadDirections(selectedRoute);
+
+            #if WINDOWS_PHONE_APP
+                        systemTray.ProgressIndicator.ProgressValue = 0;
+            #endif
         }
 
         private static async void LoadDirections(string _route)
@@ -191,23 +201,25 @@ namespace nexMuni
         {
             if (((ComboBox)sender).SelectedIndex != -1)
             {
+                #if WINDOWS_PHONE_APP
+                                var systemTray = Windows.UI.ViewManagement.StatusBar.GetForCurrentView();
+                                systemTray.ProgressIndicator.Text = "Getting Arrival Times";
+                                systemTray.ProgressIndicator.ProgressValue = null;
+                #endif
+
                 Stop selectedStop = ((ComboBox)sender).SelectedItem as Stop;
                 string url = "http://webservices.nextbus.com/service/publicXMLFeed?command=predictions&a=sf-muni&stopId=" + selectedStop.stopID + "&routeTag=" + selectedRoute;
 
-                //AddMapIcon(selectedStop.lat, selectedStop.lon);
-                await MainPage.searchMap.TrySetViewAsync(new Geopoint(new BasicGeoposition() { Latitude = selectedStop.lat, Longitude = selectedStop.lon }), 16.0);
+                await MainPage.searchMap.TrySetViewAsync(new Geopoint(new BasicGeoposition() { Latitude = selectedStop.lat, Longitude = selectedStop.lon }), 16.5);
                 if (MainPage.searchText.Visibility == Windows.UI.Xaml.Visibility.Visible) MainPage.searchText.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
                 PredictionModel.GetSearchPredictions(selectedStop, selectedRoute, url);
+
+                #if WINDOWS_PHONE_APP
+                                systemTray.ProgressIndicator.ProgressValue = 0;
+                                systemTray.ProgressIndicator.Text = "nexMuni";
+                #endif
             }
             MainPage.searchText.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-        }
-
-        private static void AddMapIcon(double lat, double lon)
-        {
-            MapIcon icon = new MapIcon();
-            icon.Location = new Geopoint(new BasicGeoposition() { Latitude = lat, Longitude = lon });
-            icon.Title = "THIS IS A STOP";
-            MainPage.searchMap.MapElements.Add(icon);
         }
     }
 

@@ -25,6 +25,7 @@ namespace nexMuni
         public static TextBlock favText { get; set; }
         public static ComboBox dirComboBox { get; set; }
         public static ComboBox stopsComboBox { get; set; }
+        public static ComboBox routesComboBox { get; set; }
         public static MapControl searchMap { get; set; }
         public static TextBlock searchText { get; set; }
 
@@ -75,17 +76,19 @@ namespace nexMuni
                     {
                         dirComboBox = new ComboBox();
                         stopsComboBox = new ComboBox();
+                        routesComboBox = new ComboBox();
                         searchMap = new MapControl();
                         searchText = new TextBlock();
 
                         dirComboBox = dirBox;
                         stopsComboBox = stopsBox;
+                        routesComboBox = routesBox;
                         searchMap = searchMapControl;
                         searchText = searchTimes;
 
-                        SearchModel.LoadStops();
+                        SearchModel.LoadRoutes();
 
-                        routesBox.ItemsSource = SearchModel.RoutesCollection;
+                        //routesBox.ItemsSource = SearchModel.RoutesCollection;
                         dirBox.ItemsSource = SearchModel.DirectionCollection;
                         stopsBox.ItemsSource = SearchModel.StopCollection;
                         stopsBox.DisplayMemberPath = "title";
