@@ -35,23 +35,25 @@ namespace nexMuni
             DirectionCollection = new ObservableCollection<string>();
             StopCollection = new ObservableCollection<Stop>();
 
+            int k = 0;
             foreach (Routes s in RoutesList)
             {
                 RoutesCollection.Add(s.Title);
+                k++;
             }
 
-            MainPage.routesComboBox.ItemsSource = RoutesCollection;
+            MainPage.routePicker.ItemsSource = RoutesCollection;
             IsDataLoaded = true;
         }
 
-        public static void RouteSelected(object sender, SelectionChangedEventArgs e)
+        public static void RouteSelected(ListPickerFlyout sender, ItemsPickedEventArgs args)
         {
             #if WINDOWS_PHONE_APP
                         var systemTray = Windows.UI.ViewManagement.StatusBar.GetForCurrentView();
                         systemTray.ProgressIndicator.ProgressValue = null;
             #endif
 
-            string selectedRoute = ((ComboBox)sender).SelectedItem.ToString();
+            string selectedRoute = sender.SelectedItem.ToString();
             if (DirectionCollection.Count != 0)
             {
                 MainPage.dirComboBox.SelectedIndex = -1;
@@ -59,12 +61,15 @@ namespace nexMuni
             }
             if (StopCollection.Count != 0)
             {
-                MainPage.stopsComboBox.SelectedIndex = -1;
+                MainPage.stopPicker.SelectedIndex = -1;
                 StopCollection.Clear();
             }
             MainPage.searchText.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
 
             LoadDirections(selectedRoute);
+
+            MainPage.dirText.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            MainPage.dirComboBox.Visibility = Windows.UI.Xaml.Visibility.Visible;
 
             #if WINDOWS_PHONE_APP
                         systemTray.ProgressIndicator.ProgressValue = 0;
@@ -74,8 +79,16 @@ namespace nexMuni
         private static async void LoadDirections(string _route)
         {
             string URL = "http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=sf-muni&r=";
-            int i = _route.IndexOf('-');
-            _route = _route.Substring(0, i);
+
+            if (_route.Equals("Powell/Mason Cable Car")) _route = "59";
+            else if (_route.Equals("Powell/Hyde Cable Car")) _route = "60";
+            else if (_route.Equals("California Cable Car")) _route = "61";
+            else
+            {
+                int i = _route.IndexOf('-');
+                _route = _route.Substring(0, i);
+            }
+            
             selectedRoute = _route;
             URL = URL + _route;
 
@@ -168,10 +181,13 @@ namespace nexMuni
         {
             if(((ComboBox)sender).SelectedIndex != -1)
             {
-                MainPage.stopsComboBox.SelectedIndex = -1;
+                MainPage.stopPicker.SelectedIndex = -1;
                 string selectedDir = ((ComboBox)sender).SelectedItem.ToString();
                 LoadStops(selectedDir);
             }
+
+            MainPage.stopText.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            MainPage.stopBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
             MainPage.searchText.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
         }
 
@@ -197,9 +213,9 @@ namespace nexMuni
             }
         }
 
-        public static async void StopSelected(object sender, SelectionChangedEventArgs e)
+        public static async void StopSelected(ListPickerFlyout sender, ItemsPickedEventArgs args)
         {
-            if (((ComboBox)sender).SelectedIndex != -1)
+            if (sender.SelectedIndex != -1)
             {
                 #if WINDOWS_PHONE_APP
                                 var systemTray = Windows.UI.ViewManagement.StatusBar.GetForCurrentView();
@@ -207,7 +223,7 @@ namespace nexMuni
                                 systemTray.ProgressIndicator.ProgressValue = null;
                 #endif
 
-                Stop selectedStop = ((ComboBox)sender).SelectedItem as Stop;
+                Stop selectedStop = sender.SelectedItem as Stop;
                 string url = "http://webservices.nextbus.com/service/publicXMLFeed?command=predictions&a=sf-muni&stopId=" + selectedStop.stopID + "&routeTag=" + selectedRoute;
 
                 await MainPage.searchMap.TrySetViewAsync(new Geopoint(new BasicGeoposition() { Latitude = selectedStop.lat, Longitude = selectedStop.lon }), 16.5);

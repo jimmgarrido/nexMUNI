@@ -24,10 +24,13 @@ namespace nexMuni
         public static TextBlock nearbyText { get; set; }
         public static TextBlock favText { get; set; }
         public static ComboBox dirComboBox { get; set; }
-        public static ComboBox stopsComboBox { get; set; }
-        public static ComboBox routesComboBox { get; set; }
         public static MapControl searchMap { get; set; }
         public static TextBlock searchText { get; set; }
+        public static ListPickerFlyout routePicker { get; set; }
+        public static ListPickerFlyout stopPicker { get; set; }
+        public static TextBlock dirText { get; set; }
+        public static TextBlock stopText { get; set; }
+        public static Button stopBtn { get; set; }
 
         public MainPage()
         {
@@ -75,27 +78,33 @@ namespace nexMuni
                     if (!SearchModel.IsDataLoaded)
                     {
                         dirComboBox = new ComboBox();
-                        stopsComboBox = new ComboBox();
-                        routesComboBox = new ComboBox();
+                        routePicker = new ListPickerFlyout();
+                        stopPicker = new ListPickerFlyout();
                         searchMap = new MapControl();
+                        dirText = new TextBlock();
+                        stopText = new TextBlock();
                         searchText = new TextBlock();
+                        stopBtn = new Button();
+                        
 
                         dirComboBox = dirBox;
-                        stopsComboBox = stopsBox;
-                        routesComboBox = routesBox;
+                        routePicker = RoutesFlyout;
+                        stopPicker = StopsFlyout;
                         searchMap = searchMapControl;
                         searchText = searchTimes;
+                        dirText = dirLabel;
+                        stopText = stopLabel;
+                        stopBtn = stopButton;
 
                         SearchModel.LoadRoutes();
 
-                        //routesBox.ItemsSource = SearchModel.RoutesCollection;
                         dirBox.ItemsSource = SearchModel.DirectionCollection;
-                        stopsBox.ItemsSource = SearchModel.StopCollection;
-                        stopsBox.DisplayMemberPath = "title";
+                        stopPicker.ItemsSource = SearchModel.StopCollection;
+                        //stopPicker.DisplayMemberPath = "title";
 
-                        routesBox.SelectionChanged += SearchModel.RouteSelected;
+                        routePicker.ItemsPicked += SearchModel.RouteSelected;
                         dirBox.SelectionChanged += SearchModel.DirSelected;
-                        stopsBox.SelectionChanged += SearchModel.StopSelected;
+                        stopPicker.ItemsPicked += SearchModel.StopSelected;
                     }
                     break;
             }
