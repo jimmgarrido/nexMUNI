@@ -4,33 +4,36 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.Devices.Geolocation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Graphics.Display;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Maps;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// The Basic Page item template is documented at http://go.microsoft.com/fwlink/?LinkID=390556
-
 namespace nexMuni
 {
-    public sealed partial class StopDetail : Page
+    public sealed partial class RouteMap : Page
     {
+        public RouteData selectedRoute;
+        public static MapControl routeMap;
         private NavigationHelper navigationHelper;
         private ObservableDictionary defaultViewModel = new ObservableDictionary();
-        public static StopData selectedStop;
-        public BusStop stop;
-        public static TextBlock noTimeText { get; set; }
 
-        public StopDetail()
+        public RouteMap()
         {
             this.InitializeComponent();
+
+            routeMap = new MapControl();
+            routeMap = routeMapControl;
+            //routeMap.TrySetViewAsync(new Geopoint(new BasicGeoposition() { Latitude = 37.7599, Longitude = -122.437 }));
 
             this.navigationHelper = new NavigationHelper(this);
             this.navigationHelper.LoadState += this.NavigationHelper_LoadState;
@@ -67,30 +70,10 @@ namespace nexMuni
         /// session.  The state will be null the first time a page is visited.</param>
         private void NavigationHelper_LoadState(object sender, LoadStateEventArgs e)
         {
-            selectedStop = e.NavigationParameter as StopData;
-            StopHeader.Text = selectedStop.Name;
-            removeBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-            favBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
-            noTimeText = new TextBlock();
-            noTimeText = noTimes;
-            noTimes.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            selectedRoute = e.NavigationParameter as RouteData;
+            routeTitle.Text = selectedRoute.RouteNum + "-" + selectedRoute.RouteName;
 
-            if (StopDetailModel.routeList == null) StopDetailModel.routeList = new System.Collections.ObjectModel.ObservableCollection<RouteData>();
-            else if (StopDetailModel.routeList != null) StopDetailModel.routeList.Clear();
-            RouteInfoList.ItemsSource = StopDetailModel.routeList;
-
-            if (MainPageModel.favoritesStops.Any(x => x.Name == selectedStop.Name))
-            {
-                foreach(StopData s in MainPageModel.favoritesStops)
-                {
-                    if(s.Name == selectedStop.Name) selectedStop.FavID = s.FavID;
-                }
-                removeBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
-                favBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-            }
-
-            //noTimes.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-            StopDetailModel.LoadData(selectedStop);
+            MapHelper.LoadDoc(selectedRoute.RouteNum);
         }
 
         /// <summary>
@@ -103,25 +86,6 @@ namespace nexMuni
         /// serializable state.</param>
         private void NavigationHelper_SaveState(object sender, SaveStateEventArgs e)
         {
-        }
-
-        private void RefreshTimes(object sender, RoutedEventArgs e)
-        {
-            PredictionModel.UpdateTimes();
-        }
-
-        private void FavoriteStop(object sender, RoutedEventArgs e)
-        {
-            DatabaseHelper.AddFavorite(selectedStop);
-            favBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-            removeBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
-        }
-
-        private void RemoveStop(object sender, RoutedEventArgs e)
-        {
-            DatabaseHelper.RemoveFavorite(selectedStop);
-            removeBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-            favBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
         }
 
         #region NavigationHelper registration
@@ -146,15 +110,9 @@ namespace nexMuni
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
-            StopDetailModel.routeList.Clear();
             this.navigationHelper.OnNavigatedFrom(e);
         }
 
         #endregion
-
-        private void ShowRouteMap(object sender, ItemClickEventArgs e)
-        {
-            this.Frame.Navigate(typeof(RouteMap), e.ClickedItem);
-        }
     }
 }

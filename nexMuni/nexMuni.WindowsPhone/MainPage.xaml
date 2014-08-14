@@ -350,7 +350,7 @@
     </Page.Resources>
 
     <Page.Foreground>
-		<SolidColorBrush Color="#FFFFFFFF"/>
+		<SolidColorBrush Color="Black"/>
 	</Page.Foreground>
     
     <Page.BottomAppBar>
@@ -358,12 +358,16 @@
             <CommandBar.SecondaryCommands>
                 <AppBarButton Label="about" Click="GoToAbout"/>
             </CommandBar.SecondaryCommands>
-        	<AppBarButton x:Name="refreshBtn" Icon="refresh"  IsCompact="False" Label="refresh" Click="UpdateButton"/>
+        	<AppBarButton x:Name="refreshBtn"  IsCompact="False" Label="refresh" Click="UpdateButton">
+        		<AppBarButton.Icon>
+        			<BitmapIcon UriSource="Assets/refresh.png"/>
+        		</AppBarButton.Icon>
+        	</AppBarButton>
             <AppBarButton x:Name="sortBtn" Icon="sort"  IsCompact="False" Label="sort" Click="SortFavorites" Visibility="Collapsed"/>
         </CommandBar>
     </Page.BottomAppBar>
 
-    <Grid d:DataContext="{Binding Source={StaticResource SampleStops}}" Background="#b31b1b">
+    <Grid x:Name="contentRoot" d:DataContext="{Binding Source={StaticResource SampleStops}}" Background="#b31b1b">
         <Pivot x:Name="pivotControl" Title="nexMuni" Background="White" Style="{StaticResource NearbyPivot}" Margin="0,25,0,0" Padding="0,-30,0,0">
             <PivotItem Header="nearby" Padding="0" Margin="10,13,10,0">
                 <Grid>
@@ -431,17 +435,17 @@
                         <TextBlock x:Name="stopLabel" Text="Select Stop" HorizontalAlignment="Center" Margin="-275,0,0,-7" FontSize="16" FontFamily="Global User Interface" Visibility="Collapsed"/>
                         <Button x:Name="stopButton" HorizontalAlignment="Center" Width="350" Style="{StaticResource ButtonStyle}" Content="{Binding SelectedItem.title, ElementName=StopsFlyout, Mode=TwoWay}" Visibility="Collapsed" >
                             <Button.Flyout>
-                                <ListPickerFlyout x:Name="StopsFlyout" Placement="Full">
+                                <ListPickerFlyout x:Name="StopsFlyout" Placement="Right">
                                     <ListPickerFlyout.ItemTemplate>
                                         <DataTemplate>
                                             <ContentControl Width="480" Content="{Binding Path= title }"/>
                                         </DataTemplate>
-                                    </ListPickerFlyout.ItemTemplate>
+                                    </ListPickerFlyout.ItemTemplate>                               
                                 </ListPickerFlyout>
                             </Button.Flyout>
                         </Button>
 
-                        <TextBlock x:Name="searchTimes" HorizontalAlignment="Center" Margin="7" FontSize="28" Visibility="Collapsed" FontFamily="Global User Interface" />
+                         <TextBlock x:Name="searchTimes" HorizontalAlignment="Center" Margin="7" FontSize="28" Visibility="Collapsed" FontFamily="Global User Interface" />
                     </StackPanel>
                     
                     <Maps:MapControl x:Name="searchMapControl" HorizontalAlignment="Center" Margin="0,0,0,0" Grid.Row="1" VerticalAlignment="Center" MapServiceToken="jjA5Pn6AN4an5lgqKNN_Rg" Height="500" Width="500" ZoomLevel="12" FontFamily="Global User Interface"/>
