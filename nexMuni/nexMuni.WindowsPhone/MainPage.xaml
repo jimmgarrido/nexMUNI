@@ -448,7 +448,9 @@
                          <TextBlock x:Name="searchTimes" HorizontalAlignment="Center" Margin="7" FontSize="28" Visibility="Collapsed" FontFamily="Global User Interface" />
                     </StackPanel>
                     
-                    <Maps:MapControl x:Name="searchMapControl" HorizontalAlignment="Center" Margin="0,0,0,0" Grid.Row="1" VerticalAlignment="Center" MapServiceToken="jjA5Pn6AN4an5lgqKNN_Rg" Height="500" Width="500" ZoomLevel="12" FontFamily="Global User Interface"/>
+                    <Maps:MapControl x:Name="searchMapControl" HorizontalAlignment="Center" Margin="0,0,0,0" Grid.Row="1" 
+                                     VerticalAlignment="Center" MapServiceToken="jjA5Pn6AN4an5lgqKNN_Rg" Height="500" 
+                                     Width="500" ZoomLevel="12" FontFamily="Global User Interface"/>
                 </Grid>
             </PivotItem>
         </Pivot>
