@@ -7,6 +7,7 @@ using SQLite;
 using Windows.Devices.Geolocation;
 using Windows.Storage;
 using System.Threading.Tasks;
+using Windows.UI.Xaml.Controls;
 
 namespace nexMuni
 {
@@ -136,6 +137,41 @@ namespace nexMuni
                     }
                 }
             }
+        }
+
+        public static void FavoriteFromSearch(object selection)
+        {
+            Stop s = selection as Stop;
+            string stop = s.title;
+
+            var db = new SQLiteConnection("db/muni.sqlite");
+            string query = "SELECT * FROM BusStops WHERE StopName = \'" + stop + "\'";
+            List<BusStop> results = db.Query<BusStop>(query);
+            
+            //If stop name not found in db, most likely a stop that was a ducplicate and merged so reverse it and search again
+            if(results.Count == 0)
+            {
+                string [] temp = stop.Split('&');
+                stop = temp[1].Substring(1) + " & " + temp[0].Substring(0, (temp[0].Length - 1));
+
+                query = "SELECT * FROM BusStops WHERE StopName = \'" + stop + "\'";
+                results = db.Query<BusStop>(query);
+            }
+            db.Close();
+            var favDB = new SQLiteConnection(path);
+            foreach(BusStop x in results)
+            {              
+                var y = favDB.Insert(new FavoriteData
+                {
+                    Name = x.StopName,
+                    Routes = x.Routes,
+                    Tags = x.StopTags,
+                    Lat = x.Latitude,
+                    Lon = x.Longitude
+                });
+            }
+            favDB.Close();
+            LoadFavorites();
         }
     }
 
