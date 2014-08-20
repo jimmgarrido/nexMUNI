@@ -99,7 +99,7 @@ namespace nexMuni
 
             if (saved != null) response = saved;
 
-            //Make sure to ppull from network not cache everytime predictions are refreshed 
+            //Make sure to pull from network not cache everytime predictions are refreshed 
             response.Headers.CacheControl.Add(new HttpNameValueHeaderValue("max-age", "1"));
             client.DefaultRequestHeaders.CacheControl.Add(new HttpNameValueHeaderValue("max-age", "1"));
             if (response.Content != null) client.DefaultRequestHeaders.IfModifiedSince = response.Content.Headers.Expires;
