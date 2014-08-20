@@ -35,15 +35,12 @@ namespace nexMuni
             DirectionCollection = new ObservableCollection<string>();
             StopCollection = new ObservableCollection<Stop>();
 
-            int k = 0;
             foreach (Routes s in RoutesList)
             {
                 RoutesCollection.Add(s.Title);
-                k++;
             }
 
             MainPage.routePicker.ItemsSource = RoutesCollection;
-            IsDataLoaded = true;
         }
 
         public static void RouteSelected(ListPickerFlyout sender, ItemsPickedEventArgs args)

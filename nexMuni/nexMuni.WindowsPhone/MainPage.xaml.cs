@@ -47,13 +47,34 @@ namespace nexMuni
             {
                 nearbyText = new TextBlock();
                 favText = new TextBlock();
+                searchMap = new MapControl();
+
                 nearbyText = noStops;
                 favText = noFav;
+                searchMap = searchMapControl;
+                searchMap.TrySetViewAsync(new Geopoint(new BasicGeoposition() { Latitude = 37.7599, Longitude = -122.437 }));
+
+                dirComboBox = new ComboBox();
+                routePicker = new ListPickerFlyout();
+                stopPicker = new ListPickerFlyout();
+                dirText = new TextBlock();
+                stopText = new TextBlock();
+                searchText = new TextBlock();
+                stopBtn = new Button();
+
+                dirComboBox = dirBox;
+                routePicker = RoutesFlyout;
+                stopPicker = StopsFlyout;
+                searchText = searchTimes;
+                dirText = dirLabel;
+                stopText = stopLabel;
+                stopBtn = stopButton;
+
+                SearchModel.LoadRoutes();
                 MainPageModel.LoadData();
 
                 nearbyListView.ItemsSource = MainPageModel.nearbyStops;
                 favoritesListView.ItemsSource = MainPageModel.favoritesStops;
-                searchMapControl.TrySetViewAsync(new Geopoint(new BasicGeoposition() { Latitude = 37.7599, Longitude = -122.437 }));
             }           
         }
 
@@ -78,6 +99,7 @@ namespace nexMuni
 
                     if (!SearchModel.IsDataLoaded)
                     {
+<<<<<<< HEAD
                         dirComboBox = new ComboBox();
                         routePicker = new ListPickerFlyout();
                         stopPicker = new ListPickerFlyout();
@@ -100,13 +122,16 @@ namespace nexMuni
 
                         SearchModel.LoadRoutes();
 
+=======
+>>>>>>> origin/dev
                         dirBox.ItemsSource = SearchModel.DirectionCollection;
                         stopPicker.ItemsSource = SearchModel.StopCollection;
-                        //stopPicker.DisplayMemberPath = "title";
 
                         routePicker.ItemsPicked += SearchModel.RouteSelected;
                         dirBox.SelectionChanged += SearchModel.DirSelected;
                         stopPicker.ItemsPicked += SearchModel.StopSelected;
+
+                        SearchModel.IsDataLoaded = true;
                     }
                     break;
             }

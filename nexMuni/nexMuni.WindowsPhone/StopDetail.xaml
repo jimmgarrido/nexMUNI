@@ -13,7 +13,11 @@
 
     <Page.BottomAppBar>
         <CommandBar Background="#FF9B1414">
-            <AppBarButton Icon="Refresh"  IsCompact="true" Label="refresh" Click="RefreshTimes"/>
+            <AppBarButton IsCompact="true" Label="refresh" Click="RefreshTimes">
+			<AppBarButton.Icon>
+        			<BitmapIcon UriSource="Assets/refresh.png"/>
+        		</AppBarButton.Icon>
+			</AppBarButton>
             <AppBarButton x:Name="favBtn" Icon="Favorite" IsCompact="True" Label="favorite" Click="FavoriteStop" Visibility="Collapsed"/>
             <AppBarButton x:Name="removeBtn" Icon="Remove" IsCompact="True" Label="unfavorite" Click="RemoveStop" Visibility="Collapsed"/>
         </CommandBar>
@@ -39,8 +43,14 @@
 
 		<Grid d:DataContext="{Binding Source={StaticResource RouteDataSample}}" Grid.Row="1" x:Name="ContentRoot">
 		<TextBlock x:Name="noTimes" Text="No busses at this time" FontSize="21" Margin="13,225,0,0" Visibility="Collapsed" TextAlignment="Center"/>
+<<<<<<< HEAD
 			<ListView x:Name="RouteInfoList" ItemsSource="{Binding Stops}" HorizontalAlignment="Center" Margin="0,0,0,0" 
                       VerticalAlignment="Top" IsTapEnabled="False" IsHoldingEnabled="False" 
+=======
+			<ListView x:Name="RouteInfoList" IsItemClickEnabled="True" ItemsSource="{Binding Stops}" 
+                      HorizontalAlignment="Center" Margin="0,0,0,0" VerticalAlignment="Top" 
+                      IsTapEnabled="False" IsHoldingEnabled="False" ItemClick="ShowRouteMap"
+>>>>>>> origin/dev
                       ScrollViewer.HorizontalScrollBarVisibility="Auto" FontFamily="Global User Interface" >
                 <ListView.ItemTemplate>
                     <DataTemplate>

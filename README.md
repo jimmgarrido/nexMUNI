@@ -1,4 +1,1 @@
-NexMuni
-=======
-
-Real-time Muni prediction app for Windows Phone 8
+NexMuni=======Real-time Muni prediction app for Windows Phone 8.1
