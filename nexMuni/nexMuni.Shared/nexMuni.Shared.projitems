@@ -16,7 +16,6 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)DatabaseHelper.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ErrorHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LocationHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MainPageModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PredictionModel.cs" />
@@ -26,8 +25,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)StopDetailModel.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="$(MSBuildThisFileDirectory)assets\AddStar.png" />
-    <Content Include="$(MSBuildThisFileDirectory)assets\RemoveStar.png" />
     <Content Include="$(MSBuildThisFileDirectory)db\muni.sqlite" />
   </ItemGroup>
 </Project>

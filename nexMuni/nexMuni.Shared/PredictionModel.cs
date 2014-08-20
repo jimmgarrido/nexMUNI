@@ -7,9 +7,9 @@ using System.IO;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Linq;
+using System.Net;
 using Windows.Web.Http;
 using Windows.Web.Http.Headers;
-using Windows.UI.Popups;
 
 namespace nexMuni
 {
@@ -36,24 +36,19 @@ namespace nexMuni
 
             if (saved != null) response = saved;
             
-            //Make sure to pull from network not cache everytime predictions are refreshed 
+            //Make sure to ppull from network not cache everytime predictions are refreshed 
             response.Headers.CacheControl.Add(new HttpNameValueHeaderValue("max-age", "1"));
             client.DefaultRequestHeaders.CacheControl.Add(new HttpNameValueHeaderValue("max-age", "1"));
             if (response.Content != null) client.DefaultRequestHeaders.IfModifiedSince = response.Content.Headers.Expires;
-            try
-            {
-                response = await client.GetAsync(new Uri(URLstring));
-                response.EnsureSuccessStatusCode();
-                response.Content.Headers.Expires = System.DateTime.Now;
-                reader = await response.Content.ReadAsStringAsync();
-                xmlDoc = XDocument.Parse(reader);
+            response = await client.GetAsync(new Uri(URLstring));
+            response.Content.Headers.Expires = System.DateTime.Now;
+            
+            saved = response;
 
-                GetPredictions(xmlDoc, selectedStop);
-            }
-            catch(Exception ex)
-            {
-                ErrorHandler.NetworkError("Error getting predictions. Check network connection and try again.");
-            }
+            reader = await response.Content.ReadAsStringAsync();
+            xmlDoc = XDocument.Parse(reader);
+
+            GetPredictions(xmlDoc, selectedStop);
 
 #if WINDOWS_PHONE_APP
             systemTray.ProgressIndicator.ProgressValue = 0;
@@ -206,7 +201,6 @@ namespace nexMuni
             
             MainPage.searchText.Text = times;
             MainPage.searchText.Visibility = Windows.UI.Xaml.Visibility.Visible;
-            MainPage.favSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
         }
 
         internal static void UpdateTimes()
@@ -215,7 +209,7 @@ namespace nexMuni
             GetXML(URLstring, selectedStop);
         }
 
-        internal static async void SearchPredictions(Stop selectedStop, string route, string url)
+        internal static async void GetSearchPredictions(Stop selectedStop, string route, string url)
         {
             var response = new HttpResponseMessage();
             var client = new HttpClient();
@@ -228,21 +222,14 @@ namespace nexMuni
             response.Headers.CacheControl.Add(new HttpNameValueHeaderValue("max-age", "1"));
             client.DefaultRequestHeaders.CacheControl.Add(new HttpNameValueHeaderValue("max-age", "1"));
             if (response.Content != null) client.DefaultRequestHeaders.IfModifiedSince = response.Content.Headers.Expires;
-            try
-            {
-                response = await client.GetAsync(new Uri(url));
-                response.Content.Headers.Expires = System.DateTime.Now;
+            response = await client.GetAsync(new Uri(url));
+            response.Content.Headers.Expires = System.DateTime.Now;
 
-                saved = response;
-                reader = await response.Content.ReadAsStringAsync();
-                xmlDoc = XDocument.Parse(reader);
+            saved = response;
+            reader = await response.Content.ReadAsStringAsync();
+            xmlDoc = XDocument.Parse(reader);
 
-                GetSearchPredictions(xmlDoc);
-            }
-            catch (Exception ex)
-            {
-                ErrorHandler.NetworkError("Error getting predictions. Check network connection and try again.");
-            }   
+            GetSearchPredictions(xmlDoc);
         }
     }
 }

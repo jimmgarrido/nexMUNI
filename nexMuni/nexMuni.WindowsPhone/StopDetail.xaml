@@ -34,14 +34,12 @@
 
 		<!-- Title Panel -->
 		<StackPanel Grid.Row="0" Margin="19,0,0,0">
-			<TextBlock x:Name="StopHeader" Margin="0,0,0,15" Style="{ThemeResource HeaderTextBlockStyle}" CharacterSpacing="{ThemeResource PivotHeaderItemCharacterSpacing}" FontSize="36" />
+			<TextBlock x:Name="StopHeader" Text="Mission St &amp; 24 St" Margin="0,0,0,15" Style="{ThemeResource HeaderTextBlockStyle}" CharacterSpacing="{ThemeResource PivotHeaderItemCharacterSpacing}" FontSize="36" />
 		</StackPanel>
 
 		<Grid d:DataContext="{Binding Source={StaticResource RouteDataSample}}" Grid.Row="1" x:Name="ContentRoot">
 		<TextBlock x:Name="noTimes" Text="No busses at this time" FontSize="21" Margin="13,225,0,0" Visibility="Collapsed" TextAlignment="Center"/>
-			<ListView x:Name="RouteInfoList" ItemsSource="{Binding Stops}" HorizontalAlignment="Center" Margin="0,0,0,0" 
-                      VerticalAlignment="Top" IsTapEnabled="False" IsHoldingEnabled="False" 
-                      ScrollViewer.HorizontalScrollBarVisibility="Auto" FontFamily="Global User Interface" >
+			<ListView x:Name="RouteInfoList" ItemsSource="{Binding Stops}" HorizontalAlignment="Center" Margin="0,0,0,0" VerticalAlignment="Top" IsTapEnabled="False" IsHoldingEnabled="False" ScrollViewer.HorizontalScrollBarVisibility="Auto" FontFamily="Global User Interface" >
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <Grid Margin="0,0,0,15" Width="500" >
