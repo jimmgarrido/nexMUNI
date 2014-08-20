@@ -103,15 +103,21 @@ namespace nexMuni
             response.Headers.CacheControl.Add(new HttpNameValueHeaderValue("max-age", "1"));
             client.DefaultRequestHeaders.CacheControl.Add(new HttpNameValueHeaderValue("max-age", "1"));
             if (response.Content != null) client.DefaultRequestHeaders.IfModifiedSince = response.Content.Headers.Expires;
-            response = await client.GetAsync(new Uri(URL));
-            response.Content.Headers.Expires = System.DateTime.Now;
+            try
+            {
+                response = await client.GetAsync(new Uri(URL));
+                response.Content.Headers.Expires = System.DateTime.Now;
+                saved = response;
 
-            saved = response;
+                reader = await response.Content.ReadAsStringAsync();
+                xmlDoc = XDocument.Parse(reader);
 
-            reader = await response.Content.ReadAsStringAsync();
-            xmlDoc = XDocument.Parse(reader);
-
-            GetDirections(xmlDoc);            
+                GetDirections(xmlDoc);  
+            }
+            catch(Exception ex)
+            {
+                ErrorHandler.NetworkError("Error getting route information. Please try again.");
+            }            
         }
 
         private static void GetDirections(XDocument doc)
@@ -228,7 +234,8 @@ namespace nexMuni
 
                 await MainPage.searchMap.TrySetViewAsync(new Geopoint(new BasicGeoposition() { Latitude = selectedStop.lat, Longitude = selectedStop.lon }), 16.5);
                 if (MainPage.searchText.Visibility == Windows.UI.Xaml.Visibility.Visible) MainPage.searchText.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-                PredictionModel.GetSearchPredictions(selectedStop, selectedRoute, url);
+                if (MainPage.favSearchBtn.Visibility == Windows.UI.Xaml.Visibility.Visible) MainPage.favSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                PredictionModel.SearchPredictions(selectedStop, selectedRoute, url);
 
                 #if WINDOWS_PHONE_APP
                                 systemTray.ProgressIndicator.ProgressValue = 0;
@@ -236,6 +243,7 @@ namespace nexMuni
                 #endif
             }
             MainPage.searchText.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            MainPage.favSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
         }
     }
 

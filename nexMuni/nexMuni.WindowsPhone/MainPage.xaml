@@ -83,7 +83,7 @@
             <Setter Property="FontSize" Value="{ThemeResource TextStyleLargeFontSize}"/>
             <Setter Property="Padding" Value="{ThemeResource PhoneButtonContentPadding}"/>
             <Setter Property="MinHeight" Value="{ThemeResource PhoneButtonMinHeight}"/>
-            <Setter Property="MinWidth" Value="{ThemeResource PhoneButtonMinWidth}"/>
+            <Setter Property="MinWidth" Value="30"/>
             <Setter Property="HorizontalAlignment" Value="Left"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="Template">
@@ -403,7 +403,7 @@
                     </ListView>
                 </Grid>
             </PivotItem>
-            <PivotItem Header="search" Padding="-20,-10,-20,0" FontFamily="Global User Interface">
+            <PivotItem Header="search" Padding="-20,-10,-20,0">
                 <Grid HorizontalAlignment="Center" Width="500" Margin="0,0,0,0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="275"/>
@@ -441,10 +441,16 @@
                             </Button.Flyout>
                         </Button>
 
-                        <TextBlock x:Name="searchTimes" HorizontalAlignment="Center" Margin="7" FontSize="28" Visibility="Collapsed" FontFamily="Global User Interface" />
+                        <TextBlock x:Name="searchTimes" HorizontalAlignment="Left" Margin="90,10,0,0" FontSize="26" FontWeight="Bold" Visibility="Collapsed" />
+                        <Button x:Name="AddFavSearch" Click="FavoriteSearch" Style="{StaticResource ButtonStyle}" MinHeight="30" Margin="0,-47,75,0" HorizontalAlignment="Right" Padding="0" FontFamily="Global User Interface" Visibility="Collapsed">
+							<Image Source="Assets/AddStar.png" Width="30" Height="30" />
+						</Button>
+                        <Button x:Name="RemoveFavSearch" Click="RemoveSearch" Style="{StaticResource ButtonStyle}" MinHeight="30" Margin="0,-47,75,0" HorizontalAlignment="Right" Padding="0" FontFamily="Global User Interface" Visibility="Collapsed">
+                            <Image Source="Assets/RemoveStar.png" Width="30" Height="30" />
+                        </Button>
                     </StackPanel>
                     
-                    <Maps:MapControl x:Name="searchMapControl" HorizontalAlignment="Center" Margin="0,0,0,0" Grid.Row="1" VerticalAlignment="Center" MapServiceToken="jjA5Pn6AN4an5lgqKNN_Rg" Height="500" Width="500" ZoomLevel="12" FontFamily="Global User Interface"/>
+                    <Maps:MapControl x:Name="searchMapControl" HorizontalAlignment="Center" Margin="0,0,0,0" Grid.Row="1" VerticalAlignment="Center" MapServiceToken="jjA5Pn6AN4an5lgqKNN_Rg" Height="500" Width="500" ZoomLevel="12"/>
                 </Grid>
             </PivotItem>
         </Pivot>
