@@ -139,22 +139,29 @@ namespace nexMuni
             }
         }
 
-        public static void FavoriteFromSearch(object selection)
+        public static void FavoriteFromSearch(Stop selection)
         {
-            Stop s = selection as Stop;
-            string stop = s.title;
-
+            string title = selection.title;
+            if (title.Contains("Inbound"))
+            {
+                title = title.Replace(" Inbound", "");
+            }
+            if (title.Contains("Outbound"))
+            {
+                title = title.Replace(" Outbound", "");
+            }
+ 
             var db = new SQLiteConnection("db/muni.sqlite");
-            string query = "SELECT * FROM BusStops WHERE StopName = \'" + stop + "\'";
+            string query = "SELECT * FROM BusStops WHERE StopName = \'" + title + "\'";
             List<BusStop> results = db.Query<BusStop>(query);
             
             //If stop name not found in db, most likely a stop that was a ducplicate and merged so reverse it and search again
             if(results.Count == 0)
             {
-                string [] temp = stop.Split('&');
-                stop = temp[1].Substring(1) + " & " + temp[0].Substring(0, (temp[0].Length - 1));
+                string [] temp = title.Split('&');
+                title = temp[1].Substring(1) + " & " + temp[0].Substring(0, (temp[0].Length - 1));
 
-                query = "SELECT * FROM BusStops WHERE StopName = \'" + stop + "\'";
+                query = "SELECT * FROM BusStops WHERE StopName = \'" + title + "\'";
                 results = db.Query<BusStop>(query);
             }
             db.Close();
@@ -170,6 +177,15 @@ namespace nexMuni
                     Lon = x.Longitude
                 });
             }
+            favDB.Close();
+            LoadFavorites();
+        }
+
+        public static void RemoveSearch(Stop selection)
+        {
+            var favDB = new SQLiteConnection(path);
+            string q = "DELETE FROM FavoriteData WHERE Id IS " + selection.FavID;
+            favDB.Query<FavoriteData>(q);
             favDB.Close();
             LoadFavorites();
         }

@@ -32,6 +32,7 @@ namespace nexMuni
         public static TextBlock stopText { get; set; }
         public static Button stopBtn { get; set; }
         public static Button favSearchBtn { get; set; }
+        public static Button removeSearchBtn { get; set; }
 
         public MainPage()
         {
@@ -62,6 +63,7 @@ namespace nexMuni
                 searchText = new TextBlock();
                 stopBtn = new Button();
                 favSearchBtn = new Button();
+                removeSearchBtn = new Button();
 
                 dirComboBox = dirBox;
                 routePicker = RoutesFlyout;
@@ -71,6 +73,7 @@ namespace nexMuni
                 stopText = stopLabel;
                 stopBtn = stopButton;
                 favSearchBtn = AddFavSearch;
+                removeSearchBtn = RemoveFavSearch;
 
                 SearchModel.LoadRoutes();
                 MainPageModel.LoadData();
@@ -138,15 +141,16 @@ namespace nexMuni
 
         private void FavoriteSearch(object sender, RoutedEventArgs e)
         {
-            DatabaseHelper.FavoriteFromSearch(stopPicker.SelectedItem);
+            DatabaseHelper.FavoriteFromSearch(SearchModel.selectedStop);
             favSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-            
+            //removeSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
         }
 
         private void RemoveSearch(object sender, RoutedEventArgs e)
         {
-            DatabaseHelper.FavoriteFromSearch(stopPicker.SelectedItem);
-            favSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            DatabaseHelper.RemoveSearch(SearchModel.selectedStop);
+            removeSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            favSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
         }
     }
 }

@@ -79,6 +79,7 @@ namespace nexMuni
             else if (StopDetailModel.routeList != null) StopDetailModel.routeList.Clear();
             RouteInfoList.ItemsSource = StopDetailModel.routeList;
 
+            //Check if the stop is in user's favorites list
             if (MainPageModel.favoritesStops.Any(x => x.Name == selectedStop.Name))
             {
                 foreach(StopData s in MainPageModel.favoritesStops)
