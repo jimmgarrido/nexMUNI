@@ -27,12 +27,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)StopDetailModel.cs" />
   </ItemGroup>
   <ItemGroup>
-<<<<<<< HEAD
     <Content Include="$(MSBuildThisFileDirectory)assets\AddStar.png" />
+    <Content Include="$(MSBuildThisFileDirectory)assets\Marker.png" />
+    <Content Include="$(MSBuildThisFileDirectory)assets\Location.png" />
+    <Content Include="$(MSBuildThisFileDirectory)assets\Marker2.png" />
     <Content Include="$(MSBuildThisFileDirectory)assets\RemoveStar.png" />
-=======
     <Content Include="$(MSBuildThisFileDirectory)assets\refresh.png" />
->>>>>>> origin/dev
     <Content Include="$(MSBuildThisFileDirectory)db\muni.sqlite" />
   </ItemGroup>
 </Project>

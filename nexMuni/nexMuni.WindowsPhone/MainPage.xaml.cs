@@ -52,7 +52,7 @@ namespace nexMuni
                 nearbyText = noStops;
                 favText = noFav;
                 searchMap = searchMapControl;
-                searchMap.TrySetViewAsync(new Geopoint(new BasicGeoposition() { Latitude = 37.7599, Longitude = -122.437 }));
+                searchMap.Center = new Geopoint(new BasicGeoposition() { Latitude = 37.7599, Longitude = -122.437 });
 
                 dirComboBox = new ComboBox();
                 routePicker = new ListPickerFlyout();
@@ -61,6 +61,7 @@ namespace nexMuni
                 stopText = new TextBlock();
                 searchText = new TextBlock();
                 stopBtn = new Button();
+                favSearchBtn = new Button();
 
                 dirComboBox = dirBox;
                 routePicker = RoutesFlyout;
@@ -69,6 +70,7 @@ namespace nexMuni
                 dirText = dirLabel;
                 stopText = stopLabel;
                 stopBtn = stopButton;
+                favSearchBtn = AddFavSearch;
 
                 SearchModel.LoadRoutes();
                 MainPageModel.LoadData();
@@ -99,31 +101,6 @@ namespace nexMuni
 
                     if (!SearchModel.IsDataLoaded)
                     {
-<<<<<<< HEAD
-                        dirComboBox = new ComboBox();
-                        routePicker = new ListPickerFlyout();
-                        stopPicker = new ListPickerFlyout();
-                        searchMap = new MapControl();
-                        dirText = new TextBlock();
-                        stopText = new TextBlock();
-                        searchText = new TextBlock();
-                        stopBtn = new Button();
-                        favSearchBtn = new Button();
-
-                        dirComboBox = dirBox;
-                        routePicker = RoutesFlyout;
-                        stopPicker = StopsFlyout;
-                        searchMap = searchMapControl;
-                        searchText = searchTimes;
-                        dirText = dirLabel;
-                        stopText = stopLabel;
-                        stopBtn = stopButton;
-                        favSearchBtn = RemoveFavSearch;
-
-                        SearchModel.LoadRoutes();
-
-=======
->>>>>>> origin/dev
                         dirBox.ItemsSource = SearchModel.DirectionCollection;
                         stopPicker.ItemsSource = SearchModel.StopCollection;
 

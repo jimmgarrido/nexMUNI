@@ -79,6 +79,7 @@ namespace nexMuni
             {
                 foreach (FavoriteData s in favList)
                 {
+                    if (MainPage.favText.Visibility != Windows.UI.Xaml.Visibility.Collapsed) MainPage.favText.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
                     MainPageModel.favoritesStops.Add(new StopData(s.Name, s.Routes, s.Tags, 0.000, s.Lat, s.Lon, s.Id.ToString()));
                 }
             }
@@ -102,7 +103,6 @@ namespace nexMuni
 
         public static void AddFavorite(StopData stop)
         {
-            if (MainPage.favText.Visibility != Windows.UI.Xaml.Visibility.Collapsed) MainPage.favText.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
             var favDB = new SQLiteConnection(path); 
             var s = favDB.Insert(new FavoriteData
                 {

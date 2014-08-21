@@ -26,6 +26,16 @@ namespace nexMuni
         public static MapControl routeMap;
         private NavigationHelper navigationHelper;
         private ObservableDictionary defaultViewModel = new ObservableDictionary();
+        public Geopoint center {
+            get
+            {
+                return this.center;
+            }
+            set
+            {
+                new BasicGeoposition() { Latitude = 37.7603, Longitude = -122.427 };
+            }
+        }
 
         public RouteMap()
         {
@@ -33,7 +43,7 @@ namespace nexMuni
 
             routeMap = new MapControl();
             routeMap = routeMapControl;
-            //routeMap.TrySetViewAsync(new Geopoint(new BasicGeoposition() { Latitude = 37.7599, Longitude = -122.437 }));
+            routeMap.Center = new Geopoint(new BasicGeoposition() { Latitude = 37.7603, Longitude = -122.427 }); 
 
             this.navigationHelper = new NavigationHelper(this);
             this.navigationHelper.LoadState += this.NavigationHelper_LoadState;

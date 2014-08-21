@@ -9,6 +9,7 @@ using Windows.Devices.Geolocation;
 using Windows.UI.Xaml.Controls.Maps;
 using Windows.Services.Maps;
 using Windows.UI;
+using Windows.Storage.Streams;
 
 namespace nexMuni
 {
@@ -26,7 +27,7 @@ namespace nexMuni
 
             if (saved != null) response = saved;
 
-            //Make sure to ppull from network not cache everytime predictions are refreshed 
+            //Make sure to pull from network not cache everytime predictions are refreshed 
             response.Headers.CacheControl.Add(new HttpNameValueHeaderValue("max-age", "1"));
             client.DefaultRequestHeaders.CacheControl.Add(new HttpNameValueHeaderValue("max-age", "1"));
             if (response.Content != null) client.DefaultRequestHeaders.IfModifiedSince = response.Content.Headers.Expires;
@@ -39,14 +40,11 @@ namespace nexMuni
             GetPoints(XDocument.Parse(reader));
         }
 
-        public async static void GetPoints(XDocument doc)
+        public static void GetPoints(XDocument doc)
         {
-            MapService.ServiceToken = "jjA5Pn6AN4an5lgqKNN_Rg";
-            List<Geopoint> positions = new List<Geopoint>();
-            IEnumerable<Geopoint> points;
+            List<BasicGeoposition> positions = new List<BasicGeoposition>();
             IEnumerable<XElement> subElements;
-            MapRoute route;
-            MapRouteView view;
+            List<MapPolyline> route = new List<MapPolyline>();
 
             IEnumerable<XElement> rootElement =
                 from e in doc.Descendants("route")
@@ -54,28 +52,34 @@ namespace nexMuni
             IEnumerable<XElement> elements =
                 from d in rootElement.ElementAt(0).Elements("path")
                 select d;
-
-            foreach(XElement el in elements)
+            int x = 0;
+            
+            foreach (XElement el in elements)
             {
                 subElements =
                     from p in el.Elements("point")
                     select p;
 
-                foreach(XElement e in subElements)
+                if (positions.Count > 0) positions.Clear();
+                foreach (XElement e in subElements)
                 {
-                    positions.Add(new Geopoint(new BasicGeoposition() { Latitude = Double.Parse(e.Attribute("lat").Value), Longitude = Double.Parse(e.Attribute("lon").Value) }));
+                    positions.Add(new BasicGeoposition() { Latitude = Double.Parse(e.Attribute("lat").Value), Longitude = Double.Parse(e.Attribute("lon").Value) });
                 }
+                route.Add(new MapPolyline());
+                route[x].StrokeColor = Color.FromArgb(255, 179, 27, 27);
+                route[x].StrokeThickness = 2.00;
+                route[x].ZIndex = 99;
+                route[x].Path = new Geopath(positions);
+                route[x].Visible = true;
+                RouteMap.routeMap.MapElements.Add(route[x]);
+                x++;
             }
-            points = positions.AsEnumerable<Geopoint>();
-            MapRouteFinderResult result = await MapRouteFinder.GetDrivingRouteFromWaypointsAsync(points);
-            if(result.Status == MapRouteFinderStatus.Success)
-            {
-                route = result.Route;
-                view = new MapRouteView(route);
-                view.RouteColor = Colors.Black;
-                RouteMap.routeMap.Routes.Add(view);
-                RouteMap.routeMap.TrySetViewBoundsAsync(route.BoundingBox, null, MapAnimationKind.None);
-            }
+            
+            MapIcon icon = new MapIcon();
+            icon.Image = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/Location.png"));
+            icon.Location = LocationHelper.PhoneLocation.Coordinate.Point;
+            icon.ZIndex = 99;
+            RouteMap.routeMap.MapElements.Add(icon);
         }
     }
 }

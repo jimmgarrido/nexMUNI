@@ -10,6 +10,8 @@ using Windows.Web.Http.Headers;
 using Windows.Devices.Geolocation;
 using Windows.UI.Xaml.Controls.Maps;
 using Windows.Foundation;
+using Windows.Storage.Streams;
+using Windows.UI;
 
 namespace nexMuni
 {
@@ -178,6 +180,51 @@ namespace nexMuni
                 }
             }
             MainPage.dirComboBox.SelectedIndex = 0;
+
+            MapRouteView(doc);
+        }
+
+        private static async void MapRouteView(XDocument doc)
+        {
+            MainPage.searchMap.TrySetViewAsync(new Geopoint(new BasicGeoposition() { Latitude = 37.7599, Longitude = -122.437 }), 11.5);
+            List<BasicGeoposition> positions = new List<BasicGeoposition>();
+            IEnumerable<XElement> subElements;
+            List<MapPolyline> route = new List<MapPolyline>();
+
+            IEnumerable<XElement> rootElement =
+                from e in doc.Descendants("route")
+                select e;
+            IEnumerable<XElement> elements =
+                from d in rootElement.ElementAt(0).Elements("path")
+                select d;
+            int x = 0;
+            if (MainPage.searchMap.MapElements.Count > 0) MainPage.searchMap.MapElements.Clear();
+            foreach (XElement el in elements)
+            {
+                subElements =
+                    from p in el.Elements("point")
+                    select p;
+
+                if (positions.Count > 0) positions.Clear();
+                foreach (XElement e in subElements)
+                {
+                    positions.Add(new BasicGeoposition() { Latitude = Double.Parse(e.Attribute("lat").Value), Longitude = Double.Parse(e.Attribute("lon").Value) });
+                }
+                route.Add(new MapPolyline());
+                route[x].StrokeColor = Color.FromArgb(255,179,27,27);
+                route[x].StrokeThickness = 2.00;
+                route[x].ZIndex = 99;
+                route[x].Path = new Geopath(positions);
+                route[x].Visible = true;
+                MainPage.searchMap.MapElements.Add(route[x]);
+                x++;
+            }
+
+            MapIcon icon = new MapIcon();
+            icon.Image = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/Location.png"));
+            icon.Location = LocationHelper.PhoneLocation.Coordinate.Point;
+            icon.ZIndex = 99;
+            MainPage.searchMap.MapElements.Add(icon);
         }
 
         public static void DirSelected(object sender, SelectionChangedEventArgs e)

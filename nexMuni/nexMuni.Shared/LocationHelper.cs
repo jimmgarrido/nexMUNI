@@ -6,6 +6,8 @@ using Windows.Devices.Geolocation;
 using Windows.Storage;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Windows.UI.Xaml.Controls.Maps;
+using Windows.Storage.Streams;
 
 namespace nexMuni
 {
@@ -13,6 +15,7 @@ namespace nexMuni
     {
         private static double PhoneLat { get; set; }
         private static double PhoneLong { get; set; }
+        public static Geoposition PhoneLocation { get; set; }
 
         public static async void UpdateNearbyList()
         {
@@ -25,7 +28,15 @@ namespace nexMuni
             Geolocator geolocator = new Geolocator();
             geolocator.DesiredAccuracyInMeters = 50;
 
+            MapIcon icon = new MapIcon();
+            icon.Image = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/Location.png"));
             var position = await geolocator.GetGeopositionAsync();
+            PhoneLocation = position;
+            icon.Location = position.Coordinate.Point;
+            icon.ZIndex = 99;
+            MainPage.searchMap.MapElements.Clear();
+            MainPage.searchMap.MapElements.Add(icon);
+            //await MainPage.searchMap.TrySetViewAsync(position.Coordinate.Point, 15);
 
 #if WINDOWS_PHONE_APP
             systemTray.ProgressIndicator.Text = "Locating Stops";
