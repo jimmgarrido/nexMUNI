@@ -19,6 +19,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)ErrorHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LocationHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MainPageModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MapHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PredictionModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)RouteData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SearchModel.cs" />
@@ -27,7 +28,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="$(MSBuildThisFileDirectory)assets\AddStar.png" />
+    <Content Include="$(MSBuildThisFileDirectory)assets\Marker.png" />
+    <Content Include="$(MSBuildThisFileDirectory)assets\Location.png" />
+    <Content Include="$(MSBuildThisFileDirectory)assets\Marker2.png" />
     <Content Include="$(MSBuildThisFileDirectory)assets\RemoveStar.png" />
+    <Content Include="$(MSBuildThisFileDirectory)assets\refresh.png" />
     <Content Include="$(MSBuildThisFileDirectory)db\muni.sqlite" />
   </ItemGroup>
 </Project>

@@ -10,6 +10,8 @@ using Windows.Web.Http.Headers;
 using Windows.Devices.Geolocation;
 using Windows.UI.Xaml.Controls.Maps;
 using Windows.Foundation;
+using Windows.Storage.Streams;
+using Windows.UI;
 
 namespace nexMuni
 {
@@ -27,6 +29,7 @@ namespace nexMuni
         public static List<Stop> FoundStops = new List<Stop>();
         public static string title, stopID, lat, lon, tag;
         private static string selectedRoute;
+        public static Stop selectedStop { get; set; }
 
         public static void LoadRoutes()
         {
@@ -35,15 +38,12 @@ namespace nexMuni
             DirectionCollection = new ObservableCollection<string>();
             StopCollection = new ObservableCollection<Stop>();
 
-            int k = 0;
             foreach (Routes s in RoutesList)
             {
                 RoutesCollection.Add(s.Title);
-                k++;
             }
 
             MainPage.routePicker.ItemsSource = RoutesCollection;
-            IsDataLoaded = true;
         }
 
         public static void RouteSelected(ListPickerFlyout sender, ItemsPickedEventArgs args)
@@ -65,6 +65,7 @@ namespace nexMuni
                 StopCollection.Clear();
             }
             MainPage.searchText.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            MainPage.favSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
 
             LoadDirections(selectedRoute);
 
@@ -181,6 +182,51 @@ namespace nexMuni
                 }
             }
             MainPage.dirComboBox.SelectedIndex = 0;
+
+            MapRouteView(doc);
+        }
+
+        private static void MapRouteView(XDocument doc)
+        {
+            MainPage.searchMap.TrySetViewAsync(new Geopoint(new BasicGeoposition() { Latitude = 37.7599, Longitude = -122.437 }), 11.5);
+            List<BasicGeoposition> positions = new List<BasicGeoposition>();
+            IEnumerable<XElement> subElements;
+            List<MapPolyline> route = new List<MapPolyline>();
+
+            IEnumerable<XElement> rootElement =
+                from e in doc.Descendants("route")
+                select e;
+            IEnumerable<XElement> elements =
+                from d in rootElement.ElementAt(0).Elements("path")
+                select d;
+            int x = 0;
+            if (MainPage.searchMap.MapElements.Count > 0) MainPage.searchMap.MapElements.Clear();
+            foreach (XElement el in elements)
+            {
+                subElements =
+                    from p in el.Elements("point")
+                    select p;
+
+                if (positions.Count > 0) positions.Clear();
+                foreach (XElement e in subElements)
+                {
+                    positions.Add(new BasicGeoposition() { Latitude = Double.Parse(e.Attribute("lat").Value), Longitude = Double.Parse(e.Attribute("lon").Value) });
+                }
+                route.Add(new MapPolyline());
+                route[x].StrokeColor = Color.FromArgb(255,179,27,27);
+                route[x].StrokeThickness = 2.00;
+                route[x].ZIndex = 99;
+                route[x].Path = new Geopath(positions);
+                route[x].Visible = true;
+                MainPage.searchMap.MapElements.Add(route[x]);
+                x++;
+            }
+
+            MapIcon icon = new MapIcon();
+            icon.Image = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/Location.png"));
+            icon.Location = LocationHelper.PhoneLocation.Coordinate.Point;
+            icon.ZIndex = 99;
+            MainPage.searchMap.MapElements.Add(icon);
         }
 
         public static void DirSelected(object sender, SelectionChangedEventArgs e)
@@ -195,6 +241,7 @@ namespace nexMuni
             MainPage.stopText.Visibility = Windows.UI.Xaml.Visibility.Visible;
             MainPage.stopBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
             MainPage.searchText.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            MainPage.favSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
         }
 
         private static void LoadStops(string _dir)
@@ -223,27 +270,69 @@ namespace nexMuni
         {
             if (sender.SelectedIndex != -1)
             {
-                #if WINDOWS_PHONE_APP
-                                var systemTray = Windows.UI.ViewManagement.StatusBar.GetForCurrentView();
-                                systemTray.ProgressIndicator.Text = "Getting Arrival Times";
-                                systemTray.ProgressIndicator.ProgressValue = null;
-                #endif
+#if WINDOWS_PHONE_APP
+                var systemTray = Windows.UI.ViewManagement.StatusBar.GetForCurrentView();
+                systemTray.ProgressIndicator.Text = "Getting Arrival Times";
+                systemTray.ProgressIndicator.ProgressValue = null;
+#endif
 
-                Stop selectedStop = sender.SelectedItem as Stop;
+                selectedStop = sender.SelectedItem as Stop;
+                string title = selectedStop.title;
+                if (title.Contains("Inbound"))
+                {
+                    title = title.Replace(" Inbound", "");
+                }
+                if (title.Contains("Outbound"))
+                {
+                    title = title.Replace(" Outbound", "");
+                }
+
+                string[] temp = selectedStop.title.Split('&');
+                string reversed;
+                if (temp.Count() > 1)
+                {
+                    reversed = temp[1].Substring(1) + " & " + temp[0].Substring(0, (temp[0].Length - 1));
+                }
+                else reversed = "";
+
                 string url = "http://webservices.nextbus.com/service/publicXMLFeed?command=predictions&a=sf-muni&stopId=" + selectedStop.stopID + "&routeTag=" + selectedRoute;
 
                 await MainPage.searchMap.TrySetViewAsync(new Geopoint(new BasicGeoposition() { Latitude = selectedStop.lat, Longitude = selectedStop.lon }), 16.5);
+
                 if (MainPage.searchText.Visibility == Windows.UI.Xaml.Visibility.Visible) MainPage.searchText.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
                 if (MainPage.favSearchBtn.Visibility == Windows.UI.Xaml.Visibility.Visible) MainPage.favSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+
+                //Get bus predictions for stop
                 PredictionModel.SearchPredictions(selectedStop, selectedRoute, url);
 
-                #if WINDOWS_PHONE_APP
-                                systemTray.ProgressIndicator.ProgressValue = 0;
-                                systemTray.ProgressIndicator.Text = "nexMuni";
-                #endif
+                //Check to see if the stop is in user's favorites list
+                if (MainPageModel.favoritesStops.Any(z => z.Name == title || z.Name == reversed))
+                {
+                    foreach (StopData s in MainPageModel.favoritesStops)
+                    {
+                        if (s.Name == title) selectedStop.FavID = s.FavID;
+                    }
+                    MainPage.searchText.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                    MainPage.favSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                    //MainPage.removeSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                }
+                else
+                {
+                    MainPage.searchText.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                    MainPage.favSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                    MainPage.removeSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                }
+
+#if WINDOWS_PHONE_APP
+                systemTray.ProgressIndicator.ProgressValue = 0;
+                systemTray.ProgressIndicator.Text = "nexMuni";
+#endif
             }
-            MainPage.searchText.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-            MainPage.favSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            else
+            {
+                MainPage.searchText.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                MainPage.favSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            }
         }
     }
 
@@ -254,6 +343,7 @@ namespace nexMuni
         public double lon;
         public double lat;
         public string tag;
+        public string FavID { get; set; }
 
         public Stop() {}
 

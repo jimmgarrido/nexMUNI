@@ -32,6 +32,7 @@ namespace nexMuni
         public static TextBlock stopText { get; set; }
         public static Button stopBtn { get; set; }
         public static Button favSearchBtn { get; set; }
+        public static Button removeSearchBtn { get; set; }
 
         public MainPage()
         {
@@ -47,13 +48,38 @@ namespace nexMuni
             {
                 nearbyText = new TextBlock();
                 favText = new TextBlock();
+                searchMap = new MapControl();
+
                 nearbyText = noStops;
                 favText = noFav;
+                searchMap = searchMapControl;
+                searchMap.Center = new Geopoint(new BasicGeoposition() { Latitude = 37.7599, Longitude = -122.437 });
+
+                dirComboBox = new ComboBox();
+                routePicker = new ListPickerFlyout();
+                stopPicker = new ListPickerFlyout();
+                dirText = new TextBlock();
+                stopText = new TextBlock();
+                searchText = new TextBlock();
+                stopBtn = new Button();
+                favSearchBtn = new Button();
+                removeSearchBtn = new Button();
+
+                dirComboBox = dirBox;
+                routePicker = RoutesFlyout;
+                stopPicker = StopsFlyout;
+                searchText = searchTimes;
+                dirText = dirLabel;
+                stopText = stopLabel;
+                stopBtn = stopButton;
+                favSearchBtn = AddFavSearch;
+                removeSearchBtn = RemoveFavSearch;
+
+                SearchModel.LoadRoutes();
                 MainPageModel.LoadData();
 
                 nearbyListView.ItemsSource = MainPageModel.nearbyStops;
                 favoritesListView.ItemsSource = MainPageModel.favoritesStops;
-                searchMapControl.TrySetViewAsync(new Geopoint(new BasicGeoposition() { Latitude = 37.7599, Longitude = -122.437 }));
             }           
         }
 
@@ -78,35 +104,14 @@ namespace nexMuni
 
                     if (!SearchModel.IsDataLoaded)
                     {
-                        dirComboBox = new ComboBox();
-                        routePicker = new ListPickerFlyout();
-                        stopPicker = new ListPickerFlyout();
-                        searchMap = new MapControl();
-                        dirText = new TextBlock();
-                        stopText = new TextBlock();
-                        searchText = new TextBlock();
-                        stopBtn = new Button();
-                        favSearchBtn = new Button();
-
-                        dirComboBox = dirBox;
-                        routePicker = RoutesFlyout;
-                        stopPicker = StopsFlyout;
-                        searchMap = searchMapControl;
-                        searchText = searchTimes;
-                        dirText = dirLabel;
-                        stopText = stopLabel;
-                        stopBtn = stopButton;
-                        favSearchBtn = RemoveFavSearch;
-
-                        SearchModel.LoadRoutes();
-
                         dirBox.ItemsSource = SearchModel.DirectionCollection;
                         stopPicker.ItemsSource = SearchModel.StopCollection;
-                        //stopPicker.DisplayMemberPath = "title";
 
                         routePicker.ItemsPicked += SearchModel.RouteSelected;
                         dirBox.SelectionChanged += SearchModel.DirSelected;
                         stopPicker.ItemsPicked += SearchModel.StopSelected;
+
+                        SearchModel.IsDataLoaded = true;
                     }
                     break;
             }
@@ -136,15 +141,16 @@ namespace nexMuni
 
         private void FavoriteSearch(object sender, RoutedEventArgs e)
         {
-            DatabaseHelper.FavoriteFromSearch(stopPicker.SelectedItem);
+            DatabaseHelper.FavoriteFromSearch(SearchModel.selectedStop);
             favSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-            
+            //removeSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
         }
 
         private void RemoveSearch(object sender, RoutedEventArgs e)
         {
-            DatabaseHelper.FavoriteFromSearch(stopPicker.SelectedItem);
-            favSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            DatabaseHelper.RemoveSearch(SearchModel.selectedStop);
+            removeSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            favSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
         }
     }
 }

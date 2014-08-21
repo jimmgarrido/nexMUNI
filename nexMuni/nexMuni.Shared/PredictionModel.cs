@@ -205,8 +205,6 @@ namespace nexMuni
             else times = times + " mins";
             
             MainPage.searchText.Text = times;
-            MainPage.searchText.Visibility = Windows.UI.Xaml.Visibility.Visible;
-            MainPage.favSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
         }
 
         internal static void UpdateTimes()
