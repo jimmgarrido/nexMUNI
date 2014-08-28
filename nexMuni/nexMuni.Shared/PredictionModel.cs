@@ -48,6 +48,7 @@ namespace nexMuni
                 reader = await response.Content.ReadAsStringAsync();
                 xmlDoc = XDocument.Parse(reader);
 
+                saved = response;
                 GetPredictions(xmlDoc, selectedStop);
             }
             catch(Exception ex)
@@ -71,8 +72,8 @@ namespace nexMuni
             IEnumerable<XElement> predictionElements;
 
             string dirTitle1, dirTitle2, title, time, route, fullTitle;
-            string[] times1 = new string[3];
-            string[] times2 = new string[3];
+            string[] times1 = new string[4];
+            string[] times2 = new string[4];
             int j, x, y;
 
             while(i < rootElements.Count())
@@ -110,7 +111,7 @@ namespace nexMuni
                             select e;
 
                         j = 0;
-                        times1 = new string[3];
+                        //times1 = new string[3];
                         while (j < predictionElements.Count())
                         {
                             
@@ -119,7 +120,7 @@ namespace nexMuni
                             x = time.LastIndexOf('"');
                             time = time.Substring(9, x - 9);
 
-                            if (j < 3) times1[j] = time;
+                            if (j < 4) times1[j] = time;
                             j++;
                         }
                         StopDetailModel.routeList.Add(new RouteData(title, route, dirTitle1, times1));
@@ -140,7 +141,7 @@ namespace nexMuni
                             select e;
 
                         j = 0;
-                        times2 = new string[3];
+                        //times2 = new string[3];
                         while (j < predictionElements.Count())
                         {
                             XElement element = predictionElements.ElementAt(j);
@@ -148,7 +149,7 @@ namespace nexMuni
                             x = time.LastIndexOf('"');
                             time = time.Substring(9, x - 9);
 
-                            if (j < 3) times2[j] = time;
+                            if (j < 4) times2[j] = time;
                             j++;
                         }
                         
@@ -231,10 +232,10 @@ namespace nexMuni
                 response = await client.GetAsync(new Uri(url));
                 response.Content.Headers.Expires = System.DateTime.Now;
 
-                saved = response;
                 reader = await response.Content.ReadAsStringAsync();
                 xmlDoc = XDocument.Parse(reader);
 
+                saved = response;
                 GetSearchPredictions(xmlDoc);
             }
             catch (Exception ex)
