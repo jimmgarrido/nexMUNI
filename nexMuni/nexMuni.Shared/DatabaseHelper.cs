@@ -32,12 +32,18 @@ namespace nexMuni
             return r;
         }
 
-        public static List<Routes> QueryForRoutes()
+        public static List<string> QueryForRoutes()
         {
-            var db = new SQLiteConnection("db/muni.sqlite");
-            string query = "SELECT * FROM Routes";
+            //string path = Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, "db\\muni.sqlite");
+            SQLiteConnection db = new SQLiteConnection("db/muni.sqlite");
+            var query = db.Query<Routes>("SELECT * FROM Routes");
 
-            List<Routes> list = db.Query<Routes>(query);
+            List<string> list = new List<string>();
+
+            foreach (var route in query)
+            {
+                list.Add(route.Title);
+            }
             db.Close();
             return list;
         }
@@ -226,7 +232,7 @@ namespace nexMuni
     public class Routes
     {
         [PrimaryKey, AutoIncrement]
-        public int Id { get; set; }
+        public int ID { get; set; }
         public string Title { get; set; }
     }
 }

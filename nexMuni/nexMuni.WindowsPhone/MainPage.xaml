@@ -11,7 +11,7 @@
     xmlns:SampleData="using:Blend.SampleData.SampleStops"
     
     x:Class="nexMuni.MainPage"
-    mc:Ignorable="d" Background="#FFB31B1B"
+    mc:Ignorable="d" Background="#b31b1b"
     >
     <Page.Resources>
         <SampleData:SampleStops x:Key="SampleStops" d:IsDataSource="True"/>
@@ -46,7 +46,7 @@
                             </VisualStateManager.VisualStateGroups>
                             <ScrollViewer x:Name="ScrollViewer" HorizontalSnapPointsAlignment="Center" HorizontalSnapPointsType="MandatorySingle" HorizontalScrollBarVisibility="Hidden" Margin="{TemplateBinding Padding}" Grid.Row="1" Template="{StaticResource ScrollViewerScrollBarlessTemplate}" VerticalSnapPointsType="None" VerticalScrollBarVisibility="Disabled" VerticalScrollMode="Disabled" VerticalContentAlignment="Stretch" ZoomMode="Disabled" Padding="0,30,0,0">
                                 <PivotPanel x:Name="Panel" VerticalAlignment="Stretch">
-                                    <PivotHeaderPanel x:Name="Header" Background="#FFB31B1B" Margin="0">
+                                    <PivotHeaderPanel x:Name="Header" Background="#FFB31B1B">
                                         <PivotHeaderPanel.RenderTransform>
                                             <CompositeTransform x:Name="HeaderTranslateTransform" TranslateX="0"/>
                                         </PivotHeaderPanel.RenderTransform>
@@ -419,7 +419,7 @@
                         <TextBlock Text="Select Route" HorizontalAlignment="Center" Margin="-265,0,0,-7" FontSize="16" FontFamily="Global User Interface"/>
                         <Button Content="{Binding SelectedItem, ElementName=RoutesFlyout, Mode=TwoWay}" HorizontalAlignment="Center" Width="350" Style="{StaticResource ButtonStyle}" >
                             <Button.Flyout>
-                                <ListPickerFlyout x:Name="RoutesFlyout" Placement="Full" >
+                                <ListPickerFlyout x:Name="RoutesFlyout" Title="SELECT ROUTE" SelectedValue="{Binding SelectedItem, Mode=TwoWay}" >
                                     <ListPickerFlyout.ItemTemplate>
                                         <DataTemplate>
                                             <ContentControl Width="480" Content="{Binding}"/>

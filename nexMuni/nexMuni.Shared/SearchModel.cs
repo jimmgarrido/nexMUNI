@@ -33,15 +33,10 @@ namespace nexMuni
 
         public static void LoadRoutes()
         {
-            RoutesList = DatabaseHelper.QueryForRoutes();
-            RoutesCollection = new List<string>();
+            RoutesCollection = DatabaseHelper.QueryForRoutes();
+            //RoutesCollection = new List<string>();
             DirectionCollection = new ObservableCollection<string>();
             StopCollection = new ObservableCollection<Stop>();
-
-            foreach (Routes s in RoutesList)
-            {
-                RoutesCollection.Add(s.Title);
-            }
 
             MainPage.routePicker.ItemsSource = RoutesCollection;
         }
