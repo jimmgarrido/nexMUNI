@@ -4071,7 +4071,7 @@ a {
 .metro .navbar .navigation-bar-content .element:hover,
 .metro .navigation-bar .navbar-content .element:hover,
 .metro .navbar .navbar-content .element:hover {
-  background-color: #00aafd;
+  background-color: #0e5b5b;
 }
 .metro .navigation-bar .navigation-bar-content .element > a.dropdown-toggle,
 .metro .navbar .navigation-bar-content .element > a.dropdown-toggle,
@@ -4211,14 +4211,14 @@ a {
   margin: 0;
   padding: 0;
   list-style: none;
-  color: inherit;
+  color: #ffffff;
 }
 .metro .navigation-bar .element-menu > li,
 .metro .navbar .element-menu > li {
   display: block;
   float: left;
   position: relative;
-  color: inherit;
+  color: #ffffff;
 }
 .metro .navigation-bar .element-menu > li > a,
 .metro .navbar .element-menu > li > a {
@@ -4227,7 +4227,7 @@ a {
   width: 100%;
   padding: 15px;
   line-height: 15px;
-  color: inherit;
+  color: #ffffff;
   font-family: 'Segoe UI Light_', 'Open Sans Light', Verdana, Arial, Helvetica, sans-serif;
   font-size: 14px;
 }
