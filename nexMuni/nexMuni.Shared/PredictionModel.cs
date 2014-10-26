@@ -15,11 +15,9 @@ namespace nexMuni
 {
     class PredictionModel
     {
-        public static string URLstring {get; set;}
-        public static StopData selectedStop { get; set; }
-        public static HttpResponseMessage saved { get; set; }
+        private static string URLstring {get; set;}
 
-        public static async void GetXML(string url, StopData stop)
+        public static async void GetXML(string url)
         {
 #if WINDOWS_PHONE_APP
             var systemTray = Windows.UI.ViewManagement.StatusBar.GetForCurrentView();
@@ -27,28 +25,22 @@ namespace nexMuni
             systemTray.ProgressIndicator.ProgressValue = null;
 #endif
             URLstring = url;
-            selectedStop = stop;
 
             var response = new HttpResponseMessage();
             var client = new HttpClient();
             XDocument xmlDoc = new XDocument();
             string reader;
 
-            if (saved != null) response = saved;
-            
             //Make sure to pull from network not cache everytime predictions are refreshed 
-            response.Headers.CacheControl.Add(new HttpNameValueHeaderValue("max-age", "1"));
-            client.DefaultRequestHeaders.CacheControl.Add(new HttpNameValueHeaderValue("max-age", "1"));
-            if (response.Content != null) client.DefaultRequestHeaders.IfModifiedSince = response.Content.Headers.Expires;
+            client.DefaultRequestHeaders.IfModifiedSince = System.DateTime.Now;
             try
             {
                 response = await client.GetAsync(new Uri(URLstring));
                 response.EnsureSuccessStatusCode();
-                response.Content.Headers.Expires = System.DateTime.Now;
                 reader = await response.Content.ReadAsStringAsync();
                 xmlDoc = XDocument.Parse(reader);
 
-                GetPredictions(xmlDoc, selectedStop);
+                GetPredictions(xmlDoc, StopDetailModel.selectedStop);
             }
             catch(Exception ex)
             {
@@ -67,26 +59,24 @@ namespace nexMuni
             IEnumerable<XElement> rootElements =
                 from e in doc.Descendants("predictions")
                 select e;
-            XElement currElement;
+            XElement currElement, element;
             IEnumerable<XElement> predictionElements;
 
             string dirTitle1, dirTitle2, title, time, route, fullTitle;
-            string[] times1 = new string[3];
-            string[] times2 = new string[3];
-            int j, x, y;
+            string[] times1 = new string[4];
+            string[] times2 = new string[4];
+            int j=0, x;
 
             while(i < rootElements.Count())
             {
                 currElement = rootElements.ElementAt(i);
-                fullTitle = currElement.Attribute("routeTitle").ToString();
+                fullTitle = currElement.Attribute("routeTitle").Value;
 
                 if (fullTitle.Contains('-'))
                 {
                     x = fullTitle.IndexOf('-');   
-                    y = fullTitle.LastIndexOf('"');
-                    title = fullTitle.Substring(x + 1, y - (x + 1));
-                    y = fullTitle.IndexOf('"');
-                    route = fullTitle.Substring(y + 1, x - (y + 1));
+                    title = fullTitle.Substring(x + 1, fullTitle.Length - (x + 1));
+                    route = fullTitle.Substring(0, x );
                 } else
                 {
                     x = fullTitle.IndexOf('"');
@@ -101,25 +91,19 @@ namespace nexMuni
                     currElement = currElement.Element("direction");
                     if (currElement != null)
                     {
-                        dirTitle1 = currElement.Attribute("title").ToString();
-                        x = dirTitle1.LastIndexOf('"');
-                        dirTitle1 = dirTitle1.Substring(7, x - 7);
+                        dirTitle1 = currElement.Attribute("title").Value;;
 
                         predictionElements =
                             from e in currElement.Descendants("prediction")
                             select e;
 
                         j = 0;
-                        times1 = new string[3];
                         while (j < predictionElements.Count())
-                        {
-                            
-                            XElement element = predictionElements.ElementAt(j);
-                            time = element.Attribute("minutes").ToString();
-                            x = time.LastIndexOf('"');
-                            time = time.Substring(9, x - 9);
+                        {                           
+                            element = predictionElements.ElementAt(j);
+                            time = element.Attribute("minutes").Value;
 
-                            if (j < 3) times1[j] = time;
+                            if (j < 4) times1[j] = time;
                             j++;
                         }
                         StopDetailModel.routeList.Add(new RouteData(title, route, dirTitle1, times1));
@@ -131,24 +115,19 @@ namespace nexMuni
 
                     if (currElement != null)
                     {
-                        dirTitle2 = currElement.Attribute("title").ToString();
-                        x = dirTitle2.LastIndexOf('"');
-                        dirTitle2 = dirTitle2.Substring(7, x - 7);
+                        dirTitle2 = currElement.Attribute("title").Value ;
 
                         predictionElements =
                             from e in currElement.Descendants("prediction")
                             select e;
 
                         j = 0;
-                        times2 = new string[3];
                         while (j < predictionElements.Count())
                         {
-                            XElement element = predictionElements.ElementAt(j);
-                            time = element.Attribute("minutes").ToString();
-                            x = time.LastIndexOf('"');
-                            time = time.Substring(9, x - 9);
+                            element = predictionElements.ElementAt(j);
+                            time = element.Attribute("minutes").Value;
 
-                            if (j < 3) times2[j] = time;
+                            if (j < 4) times2[j] = time;
                             j++;
                         }
                         
@@ -166,7 +145,7 @@ namespace nexMuni
             if (StopDetailModel.routeList.Count == 0) StopDetail.noTimeText.Visibility = Windows.UI.Xaml.Visibility.Visible;
         }
 
-        private static void GetSearchPredictions(XDocument doc)
+        private static void GetPredictions(XDocument doc)
         {
             string [] searchTimes = new string[5];
             int i = 0;
@@ -204,38 +183,32 @@ namespace nexMuni
             if (times == null) times = "No busses at this time";
             else times = times + " mins";
             
-            MainPage.searchText.Text = times;
+            MainPage.timesText.Text = times;
         }
 
         internal static void UpdateTimes()
         {
             StopDetailModel.routeList.Clear();
-            GetXML(URLstring, selectedStop);
+            GetXML(URLstring);
         }
 
-        internal static async void SearchPredictions(Stop selectedStop, string route, string url)
+        internal static async Task SearchPredictions(StopData selectedStop, string route, string url)
         {
             var response = new HttpResponseMessage();
             var client = new HttpClient();
             XDocument xmlDoc = new XDocument();
             string reader;
 
-            if (saved != null) response = saved;
-
-            //Make sure to ppull from network not cache everytime predictions are refreshed 
-            response.Headers.CacheControl.Add(new HttpNameValueHeaderValue("max-age", "1"));
-            client.DefaultRequestHeaders.CacheControl.Add(new HttpNameValueHeaderValue("max-age", "1"));
-            if (response.Content != null) client.DefaultRequestHeaders.IfModifiedSince = response.Content.Headers.Expires;
+            //Make sure to pull from network not cache everytime predictions are refreshed 
+            client.DefaultRequestHeaders.IfModifiedSince = System.DateTime.Now;
             try
             {
                 response = await client.GetAsync(new Uri(url));
-                response.Content.Headers.Expires = System.DateTime.Now;
 
-                saved = response;
                 reader = await response.Content.ReadAsStringAsync();
-                xmlDoc = XDocument.Parse(reader);
+                //xmlDoc = XDocument.Parse(reader);
 
-                GetSearchPredictions(xmlDoc);
+                GetPredictions(XDocument.Parse(reader));
             }
             catch (Exception ex)
             {

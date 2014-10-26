@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest" xmlns:m3="http://schemas.microsoft.com/appx/2014/manifest" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest">
-  <Identity Name="10642JimmyGarrido.nexMuni" Publisher="CN=28976100-24E8-4BA4-858A-2545BD9EA0E9" Version="1.7.5.0" />
-  <mp:PhoneIdentity PhoneProductId="7c99cdf3-4d55-4294-956a-ab4e8d6355c9" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
+  <Identity Name="10642JimmyGarrido.nexMuni" Publisher="CN=28976100-24E8-4BA4-858A-2545BD9EA0E9" Version="1.8.1.0" />
+  <mp:PhoneIdentity PhoneProductId="132f3146-bca8-42a3-a04a-e3d4171c4125" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>nexMuni</DisplayName>
     <PublisherDisplayName>nexDevelopment</PublisherDisplayName>

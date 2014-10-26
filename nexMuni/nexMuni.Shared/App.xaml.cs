@@ -77,6 +77,14 @@ namespace nexMuni
             if (rootFrame.Content == null)
             {
 #if WINDOWS_PHONE_APP
+                var statusBar = Windows.UI.ViewManagement.StatusBar.GetForCurrentView();
+                statusBar.ForegroundColor = Colors.White;
+                statusBar.BackgroundColor = Color.FromArgb(100, 179, 27, 27);
+                statusBar.BackgroundOpacity = 1;
+                statusBar.ProgressIndicator.Text = "nexMuni";
+                statusBar.ProgressIndicator.ShowAsync();
+                statusBar.ProgressIndicator.ProgressValue = 0;
+
                 // Removes the turnstile navigation for startup.
                 if (rootFrame.ContentTransitions != null)
                 {
@@ -89,13 +97,6 @@ namespace nexMuni
 
                 rootFrame.ContentTransitions = null;
                 rootFrame.Navigated += this.RootFrame_FirstNavigated;
-
-                var statusBar = Windows.UI.ViewManagement.StatusBar.GetForCurrentView();
-                statusBar.BackgroundColor = Color.FromArgb(100, 179, 27, 27);
-                statusBar.BackgroundOpacity = 1;
-                statusBar.ProgressIndicator.Text = "nexMuni";
-                statusBar.ProgressIndicator.ShowAsync();
-                statusBar.ProgressIndicator.ProgressValue = 0;
 
 #endif
 

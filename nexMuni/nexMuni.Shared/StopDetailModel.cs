@@ -12,35 +12,31 @@ namespace nexMuni
     class StopDetailModel
     {
         public static ObservableCollection<RouteData> routeList;
-        public static string url { get; set; }
         public static string baseURL {get; set;}
+        public static StopData selectedStop { get; set; }
 
         public static void LoadData(StopData stop)
-        {            
+        {
+            selectedStop = stop;
+
             baseURL = "http://webservices.nextbus.com/service/publicXMLFeed?command=predictionsForMultiStops&a=sf-muni";
             StringBuilder cont = new StringBuilder();
             
             int i = 0;
-            if(stop.TagsSplit == null)
-            {
-                stop.TagsSplit = stop.Tags.Split(',');
-            }
+            string[] splitTags = stop.Tags.Split(',');
 
-            if (stop.RoutesSplit == null)
-            {
-                stop.RoutesSplit = stop.Routes.Split(',');
-                stop.RoutesSplit[0] = " " + stop.RoutesSplit[0];
-            }
+            string[] splitRoutes = stop.Routes.Split(',');
+            splitRoutes[0] = " " + splitRoutes[0];
 
-            while (i < stop.TagsSplit.Length)
+            while (i < splitTags.Length)
             {
-                cont.Append("&stops=" + stop.TagsSplit[i]);
+                cont.Append("&stops=" + splitTags[i]);
                 i++;
             }
 
-            url = baseURL + cont.ToString();
+            string url = baseURL + cont.ToString();
 
-            PredictionModel.GetXML(url, stop); 
+            PredictionModel.GetXML(url);
         }
     }
 }

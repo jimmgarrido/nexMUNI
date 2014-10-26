@@ -16,16 +16,12 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// The Basic Page item template is documented at http://go.microsoft.com/fwlink/?LinkID=390556
-
 namespace nexMuni
 {
     public sealed partial class StopDetail : Page
     {
         private NavigationHelper navigationHelper;
         private ObservableDictionary defaultViewModel = new ObservableDictionary();
-        public static StopData selectedStop;
-        public BusStop stop;
         public static TextBlock noTimeText { get; set; }
 
         public StopDetail()
@@ -67,10 +63,11 @@ namespace nexMuni
         /// session.  The state will be null the first time a page is visited.</param>
         private void NavigationHelper_LoadState(object sender, LoadStateEventArgs e)
         {
-            selectedStop = e.NavigationParameter as StopData;
-            StopHeader.Text = selectedStop.Name;
+            StopDetailModel.selectedStop = e.NavigationParameter as StopData;
+
+            StopHeader.Text = StopDetailModel.selectedStop.Name;
             removeBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-            favBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            favBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
             noTimeText = new TextBlock();
             noTimeText = noTimes;
             noTimes.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
@@ -80,18 +77,19 @@ namespace nexMuni
             RouteInfoList.ItemsSource = StopDetailModel.routeList;
 
             //Check if the stop is in user's favorites list
-            if (MainPageModel.favoritesStops.Any(x => x.Name == selectedStop.Name))
+            if (MainPageModel.favoritesStops.Any(x => x.Name == StopDetailModel.selectedStop.Name))
             {
-                foreach(StopData s in MainPageModel.favoritesStops)
+                foreach (StopData s in MainPageModel.favoritesStops)
                 {
-                    if(s.Name == selectedStop.Name) selectedStop.FavID = s.FavID;
+                    if (s.Name == StopDetailModel.selectedStop.Name) StopDetailModel.selectedStop.FavID = s.FavID;
                 }
                 removeBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
                 favBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
             }
+            else favBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
 
             //noTimes.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-            StopDetailModel.LoadData(selectedStop);
+            StopDetailModel.LoadData(StopDetailModel.selectedStop);
         }
 
         /// <summary>
@@ -113,14 +111,14 @@ namespace nexMuni
 
         private void FavoriteStop(object sender, RoutedEventArgs e)
         {
-            DatabaseHelper.AddFavorite(selectedStop);
+            DatabaseHelper.AddFavorite(StopDetailModel.selectedStop);
             favBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
             removeBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
         }
 
         private void RemoveStop(object sender, RoutedEventArgs e)
         {
-            DatabaseHelper.RemoveFavorite(selectedStop);
+            DatabaseHelper.RemoveFavorite(StopDetailModel.selectedStop);
             removeBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
             favBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
         }

@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Windows.UI.Xaml.Controls.Maps;
 using Windows.Storage.Streams;
+using System.Threading.Tasks;
 
 namespace nexMuni
 {
@@ -17,7 +18,7 @@ namespace nexMuni
         private static double PhoneLong { get; set; }
         public static Geoposition PhoneLocation { get; set; }
 
-        public static async void UpdateNearbyList()
+        public static async Task UpdateNearbyList()
         {
 #if WINDOWS_PHONE_APP
             var systemTray = Windows.UI.ViewManagement.StatusBar.GetForCurrentView();
@@ -30,7 +31,7 @@ namespace nexMuni
 
             MapIcon icon = new MapIcon();
             icon.Image = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/Location.png"));
-            var position = await geolocator.GetGeopositionAsync();
+            var position = await geolocator.GetGeopositionAsync(maximumAge: TimeSpan.FromSeconds(5), timeout: TimeSpan.FromSeconds(30));
             PhoneLocation = position;
             icon.Location = position.Coordinate.Point;
             icon.ZIndex = 99;
@@ -41,8 +42,8 @@ namespace nexMuni
 #if WINDOWS_PHONE_APP
             systemTray.ProgressIndicator.Text = "Locating Stops";
 #endif
-
-            FindNearby(position.Coordinate.Point, 0.5, 0);
+            //Find nearby stops in the database
+            DatabaseHelper.QueryForNearby(position.Coordinate.Point, 0.5);
 
 #if WINDOWS_PHONE_APP           
             systemTray.ProgressIndicator.ProgressValue = 0;
@@ -50,44 +51,16 @@ namespace nexMuni
 #endif
         }
 
-        public static void FindNearby(Geopoint location, double dist, int count)
+        public static double[][] MakeBounds(Geopoint location, double dist)
         {
-            int counter = 0;
+            PhoneLat = location.Position.Latitude;
+            PhoneLong = location.Position.Longitude;
 
-            if (count < 5)
-            {
-                PhoneLat = location.Position.Latitude;
-                PhoneLong = location.Position.Longitude;
-
-                //code to create bounds
-                double[][] bounds = new double[][] { Destination(PhoneLat, PhoneLong, 0.0, dist),
-                                                 Destination(PhoneLat, PhoneLong, 90.0, dist),
-                                                 Destination(PhoneLat, PhoneLong, 180.0, dist),
-                                                 Destination(PhoneLat, PhoneLong, 270.0, dist)};
-
-                //query db with bounds
-                List<BusStop> results = DatabaseHelper.QueryDatabase(bounds, location, dist, count);
-
-                foreach (BusStop stop in results)
-                {
-                    stop.Distance = Distance(stop.Latitude, stop.Longitude);
-                }
-                IEnumerable<BusStop> sortedList =
-                    from s in results
-                    orderby s.Distance
-                    select s;
-
-                foreach (BusStop d in sortedList)
-                {
-                    if (counter < 15)
-                    {
-                        MainPageModel.nearbyStops.Add(new StopData(d.StopName, d.Routes, d.StopTags, d.Distance, d.Latitude, d.Longitude));
-                        counter++;
-                    }
-                    else break;
-                }
-            }
-            else MainPage.nearbyText.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            //Create search radius bounds
+           return new double[][] { Destination(PhoneLat, PhoneLong, 0.0, dist),
+                                                Destination(PhoneLat, PhoneLong, 90.0, dist),
+                                                Destination(PhoneLat, PhoneLong, 180.0, dist),
+                                                Destination(PhoneLat, PhoneLong, 270.0, dist)};
         }
 
         private static double[] Destination(double lat, double lon, double bearing, double d)
@@ -115,7 +88,7 @@ namespace nexMuni
             return (180 / Math.PI) * radians;
         }
 
-        private static double Distance(double latB, double lonB)
+        public static double Distance(double latB, double lonB)
         {
             double rLatA = Deg2Rad(PhoneLat);
             double rLatB = Deg2Rad(latB);
