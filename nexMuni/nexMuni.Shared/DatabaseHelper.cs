@@ -8,30 +8,37 @@ using Windows.Devices.Geolocation;
 using Windows.Storage;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
+using System.Collections.ObjectModel;
+using Windows.ApplicationModel;
 
 namespace nexMuni
 {
     class DatabaseHelper
     {
-        protected static string path = string.Empty;
+        protected static string favDBPath = string.Empty;
 
-        public static List<BusStop> QueryDatabase(double[][] b, Geopoint l, double d, int c)
+        public static async Task CheckDB()
         {
-            var db = new SQLiteConnection("db/muni.sqlite");
-            string query = "SELECT * FROM BusStops WHERE Longitude BETWEEN " + b[3][1] + " AND " + b[1][1] + " AND Latitude BETWEEN " + b[2][0] + " AND " + b[0][0];
-            List<BusStop> r = db.Query<BusStop>(query);
-
-            if ((r.Count == 0 || r.Count < 15))
+            bool dbExists = false;
+            try
             {
-                c++;
-                LocationHelper.FindNearby(l, d += 0.50, c);
-
+                StorageFile muniDB = await ApplicationData.Current.LocalFolder.GetFileAsync("muni.sqlite");
+                dbExists = true;
             }
-            else db.Close();
+            catch
+            {
+                dbExists = false;
+            }
 
-            return r;
+            if(!dbExists)
+            {
+                StorageFile dbFile = await Package.Current.InstalledLocation.GetFileAsync("db\\muni.sqlite");
+                await dbFile.CopyAsync(ApplicationData.Current.LocalFolder);
+            }
+
         }
 
+<<<<<<< HEAD
         public static List<string> QueryForRoutes()
         {
             //string path = Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, "db\\muni.sqlite");
@@ -45,26 +52,50 @@ namespace nexMuni
                 list.Add(route.Title);
             }
             db.Close();
+=======
+        public async static Task QueryForNearby(Geopoint point, double dist)
+        {
+            //Get search bounds from location and given radius
+            double[][] bounds = LocationHelper.MakeBounds(point, dist);
+
+            //Query database for stops
+            string query = "SELECT * FROM BusStops WHERE Longitude BETWEEN " + bounds[3][1] + " AND " + bounds[1][1] + " AND Latitude BETWEEN " + bounds[2][0] + " AND " + bounds[0][0];
+            SQLiteAsyncConnection db = new SQLiteAsyncConnection("muni.sqlite");
+            var results = await db.QueryAsync<BusStop>(query);
+
+            //Check results for enough stops. If less than 5 returned, call method again with larger radius
+            if (results.Count < 5)
+            {
+                QueryForNearby(point, dist += 0.50);
+            }
+            else MainPageModel.DisplayResults(results);
+        }
+
+        public static async Task<List<string>> QueryForRoutes()
+        {
+            SQLiteAsyncConnection db = new SQLiteAsyncConnection("muni.sqlite");
+            var query = await db.QueryAsync<Routes>("SELECT * FROM Routes");
+
+            List<string> list = new List<string>();
+
+            foreach (var route in query)
+            {
+                list.Add(route.Title);
+            }
+
+>>>>>>> origin/master
             return list;
         }
 
-        public static async void LoadFavoritesDB()
+        public static async Task CheckFavDB()
         {
             StorageFile file = null;
             try
             {
                 file = await ApplicationData.Current.LocalFolder.GetFileAsync("favorites.sqlite");
-                path = file.Path;
-                DateTimeOffset created = file.DateCreated;
-                DateTimeOffset compare = new DateTimeOffset(new DateTime(2014, 07, 30));
+                favDBPath = file.Path;
 
-                if (created <= compare)
-                {
-                    await file.DeleteAsync();
-                    file = await ApplicationData.Current.LocalFolder.GetFileAsync("favorites.sqlite");
-                }
-
-                LoadFavorites();
+                GetFavorites();
             }
             catch (FileNotFoundException)
             {
@@ -72,63 +103,25 @@ namespace nexMuni
             }
         }
 
-        public static void LoadFavorites()
+        public static async Task GetFavorites()
         {
             if (MainPageModel.favoritesStops != null) MainPageModel.favoritesStops.Clear();
 
-            var favDB = new SQLiteConnection(path);
-
-            string query = "SELECT * FROM FavoriteData";
-            List<FavoriteData> favList = favDB.Query<FavoriteData>(query);
-
-            if (favList.Count > 0)
-            {
-                foreach (FavoriteData s in favList)
-                {
-                    if (MainPage.favText.Visibility != Windows.UI.Xaml.Visibility.Collapsed) MainPage.favText.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-                    MainPageModel.favoritesStops.Add(new StopData(s.Name, s.Routes, s.Tags, 0.000, s.Lat, s.Lon, s.Id.ToString()));
-                }
-            }
-            else MainPage.favText.Visibility = Windows.UI.Xaml.Visibility.Visible;
-            favDB.Close();
-
-            SyncIDS();
+            SQLiteAsyncConnection favDB = new SQLiteAsyncConnection(favDBPath);
+            var results = await favDB.QueryAsync<FavoriteData>("SELECT * FROM FavoriteData");
+            if (results.Count > 0) MainPageModel.DisplayResults(results);
+            else MainPage.noFavsText.Visibility = Windows.UI.Xaml.Visibility.Visible;
         }
 
-        public static async void MakeFavDB(StorageFile f)
+        public static async Task MakeFavDB(StorageFile f)
         {
             await ApplicationData.Current.LocalFolder.CreateFileAsync("favorites.sqlite");
             f = await ApplicationData.Current.LocalFolder.GetFileAsync("favorites.sqlite");
-            path = f.Path;
+            favDBPath = f.Path;
 
-            var favDB = new SQLiteConnection(path);
-            favDB.CreateTable<FavoriteData>();
-            favDB.Close();
-            LoadFavoritesDB();
-        }
-
-        public static void AddFavorite(StopData stop)
-        {
-            var favDB = new SQLiteConnection(path); 
-            var s = favDB.Insert(new FavoriteData
-                {
-                    Name = stop.Name,
-                    Routes = stop.Routes,
-                    Tags = stop.Tags,
-                    Lat = stop.Lat,
-                    Lon = stop.Lon
-                });
-            favDB.Close();
-            LoadFavorites();
-        }
-
-        public static void RemoveFavorite(StopData stop)
-        {
-            var favDB = new SQLiteConnection(path);
-            string q = "DELETE FROM FavoriteData WHERE Id IS " + stop.FavID;
-            favDB.Query<FavoriteData>(q);
-            favDB.Close();
-            LoadFavorites();
+            SQLiteAsyncConnection favDB = new SQLiteAsyncConnection(favDBPath);
+            await favDB.CreateTableAsync<FavoriteData>();
+            GetFavorites();
         }
 
         public static void SyncIDS()
@@ -145,9 +138,32 @@ namespace nexMuni
             }
         }
 
-        public static void FavoriteFromSearch(Stop selection)
+        public static async Task AddFavorite(StopData stop)
         {
-            string title = selection.title;
+            SQLiteAsyncConnection favDB = new SQLiteAsyncConnection(favDBPath); 
+            await favDB.InsertAsync(new FavoriteData
+                {
+                    Name = stop.Name,
+                    Routes = stop.Routes,
+                    Tags = stop.Tags,
+                    Lat = stop.Lat,
+                    Lon = stop.Lon
+                });
+            await GetFavorites();
+        }
+
+        public static async Task RemoveFavorite(StopData stop)
+        {
+            SQLiteAsyncConnection favDB = new SQLiteAsyncConnection(favDBPath);
+            string q = "DELETE FROM FavoriteData WHERE Id IS " + stop.FavID;
+            await favDB.QueryAsync<FavoriteData>(q);
+            await GetFavorites();
+        }
+
+
+        public static async Task FavoriteFromSearch(StopData selection)
+        {
+            string title = selection.Name;
             if (title.Contains("Inbound"))
             {
                 title = title.Replace(" Inbound", "");
@@ -157,9 +173,9 @@ namespace nexMuni
                 title = title.Replace(" Outbound", "");
             }
  
-            var db = new SQLiteConnection("db/muni.sqlite");
+            SQLiteAsyncConnection db = new SQLiteAsyncConnection("muni.sqlite");
             string query = "SELECT * FROM BusStops WHERE StopName = \'" + title + "\'";
-            List<BusStop> results = db.Query<BusStop>(query);
+            List<BusStop> results = await db.QueryAsync<BusStop>(query);
             
             //If stop name not found in db, most likely a stop that was a ducplicate and merged so reverse it and search again
             if(results.Count == 0)
@@ -168,13 +184,13 @@ namespace nexMuni
                 title = temp[1].Substring(1) + " & " + temp[0].Substring(0, (temp[0].Length - 1));
 
                 query = "SELECT * FROM BusStops WHERE StopName = \'" + title + "\'";
-                results = db.Query<BusStop>(query);
+                results = await db.QueryAsync<BusStop>(query);
             }
-            db.Close();
-            var favDB = new SQLiteConnection(path);
+ 
+            SQLiteAsyncConnection favDB = new SQLiteAsyncConnection(favDBPath);
             foreach(BusStop x in results)
             {              
-                var y = favDB.Insert(new FavoriteData
+                await favDB.InsertAsync(new FavoriteData
                 {
                     Name = x.StopName,
                     Routes = x.Routes,
@@ -183,20 +199,20 @@ namespace nexMuni
                     Lon = x.Longitude
                 });
             }
-            favDB.Close();
-            LoadFavorites();
+            
+            await GetFavorites();
         }
 
-        public static void RemoveSearch(Stop selection)
+        public static async Task RemoveSearch(StopData selection)
         {
-            var favDB = new SQLiteConnection(path);
+            SQLiteAsyncConnection favDB = new SQLiteAsyncConnection(favDBPath);
             string q = "DELETE FROM FavoriteData WHERE Id IS " + selection.FavID;
-            favDB.Query<FavoriteData>(q);
-            favDB.Close();
-            LoadFavorites();
+            await favDB.QueryAsync<FavoriteData>(q);
+            await GetFavorites();
         }
     }
 
+    [Table("BusStops")]
     public class BusStop
     {
         [PrimaryKey, AutoIncrement]

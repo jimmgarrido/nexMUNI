@@ -12,57 +12,77 @@ using Windows.UI.Xaml.Controls.Maps;
 using Windows.Foundation;
 using Windows.Storage.Streams;
 using Windows.UI;
+using System.Threading.Tasks;
 
 namespace nexMuni
 {
     class SearchModel
     {
         public static bool IsDataLoaded { get; set; }
-        public static List<string> RoutesCollection { get; set; }
-        public static ObservableCollection<string> DirectionCollection { get; set; }
-        public static ObservableCollection<Stop> StopCollection { get; set; }
-        public static HttpResponseMessage saved { get; set; }
+        public static ObservableCollection<string> DirectionsList { get; set; }
+        public static ObservableCollection<StopData> stopsList { get; set; }
         public static List<string> outboundStops = new List<string>();
         public static List<string> inboundStops = new List<string>();
-        public static List<Stop> StopsList = new List<Stop>();
-        public static List<Routes> RoutesList;
-        public static List<Stop> FoundStops = new List<Stop>();
-        public static string title, stopID, lat, lon, tag;
+        public static List<StopData> allStopsList = new List<StopData>();
+        public static StopData foundStop;
         private static string selectedRoute;
-        public static Stop selectedStop { get; set; }
+        public static StopData selectedStop { get; set; }
 
-        public static void LoadRoutes()
+        public static async Task LoadData()
         {
+<<<<<<< HEAD
             RoutesCollection = DatabaseHelper.QueryForRoutes();
             //RoutesCollection = new List<string>();
             DirectionCollection = new ObservableCollection<string>();
             StopCollection = new ObservableCollection<Stop>();
 
             MainPage.routePicker.ItemsSource = RoutesCollection;
+=======
+            await LoadRoutes();
+
+            DirectionsList = new ObservableCollection<string>();
+            stopsList = new ObservableCollection<StopData>();
+
+            MainPage.dirComboBox.ItemsSource = SearchModel.DirectionsList;
+            MainPage.stopPicker.ItemsSource = SearchModel.stopsList;
+
+            MainPage.routePicker.ItemsPicked += SearchModel.RouteSelected;
+            MainPage.dirComboBox.SelectionChanged += SearchModel.DirSelected;
+            MainPage.stopPicker.ItemsPicked += SearchModel.StopSelected;
+
+>>>>>>> origin/master
         }
 
-        public static void RouteSelected(ListPickerFlyout sender, ItemsPickedEventArgs args)
+        public static async Task LoadRoutes()
+        {
+            MainPage.routePicker.ItemsSource = await DatabaseHelper.QueryForRoutes();
+            MainPage.routeBtn.IsEnabled = true;
+        }
+
+        public static async void RouteSelected(ListPickerFlyout sender, ItemsPickedEventArgs args)
         {
             #if WINDOWS_PHONE_APP
                         var systemTray = Windows.UI.ViewManagement.StatusBar.GetForCurrentView();
                         systemTray.ProgressIndicator.ProgressValue = null;
             #endif
 
-            string selectedRoute = sender.SelectedItem.ToString();
-            if (DirectionCollection.Count != 0)
-            {
-                MainPage.dirComboBox.SelectedIndex = -1;
-                DirectionCollection.Clear();
-            }
-            if (StopCollection.Count != 0)
-            {
-                MainPage.stopPicker.SelectedIndex = -1;
-                StopCollection.Clear();
-            }
-            MainPage.searchText.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            selectedRoute = sender.SelectedItem.ToString();
+            MainPage.routeBtn.Content = selectedRoute;
+            MainPage.timesText.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
             MainPage.favSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
 
-            LoadDirections(selectedRoute);
+            if (DirectionsList.Count != 0)
+            {
+                MainPage.dirComboBox.SelectedIndex = -1;
+                DirectionsList.Clear();
+            }
+            if (stopsList.Count != 0)
+            {
+                MainPage.stopPicker.SelectedIndex = -1;
+                stopsList.Clear();
+            }
+
+            await LoadDirections(selectedRoute);
 
             MainPage.dirText.Visibility = Windows.UI.Xaml.Visibility.Visible;
             MainPage.dirComboBox.Visibility = Windows.UI.Xaml.Visibility.Visible;
@@ -72,43 +92,35 @@ namespace nexMuni
             #endif
         }
 
-        private static async void LoadDirections(string _route)
+        private static async Task LoadDirections(string _route)
         {
-            string URL = "http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=sf-muni&r=";
+            string dirURL = "http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=sf-muni&r=";
 
             if (_route.Equals("Powell/Mason Cable Car")) _route = "59";
             else if (_route.Equals("Powell/Hyde Cable Car")) _route = "60";
             else if (_route.Equals("California Cable Car")) _route = "61";
             else
             {
-                int i = _route.IndexOf('-');
-                _route = _route.Substring(0, i);
+                _route = _route.Substring(0, _route.IndexOf('-'));
             }
             
-            selectedRoute = _route;
-            URL = URL + _route;
+            //selectedRoute = _route;
+            dirURL = dirURL + _route;
 
             var response = new HttpResponseMessage();
             var client = new HttpClient();
             XDocument xmlDoc = new XDocument();
             string reader;
 
-            if (saved != null) response = saved;
-
             //Make sure to pull from network not cache everytime predictions are refreshed 
-            response.Headers.CacheControl.Add(new HttpNameValueHeaderValue("max-age", "1"));
-            client.DefaultRequestHeaders.CacheControl.Add(new HttpNameValueHeaderValue("max-age", "1"));
-            if (response.Content != null) client.DefaultRequestHeaders.IfModifiedSince = response.Content.Headers.Expires;
+            client.DefaultRequestHeaders.IfModifiedSince = System.DateTime.Now;
             try
             {
-                response = await client.GetAsync(new Uri(URL));
-                response.Content.Headers.Expires = System.DateTime.Now;
-                saved = response;
+                response = await client.GetAsync(new Uri(dirURL));
 
                 reader = await response.Content.ReadAsStringAsync();
-                xmlDoc = XDocument.Parse(reader);
 
-                GetDirections(xmlDoc);  
+                GetDirections(XDocument.Parse(reader));  
             }
             catch(Exception ex)
             {
@@ -129,13 +141,11 @@ namespace nexMuni
             //Add all route's stops to a collection
             foreach (XElement el in elements)
             {
-                title = el.Attribute("title").Value;
-                stopID = el.Attribute("stopId").Value;
-                lon = el.Attribute("lon").Value;
-                lat = el.Attribute("lat").Value;
-                tag = el.Attribute("tag").Value;
-
-                StopsList.Add(new Stop(title, stopID, tag, lon, lat));
+                allStopsList.Add(new StopData(el.Attribute("title").Value,
+                                              el.Attribute("stopId").Value, 
+                                              el.Attribute("tag").Value, 
+                                              el.Attribute("lon").Value, 
+                                              el.Attribute("lat").Value));
             }
 
             //Move to direction element
@@ -146,7 +156,7 @@ namespace nexMuni
             foreach (XElement el in elements)
             {   
                 //Add direction title
-                DirectionCollection.Add(el.Attribute("title").Value);
+                DirectionsList.Add(el.Attribute("title").Value);
 
                 if(el.Attribute("name").Value == "Inbound")
                 {
@@ -181,9 +191,9 @@ namespace nexMuni
             MapRouteView(doc);
         }
 
-        private static void MapRouteView(XDocument doc)
+        private static async void MapRouteView(XDocument doc)
         {
-            MainPage.searchMap.TrySetViewAsync(new Geopoint(new BasicGeoposition() { Latitude = 37.7599, Longitude = -122.437 }), 11.5);
+            await MainPage.searchMap.TrySetViewAsync(new Geopoint(new BasicGeoposition() { Latitude = 37.7599, Longitude = -122.437 }), 11.5);
             List<BasicGeoposition> positions = new List<BasicGeoposition>();
             IEnumerable<XElement> subElements;
             List<MapPolyline> route = new List<MapPolyline>();
@@ -232,33 +242,37 @@ namespace nexMuni
                 string selectedDir = ((ComboBox)sender).SelectedItem.ToString();
                 LoadStops(selectedDir);
             }
-
-            MainPage.stopText.Visibility = Windows.UI.Xaml.Visibility.Visible;
-            MainPage.stopBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
-            MainPage.searchText.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-            MainPage.favSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
         }
 
         private static void LoadStops(string _dir)
         {
-            if(StopCollection.Count != 0) StopCollection.Clear();
+            if(stopsList.Count != 0) stopsList.Clear();
 
             if(_dir.Contains("Inbound"))
             {
                 foreach(string s in inboundStops)
                 {
-                    FoundStops = StopsList.FindAll(z => z.tag == s);
-                    StopCollection.Add(new Stop(FoundStops[0].title, FoundStops[0].stopID, FoundStops[0].tag, FoundStops[0].lon.ToString(), FoundStops[0].lat.ToString()));
+                    foundStop = allStopsList.Find(z => z.Tags == s);
+                    //stopsList.Add(new StopData(foundStop.Name, foundStop.StopID, foundStop.Tags, foundStop.Lon.ToString(), foundStop.Lat.ToString()));
+                    stopsList.Add(foundStop);
                 }
             }
             else if(_dir.Contains("Outbound"))
             {
                 foreach(string s in outboundStops)
                 {
-                    FoundStops = StopsList.FindAll(z => z.tag == s);
-                    StopCollection.Add(new Stop(FoundStops[0].title, FoundStops[0].stopID, FoundStops[0].tag, FoundStops[0].lon.ToString(), FoundStops[0].lat.ToString()));
+                    foundStop = allStopsList.Find(z => z.Tags == s);
+                    //stopsList.Add(new StopData(FoundStops[0].title, FoundStops[0].stopID, FoundStops[0].tag, FoundStops[0].lon.ToString(), FoundStops[0].lat.ToString()));
+                    stopsList.Add(foundStop);
                 }
             }
+
+            MainPage.stopBtn.IsEnabled = true;
+            MainPage.stopBtn.Content = String.Empty;
+            MainPage.stopText.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            MainPage.stopBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            MainPage.timesText.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            MainPage.favSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
         }
 
         public static async void StopSelected(ListPickerFlyout sender, ItemsPickedEventArgs args)
@@ -271,8 +285,10 @@ namespace nexMuni
                 systemTray.ProgressIndicator.ProgressValue = null;
 #endif
 
-                selectedStop = sender.SelectedItem as Stop;
-                string title = selectedStop.title;
+                selectedStop = sender.SelectedItem as StopData;
+                string title = selectedStop.Name;
+                MainPage.stopBtn.Content = title;
+
                 if (title.Contains("Inbound"))
                 {
                     title = title.Replace(" Inbound", "");
@@ -282,7 +298,7 @@ namespace nexMuni
                     title = title.Replace(" Outbound", "");
                 }
 
-                string[] temp = selectedStop.title.Split('&');
+                string[] temp = selectedStop.Name.Split('&');
                 string reversed;
                 if (temp.Count() > 1)
                 {
@@ -290,15 +306,12 @@ namespace nexMuni
                 }
                 else reversed = "";
 
-                string url = "http://webservices.nextbus.com/service/publicXMLFeed?command=predictions&a=sf-muni&stopId=" + selectedStop.stopID + "&routeTag=" + selectedRoute;
+                string timesURL = "http://webservices.nextbus.com/service/publicXMLFeed?command=predictions&a=sf-muni&stopId=" + selectedStop.StopID + "&routeTag=" + selectedRoute.Substring(0, selectedRoute.IndexOf('-'));
 
-                await MainPage.searchMap.TrySetViewAsync(new Geopoint(new BasicGeoposition() { Latitude = selectedStop.lat, Longitude = selectedStop.lon }), 16.5);
+                //await MainPage.searchMap.TrySetViewAsync(new Geopoint(new BasicGeoposition() { Latitude = selectedStop.Lat, Longitude = selectedStop.Lon }), 16.5);
 
-                if (MainPage.searchText.Visibility == Windows.UI.Xaml.Visibility.Visible) MainPage.searchText.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                if (MainPage.timesText.Visibility == Windows.UI.Xaml.Visibility.Visible) MainPage.timesText.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
                 if (MainPage.favSearchBtn.Visibility == Windows.UI.Xaml.Visibility.Visible) MainPage.favSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-
-                //Get bus predictions for stop
-                PredictionModel.SearchPredictions(selectedStop, selectedRoute, url);
 
                 //Check to see if the stop is in user's favorites list
                 if (MainPageModel.favoritesStops.Any(z => z.Name == title || z.Name == reversed))
@@ -307,48 +320,25 @@ namespace nexMuni
                     {
                         if (s.Name == title) selectedStop.FavID = s.FavID;
                     }
-                    MainPage.searchText.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                    MainPage.timesText.Visibility = Windows.UI.Xaml.Visibility.Visible;
                     MainPage.favSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
                     //MainPage.removeSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
                 }
                 else
                 {
-                    MainPage.searchText.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                    MainPage.timesText.Visibility = Windows.UI.Xaml.Visibility.Visible;
                     MainPage.favSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
                     MainPage.removeSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
                 }
+
+                //Get bus predictions for stop
+                await PredictionModel.SearchPredictions(selectedStop, selectedRoute, timesURL);
 
 #if WINDOWS_PHONE_APP
                 systemTray.ProgressIndicator.ProgressValue = 0;
                 systemTray.ProgressIndicator.Text = "nexMuni";
 #endif
             }
-            else
-            {
-                MainPage.searchText.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-                MainPage.favSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-            }
-        }
-    }
-
-    public class Stop
-    {
-        public string title { get; set; }
-        public string stopID;
-        public double lon;
-        public double lat;
-        public string tag;
-        public string FavID { get; set; }
-
-        public Stop() {}
-
-        public Stop(string _title, string _id, string _tag, string _lon, string _lat)
-        {
-            title = _title;
-            stopID = _id;
-            lat = double.Parse(_lat);
-            lon = double.Parse(_lon);
-            tag = _tag;
         }
     }
 }
