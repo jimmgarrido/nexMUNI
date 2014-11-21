@@ -70,11 +70,11 @@
 									</Grid.ColumnDefinitions>
                                     <!--<Image x:Name="inArrow" Source="Assets/next.png" Height="50" Margin="-10,-10,0,0" HorizontalAlignment="Left" Visibility="Visible" Grid.Column="0"/>-->
                                     <TextBlock x:Name="Dir1" Text="{Binding Dir1}" FontSize="18" Margin="0,8,0,0" HorizontalAlignment="Left" Grid.Column="0" FontWeight="Bold" />
-									<TextBlock x:Name="Times1" Text="{Binding Times1}" Margin="0,33,0,0" FontSize="18" HorizontalAlignment="Left" Visibility="Visible" Grid.Column="0"/>
+									<TextBlock x:Name="Times1" Text="{Binding Times1,Mode=OneWay}" Margin="0,33,0,0" FontSize="18" HorizontalAlignment="Left" Visibility="Visible" Grid.Column="0"/>
 
                                     <!--<Image x:Name="outArrow" Source="Assets/back.png" Height="50" Margin="-10,-10,0,0" HorizontalAlignment="Left" Grid.Row="1" Grid.Column="0" />-->
                                     <TextBlock x:Name="Dir2" Text="{Binding Dir2}" FontSize="18" Margin="0,8,0,0" HorizontalAlignment="Left" Grid.Row="1" Grid.Column="0" FontWeight="Bold" />
-                                    <TextBlock x:Name="Times2" Text="{Binding Times2}" Margin="0,33,0,0" FontSize="18" HorizontalAlignment="Left" Grid.Row="1" Grid.Column="0" />
+                                    <TextBlock x:Name="Times2" Text="{Binding Times2, Mode=OneWay}" Margin="0,33,0,0" FontSize="18" HorizontalAlignment="Left" Grid.Row="1" Grid.Column="0" />
                                 </Grid>
                             </StackPanel>
                         </Grid>

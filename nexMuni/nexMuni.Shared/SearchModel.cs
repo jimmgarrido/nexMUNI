@@ -324,7 +324,7 @@ namespace nexMuni
                 }
 
                 //Get bus predictions for stop
-                await PredictionModel.SearchPredictions(selectedStop, selectedRoute, timesURL);
+                PredictionModel.GetSearchTimes(await PredictionModel.GetXML(timesURL));
 
 #if WINDOWS_PHONE_APP
                 systemTray.ProgressIndicator.ProgressValue = 0;

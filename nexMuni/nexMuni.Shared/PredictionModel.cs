@@ -17,13 +17,8 @@ namespace nexMuni
     {
         private static string URLstring {get; set;}
 
-        public static async void GetXML(string url)
+        public static async Task<XDocument> GetXML(string url)
         {
-#if WINDOWS_PHONE_APP
-            var systemTray = Windows.UI.ViewManagement.StatusBar.GetForCurrentView();
-            systemTray.ProgressIndicator.Text = "Getting Arrival Times";
-            systemTray.ProgressIndicator.ProgressValue = null;
-#endif
             URLstring = url;
 
             var response = new HttpResponseMessage();
@@ -40,21 +35,17 @@ namespace nexMuni
                 reader = await response.Content.ReadAsStringAsync();
                 xmlDoc = XDocument.Parse(reader);
 
-                GetPredictions(xmlDoc, StopDetailModel.selectedStop);
-
+                //GetTimes(xmlDoc);
             }
             catch(Exception)
             {
                 ErrorHandler.NetworkError("Error getting predictions. Check network connection and try again.");
             }
 
-#if WINDOWS_PHONE_APP
-            systemTray.ProgressIndicator.ProgressValue = 0;
-            systemTray.ProgressIndicator.Text = "nexMuni";    
-#endif
+            return xmlDoc;
         }
 
-        private static void GetPredictions(XDocument doc, StopData s)
+        public static void GetTimes(XDocument doc)
         {
             int i = 0;
             IEnumerable<XElement> rootElements =
@@ -150,9 +141,9 @@ namespace nexMuni
             if (StopDetailModel.routeList.Count == 0) StopDetail.noTimeText.Visibility = Windows.UI.Xaml.Visibility.Visible;
         }
 
-        private static void GetPredictions(XDocument doc)
+        public static void GetSearchTimes(XDocument doc)
         {
-            string [] searchTimes = new string[5];
+            string[] searchTimes = new string[5];
             int i = 0;
             string times = null;
 
@@ -162,16 +153,16 @@ namespace nexMuni
 
             foreach (XElement el in elements)
             {
-                if(i < 5)
+                if (i < 5)
                 {
                     searchTimes[i] = el.Attribute("minutes").Value;
                     i++;
-                }  
+                }
             }
 
             i = 0;
 
-            while(i < searchTimes.Length && searchTimes[i] != null)
+            while (i < searchTimes.Length && searchTimes[i] != null)
             {
                 if (i == 0)
                 {
@@ -187,38 +178,37 @@ namespace nexMuni
 
             if (times == null) times = "No busses at this time";
             else times = times + " mins";
-            
+
             MainPage.timesText.Text = times;
         }
 
-        internal static void UpdateTimes()
+        internal static async void UpdateTimes()
         {
-            StopDetailModel.routeList.Clear();
-            GetXML(URLstring);
+            GetTimes(await GetXML(URLstring));
         }
 
-        internal static async Task SearchPredictions(StopData selectedStop, string route, string url)
-        {
-            var response = new HttpResponseMessage();
-            var client = new HttpClient();
-            XDocument xmlDoc = new XDocument();
-            string reader;
+        //internal static async Task SearchPredictions(string route, string url)
+        //{
+        //    var response = new HttpResponseMessage();
+        //    var client = new HttpClient();
+        //    XDocument xmlDoc = new XDocument();
+        //    string reader;
 
-            //Make sure to pull from network not cache everytime predictions are refreshed 
-            client.DefaultRequestHeaders.IfModifiedSince = System.DateTime.Now;
-            try
-            {
-                response = await client.GetAsync(new Uri(url));
+        //    //Make sure to pull from network not cache everytime predictions are refreshed 
+        //    client.DefaultRequestHeaders.IfModifiedSince = System.DateTime.Now;
+        //    try
+        //    {
+        //        response = await client.GetAsync(new Uri(url));
 
-                reader = await response.Content.ReadAsStringAsync();
+        //        reader = await response.Content.ReadAsStringAsync();
 
-                GetPredictions(XDocument.Parse(reader));
+        //        GetTimes(XDocument.Parse(reader));
 
-            }
-            catch (Exception)
-            {
-                ErrorHandler.NetworkError("Error getting predictions. Check network connection and try again.");
-            }   
-        }
+        //    }
+        //    catch (Exception)
+        //    {
+        //        ErrorHandler.NetworkError("Error getting predictions. Check network connection and try again.");
+        //    }   
+        //}
     }
 }

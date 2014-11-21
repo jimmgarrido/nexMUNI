@@ -15,8 +15,14 @@ namespace nexMuni
         public static string baseURL {get; set;}
         public static StopData selectedStop { get; set; }
 
-        public static void LoadData(StopData stop)
+        public static async void LoadData(StopData stop)
         {
+#if WINDOWS_PHONE_APP
+            var systemTray = Windows.UI.ViewManagement.StatusBar.GetForCurrentView();
+            systemTray.ProgressIndicator.Text = "Getting Arrival Times";
+            systemTray.ProgressIndicator.ProgressValue = null;
+#endif
+
             selectedStop = stop;
 
             baseURL = "http://webservices.nextbus.com/service/publicXMLFeed?command=predictionsForMultiStops&a=sf-muni";
@@ -36,7 +42,12 @@ namespace nexMuni
 
             string url = baseURL + cont.ToString();
 
-            PredictionModel.GetXML(url);
+            PredictionModel.GetTimes(await PredictionModel.GetXML(url));
+
+#if WINDOWS_PHONE_APP
+            systemTray.ProgressIndicator.ProgressValue = 0;
+            systemTray.ProgressIndicator.Text = "nexMuni";
+#endif
         }
     }
 }

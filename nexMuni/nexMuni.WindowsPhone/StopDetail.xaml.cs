@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Graphics.Display;
@@ -87,7 +88,6 @@ namespace nexMuni
             }
             else favBtn.Click += FavoriteStop;
 
-            //noTimes.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
             StopDetailModel.LoadData(StopDetailModel.selectedStop);
         }
 
@@ -105,7 +105,18 @@ namespace nexMuni
 
         private void RefreshTimes(object sender, RoutedEventArgs e)
         {
+#if WINDOWS_PHONE_APP
+            var systemTray = Windows.UI.ViewManagement.StatusBar.GetForCurrentView();
+            systemTray.ProgressIndicator.Text = "Refreshing Arrival Times";
+            systemTray.ProgressIndicator.ProgressValue = null;
+#endif
+
             PredictionModel.UpdateTimes();
+
+#if WINDOWS_PHONE_APP
+            systemTray.ProgressIndicator.ProgressValue = 0;
+            systemTray.ProgressIndicator.Text = "nexMuni";
+#endif
         }
 
         private async void FavoriteStop(object sender, RoutedEventArgs e)
@@ -120,8 +131,6 @@ namespace nexMuni
         private async void RemoveStop(object sender, RoutedEventArgs e)
         {
             await DatabaseHelper.RemoveFavorite(StopDetailModel.selectedStop);
-            //removeBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-            //favBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;'
             favBtn.Click -= RemoveStop;
             favBtn.Click += FavoriteStop;
             favBtn.Icon = new SymbolIcon(Symbol.Favorite);

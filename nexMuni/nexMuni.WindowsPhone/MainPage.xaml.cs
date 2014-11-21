@@ -97,7 +97,7 @@ namespace nexMuni
             {
                 case 0:
                     refreshBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
-                    appBar.ClosedDisplayMode = AppBarClosedDisplayMode.Minimal;
+                    appBar.ClosedDisplayMode = AppBarClosedDisplayMode.Compact;
                     sortBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
                     break;
                 case 1:
@@ -139,7 +139,7 @@ namespace nexMuni
         {
             await DatabaseHelper.FavoriteFromSearch(SearchModel.selectedStop);
             favSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-            //removeSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            removeSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
         }
 
         private async void RemoveSearch(object sender, RoutedEventArgs e)
