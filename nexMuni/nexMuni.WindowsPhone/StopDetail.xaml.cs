@@ -66,8 +66,6 @@ namespace nexMuni
             StopDetailModel.selectedStop = e.NavigationParameter as StopData;
 
             StopHeader.Text = StopDetailModel.selectedStop.Name;
-            removeBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-            favBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
             noTimeText = new TextBlock();
             noTimeText = noTimes;
             noTimes.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
@@ -83,10 +81,11 @@ namespace nexMuni
                 {
                     if (s.Name == StopDetailModel.selectedStop.Name) StopDetailModel.selectedStop.FavID = s.FavID;
                 }
-                removeBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
-                favBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                favBtn.Click += RemoveStop;
+                favBtn.Label = "unfavorite";
+                favBtn.Icon = new SymbolIcon(Symbol.Remove);
             }
-            else favBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            else favBtn.Click += FavoriteStop;
 
             //noTimes.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
             StopDetailModel.LoadData(StopDetailModel.selectedStop);
@@ -109,18 +108,24 @@ namespace nexMuni
             PredictionModel.UpdateTimes();
         }
 
-        private void FavoriteStop(object sender, RoutedEventArgs e)
+        private async void FavoriteStop(object sender, RoutedEventArgs e)
         {
-            DatabaseHelper.AddFavorite(StopDetailModel.selectedStop);
-            favBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-            removeBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            await DatabaseHelper.AddFavorite(StopDetailModel.selectedStop);
+            favBtn.Click -= FavoriteStop;
+            favBtn.Click += RemoveStop;
+            favBtn.Icon = new SymbolIcon(Symbol.Remove);
+            favBtn.Label = "unfavorite";
         }
 
-        private void RemoveStop(object sender, RoutedEventArgs e)
+        private async void RemoveStop(object sender, RoutedEventArgs e)
         {
-            DatabaseHelper.RemoveFavorite(StopDetailModel.selectedStop);
-            removeBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-            favBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            await DatabaseHelper.RemoveFavorite(StopDetailModel.selectedStop);
+            //removeBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            //favBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;'
+            favBtn.Click -= RemoveStop;
+            favBtn.Click += FavoriteStop;
+            favBtn.Icon = new SymbolIcon(Symbol.Favorite);
+            favBtn.Label = "favorite";
         }
 
         #region NavigationHelper registration

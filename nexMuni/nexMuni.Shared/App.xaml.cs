@@ -44,7 +44,7 @@ namespace nexMuni
         /// search results, and so forth.
         /// </summary>
         /// <param name="e">Details about the launch request and process.</param>
-        protected override void OnLaunched(LaunchActivatedEventArgs e)
+        protected async override void OnLaunched(LaunchActivatedEventArgs e)
         {
 #if DEBUG
             if (System.Diagnostics.Debugger.IsAttached)
@@ -82,7 +82,7 @@ namespace nexMuni
                 statusBar.BackgroundColor = Color.FromArgb(100, 179, 27, 27);
                 statusBar.BackgroundOpacity = 1;
                 statusBar.ProgressIndicator.Text = "nexMuni";
-                statusBar.ProgressIndicator.ShowAsync();
+                await statusBar.ProgressIndicator.ShowAsync();
                 statusBar.ProgressIndicator.ProgressValue = 0;
 
                 // Removes the turnstile navigation for startup.

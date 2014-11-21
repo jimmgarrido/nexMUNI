@@ -51,12 +51,12 @@ namespace nexMuni
             //Check results for enough stops. If less than 5 returned, call method again with larger radius
             if (results.Count < 5)
             {
-                QueryForNearby(point, dist += 0.50);
+                await QueryForNearby(point, dist += 0.50);
             }
             else MainPageModel.DisplayResults(results);
         }
 
-        public static async Task<List<string>> QueryForRoutes()
+        public static async Task< List<string>> QueryForRoutes()
         {
             SQLiteAsyncConnection db = new SQLiteAsyncConnection("muni.sqlite");
             var query = await db.QueryAsync<Routes>("SELECT * FROM Routes");
@@ -79,11 +79,11 @@ namespace nexMuni
                 file = await ApplicationData.Current.LocalFolder.GetFileAsync("favorites.sqlite");
                 favDBPath = file.Path;
 
-                GetFavorites();
+                await GetFavorites();
             }
             catch (FileNotFoundException)
             {
-                MakeFavDB(file);
+               MakeFavDB(file);
             }
         }
 
@@ -105,7 +105,7 @@ namespace nexMuni
 
             SQLiteAsyncConnection favDB = new SQLiteAsyncConnection(favDBPath);
             await favDB.CreateTableAsync<FavoriteData>();
-            GetFavorites();
+            await GetFavorites();
         }
 
         public static void SyncIDS()

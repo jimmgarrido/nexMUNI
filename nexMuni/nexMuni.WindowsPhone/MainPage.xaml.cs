@@ -113,11 +113,11 @@ namespace nexMuni
             }
         }
 
-        private void UpdateButton(object sender, RoutedEventArgs e)
+        private async void UpdateButton(object sender, RoutedEventArgs e)
         {
             MainPageModel.nearbyStops.Clear();
             noNearbyText.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-            LocationHelper.UpdateNearbyList();
+            await LocationHelper.UpdateNearbyList();
         }
 
         private void StopClicked(object sender, ItemClickEventArgs e)
@@ -135,16 +135,16 @@ namespace nexMuni
             LocationHelper.SortFavorites();
         }
 
-        private void FavoriteSearch(object sender, RoutedEventArgs e)
+        private async void FavoriteSearch(object sender, RoutedEventArgs e)
         {
-            DatabaseHelper.FavoriteFromSearch(SearchModel.selectedStop);
+            await DatabaseHelper.FavoriteFromSearch(SearchModel.selectedStop);
             favSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
             //removeSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
         }
 
-        private void RemoveSearch(object sender, RoutedEventArgs e)
+        private async void RemoveSearch(object sender, RoutedEventArgs e)
         {
-            DatabaseHelper.RemoveSearch(SearchModel.selectedStop);
+            await DatabaseHelper.RemoveSearch(SearchModel.selectedStop);
             removeSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
             favSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
         }

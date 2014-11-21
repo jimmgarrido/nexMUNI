@@ -414,12 +414,11 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
-                    <StackPanel Grid.Row="0" Background="#b31b1b">
-                        <!--<ComboBox x:Name="routesBox" Width="350" HorizontalAlignment="Center" PlaceholderText="Select Route" />-->
+                    <StackPanel  Background="#b31b1b">
                         <TextBlock Text="Select Route" HorizontalAlignment="Center" Margin="-265,0,0,-7" FontSize="16" FontFamily="Global User Interface"/>
-                        <Button x:Name="routeButton" HorizontalAlignment="Center" Width="350" Style="{StaticResource ButtonStyle}" IsEnabled="False" >
+                        <Button x:Name="routeButton" HorizontalAlignment="Center" Width="350" Style="{StaticResource ButtonStyle}" IsEnabled="False">
                             <Button.Flyout>
-                                <ListPickerFlyout x:Name="RoutesFlyout" Title="SELECT ROUTE" SelectedValue="{Binding SelectedItem, Mode=TwoWay}" >
+                                <ListPickerFlyout x:Name="RoutesFlyout" Title="SELECT ROUTE" Placement="Right" >
                                     <ListPickerFlyout.ItemTemplate>
                                         <DataTemplate>
                                             <ContentControl Width="480" Content="{Binding}"/>
@@ -438,7 +437,7 @@
                                 <ListPickerFlyout x:Name="StopsFlyout" Title="SELECT STOP" Placement="Right">
                                     <ListPickerFlyout.ItemTemplate>
                                         <DataTemplate>
-                                            <ContentControl Width="480" Content="{Binding Path= Name }"/>
+                                            <ContentControl Width="480" Content="{Binding Path = Name}"/>
                                         </DataTemplate>
                                     </ListPickerFlyout.ItemTemplate>                               
                                 </ListPickerFlyout>
@@ -456,7 +455,7 @@
                     
                     <Maps:MapControl x:Name="searchMapControl" HorizontalAlignment="Center" Margin="0,0,0,0" Grid.Row="1"
                                      VerticalAlignment="Center" MapServiceToken="jjA5Pn6AN4an5lgqKNN_Rg" Height="500" 
-                                     Width="500" ZoomLevel="11.5" />
+                                     Width="500" ZoomLevel="11.5"/>
                 </Grid>
             </PivotItem>
         </Pivot>

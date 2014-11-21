@@ -41,8 +41,9 @@ namespace nexMuni
                 xmlDoc = XDocument.Parse(reader);
 
                 GetPredictions(xmlDoc, StopDetailModel.selectedStop);
+
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 ErrorHandler.NetworkError("Error getting predictions. Check network connection and try again.");
             }
@@ -65,7 +66,9 @@ namespace nexMuni
             string dirTitle1, dirTitle2, title, time, route, fullTitle;
             string[] times1 = new string[4];
             string[] times2 = new string[4];
+
             int j=0, x;
+
 
             while(i < rootElements.Count())
             {
@@ -98,6 +101,7 @@ namespace nexMuni
                             select e;
 
                         j = 0;
+
                         while (j < predictionElements.Count())
                         {                           
                             element = predictionElements.ElementAt(j);
@@ -122,6 +126,7 @@ namespace nexMuni
                             select e;
 
                         j = 0;
+
                         while (j < predictionElements.Count())
                         {
                             element = predictionElements.ElementAt(j);
@@ -206,11 +211,11 @@ namespace nexMuni
                 response = await client.GetAsync(new Uri(url));
 
                 reader = await response.Content.ReadAsStringAsync();
-                //xmlDoc = XDocument.Parse(reader);
 
                 GetPredictions(XDocument.Parse(reader));
+
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 ErrorHandler.NetworkError("Error getting predictions. Check network connection and try again.");
             }   

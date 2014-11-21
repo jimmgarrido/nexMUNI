@@ -10,7 +10,7 @@ namespace nexMuni
     {
         private string predictions1 = String.Empty;
         private string predictions2 = String.Empty;
-        private string temp;
+        //private string temp;
 
         public string RouteNum { get; set; }
         public string RouteName { get; set; }

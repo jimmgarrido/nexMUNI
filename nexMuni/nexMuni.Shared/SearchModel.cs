@@ -59,6 +59,7 @@ namespace nexMuni
 
             selectedRoute = sender.SelectedItem.ToString();
             MainPage.routeBtn.Content = selectedRoute;
+            //MainPage.routePicker.SelectedIndex = sender.SelectedIndex;
             MainPage.timesText.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
             MainPage.favSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
 
@@ -113,7 +114,7 @@ namespace nexMuni
 
                 GetDirections(XDocument.Parse(reader));  
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 ErrorHandler.NetworkError("Error getting route information. Please try again.");
             }            
