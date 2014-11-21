@@ -193,7 +193,6 @@
     <MainPackageIdentityName>10642JimmyGarrido.BookEnd</MainPackageIdentityName>
     <MainPackageIdentityName>10642JimmyGarrido.nexMuni</MainPackageIdentityName>
   </AccountPackageIdentityNames>
-<<<<<<< HEAD
   <PackageInfoList LandingUrl="https://dev.windowsphone.com/AppSubmission/AssociationLanding?windowsProductId=86a6c9ee-dc56-4044-883a-1a995fe0d9a7">
     <BundleInfo>
       <PackageInfo>
@@ -212,13 +211,5 @@
         <PackageMaxArchitectureVersion>0.9.0.0</PackageMaxArchitectureVersion>
       </PackageInfo>
     </BundleInfo>
-=======
-  <PackageInfoList LandingUrl="https://dev.windowsphone.com/AppSubmission/AssociationLanding?windowsProductId=d81a8f85-82e7-490a-853e-92169766898d">
-    <PackageInfo>
-      <OsMinVersion>6.3.0.0</OsMinVersion>
-      <PackageArchitecture>arm</PackageArchitecture>
-      <PackageMaxArchitectureVersion>1.7.6.0</PackageMaxArchitectureVersion>
-    </PackageInfo>
->>>>>>> origin/master
   </PackageInfoList>
 </StoreAssociation>

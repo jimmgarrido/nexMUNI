@@ -18,8 +18,7 @@
         			<BitmapIcon UriSource="Assets/refresh.png"/>
         		</AppBarButton.Icon>
 			</AppBarButton>
-            <AppBarButton x:Name="favBtn" Icon="Favorite" IsCompact="True" Label="favorite" Click="FavoriteStop" Visibility="Collapsed"/>
-            <AppBarButton x:Name="removeBtn" Icon="Remove" IsCompact="True" Label="unfavorite" Click="RemoveStop" Visibility="Collapsed"/>
+            <AppBarButton x:Name="favBtn" Icon="Favorite" IsCompact="True" Label="favorite" />
         </CommandBar>
     </Page.BottomAppBar>
 

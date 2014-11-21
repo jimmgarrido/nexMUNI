@@ -131,8 +131,9 @@
     <Content Include="Assets\StoreLogo.scale-100.png" />
     <Content Include="Assets\StoreLogo.scale-140.png" />
     <Content Include="Assets\StoreLogo.scale-240.png" />
-    <None Include="ClassDiagram1.cd" />
-    <None Include="Package.StoreAssociation.xml" />
+    <None Include="Package.StoreAssociation.xml">
+      <SubType>Designer</SubType>
+    </None>
     <DesignTimeOnly Include="SampleData\RouteDataSample\RouteDataSample_Files\image01.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </DesignTimeOnly>
@@ -200,13 +201,8 @@
     <SDKReference Include="Microsoft.VCLibs, version=12.0">
       <Name>Microsoft Visual C++ 2013 Runtime Package for Windows Phone</Name>
     </SDKReference>
-<<<<<<< HEAD
-    <SDKReference Include="SQLite.WP81, Version=3.8.6">
-      <Name>SQLite for Windows Phone 8.1 %28SQLite.WP81, Version=3.8.6%29</Name>
-=======
-    <SDKReference Include="SQLite.WP81, Version=3.8.7">
-      <Name>SQLite for Windows Phone 8.1 %28SQLite.WP81, Version=3.8.7%29</Name>
->>>>>>> origin/master
+    <SDKReference Include="SQLite.WP81, Version=3.8.7.1">
+      <Name>SQLite for Windows Phone 8.1 %28SQLite.WP81, Version=3.8.7.1%29</Name>
     </SDKReference>
   </ItemGroup>
   <ItemGroup />

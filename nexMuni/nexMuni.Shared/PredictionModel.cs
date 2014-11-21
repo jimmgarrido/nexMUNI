@@ -40,14 +40,10 @@ namespace nexMuni
                 reader = await response.Content.ReadAsStringAsync();
                 xmlDoc = XDocument.Parse(reader);
 
-<<<<<<< HEAD
-                saved = response;
-                GetPredictions(xmlDoc, selectedStop);
-=======
                 GetPredictions(xmlDoc, StopDetailModel.selectedStop);
->>>>>>> origin/master
+
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 ErrorHandler.NetworkError("Error getting predictions. Check network connection and try again.");
             }
@@ -70,11 +66,9 @@ namespace nexMuni
             string dirTitle1, dirTitle2, title, time, route, fullTitle;
             string[] times1 = new string[4];
             string[] times2 = new string[4];
-<<<<<<< HEAD
-            int j, x, y;
-=======
+
             int j=0, x;
->>>>>>> origin/master
+
 
             while(i < rootElements.Count())
             {
@@ -107,10 +101,7 @@ namespace nexMuni
                             select e;
 
                         j = 0;
-<<<<<<< HEAD
-                        //times1 = new string[3];
-=======
->>>>>>> origin/master
+
                         while (j < predictionElements.Count())
                         {                           
                             element = predictionElements.ElementAt(j);
@@ -135,10 +126,7 @@ namespace nexMuni
                             select e;
 
                         j = 0;
-<<<<<<< HEAD
-                        //times2 = new string[3];
-=======
->>>>>>> origin/master
+
                         while (j < predictionElements.Count())
                         {
                             element = predictionElements.ElementAt(j);
@@ -223,16 +211,11 @@ namespace nexMuni
                 response = await client.GetAsync(new Uri(url));
 
                 reader = await response.Content.ReadAsStringAsync();
-                //xmlDoc = XDocument.Parse(reader);
 
-<<<<<<< HEAD
-                saved = response;
-                GetSearchPredictions(xmlDoc);
-=======
                 GetPredictions(XDocument.Parse(reader));
->>>>>>> origin/master
+
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 ErrorHandler.NetworkError("Error getting predictions. Check network connection and try again.");
             }   

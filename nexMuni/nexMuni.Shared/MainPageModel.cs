@@ -22,9 +22,8 @@ namespace nexMuni
         public static async void LoadData()
         {
             await DatabaseHelper.CheckDB();
-            LocationHelper.UpdateNearbyList();
-            DatabaseHelper.CheckFavDB();
-
+            await LocationHelper.UpdateNearbyList();
+            await DatabaseHelper.CheckFavDB();
             await SearchModel.LoadData();
 
             IsDataLoaded = true;

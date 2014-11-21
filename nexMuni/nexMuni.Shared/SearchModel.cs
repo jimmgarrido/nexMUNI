@@ -30,14 +30,6 @@ namespace nexMuni
 
         public static async Task LoadData()
         {
-<<<<<<< HEAD
-            RoutesCollection = DatabaseHelper.QueryForRoutes();
-            //RoutesCollection = new List<string>();
-            DirectionCollection = new ObservableCollection<string>();
-            StopCollection = new ObservableCollection<Stop>();
-
-            MainPage.routePicker.ItemsSource = RoutesCollection;
-=======
             await LoadRoutes();
 
             DirectionsList = new ObservableCollection<string>();
@@ -50,7 +42,6 @@ namespace nexMuni
             MainPage.dirComboBox.SelectionChanged += SearchModel.DirSelected;
             MainPage.stopPicker.ItemsPicked += SearchModel.StopSelected;
 
->>>>>>> origin/master
         }
 
         public static async Task LoadRoutes()
@@ -68,6 +59,7 @@ namespace nexMuni
 
             selectedRoute = sender.SelectedItem.ToString();
             MainPage.routeBtn.Content = selectedRoute;
+            //MainPage.routePicker.SelectedIndex = sender.SelectedIndex;
             MainPage.timesText.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
             MainPage.favSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
 
@@ -122,7 +114,7 @@ namespace nexMuni
 
                 GetDirections(XDocument.Parse(reader));  
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 ErrorHandler.NetworkError("Error getting route information. Please try again.");
             }            
