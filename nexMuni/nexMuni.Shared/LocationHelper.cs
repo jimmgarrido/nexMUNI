@@ -37,7 +37,7 @@ namespace nexMuni
             icon.ZIndex = 99;
             MainPage.searchMap.MapElements.Clear();
             MainPage.searchMap.MapElements.Add(icon);
-            await MainPage.searchMap.TrySetViewAsync(position.Coordinate.Point, 15);
+            //await MainPage.searchMap.TrySetViewAsync(position.Coordinate.Point, 15);
 
 #if WINDOWS_PHONE_APP
             systemTray.ProgressIndicator.Text = "Locating Stops";
