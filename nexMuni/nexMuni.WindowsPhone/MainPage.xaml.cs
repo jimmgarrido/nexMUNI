@@ -38,6 +38,8 @@ namespace nexMuni
         public static Button favSearchBtn { get; set; }
         public static Button removeSearchBtn { get; set; }
 
+        public static ObservableCollection<PositionWrapper> LocationPoint { get; set; }
+
         public MainPage()
         {
             this.InitializeComponent();
@@ -83,6 +85,8 @@ namespace nexMuni
                 dirComboBox = dirBox;
                 routePicker = RoutesFlyout;
                 stopPicker = StopsFlyout;
+
+                LocationPoint = new ObservableCollection<PositionWrapper>();
 
                 MainPageModel.LoadData(); 
 

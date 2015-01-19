@@ -7,7 +7,6 @@
     xmlns:Maps="using:Windows.UI.Xaml.Controls.Maps"
     xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
     xmlns:Primitives="clr-namespace:Microsoft.Phone.Controls.Primitives;assembly=Microsoft.Phone"
-    
     xmlns:SampleData="using:Blend.SampleData.SampleStops"
     
     x:Class="nexMuni.MainPage"
@@ -73,6 +72,7 @@
         <x:Double x:Key="PhoneButtonMinWidth">109</x:Double>
         <Thickness x:Key="PhoneTouchTargetOverhang">0,9.5</Thickness>
         <SolidColorBrush x:Key="ButtonDisabledBackgroundThemeBrush" Color="Transparent"/>
+        
         <Style x:Key="ButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderBrush" Value="White"/>
@@ -138,7 +138,7 @@
                                 </VisualStateGroup>
                             </VisualStateManager.VisualStateGroups>
                             <Border x:Name="Border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Margin="{ThemeResource PhoneTouchTargetOverhang}">
-                                <ContentPresenter x:Name="ContentPresenter" AutomationProperties.AccessibilityView="Raw" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}" HorizontalAlignment="Left" Margin="{TemplateBinding Padding}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" FontSize="20"/>
+                                <ContentPresenter x:Name="ContentPresenter" AutomationProperties.AccessibilityView="Raw" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}" HorizontalAlignment="Left" Margin="{TemplateBinding Padding}" VerticalAlignment="Center" FontSize="20"/>
                             </Border>
                         </Grid>
                     </ControlTemplate>
@@ -152,6 +152,7 @@
         <x:Double x:Key="ComboBoxItemMinHeightThemeSize">33.5</x:Double>
         <Thickness x:Key="ComboBoxPlaceholderTextThemeMargin">6.5,0.8</Thickness>
         <SolidColorBrush x:Key="ComboBoxDisabledBackgroundThemeBrush" Color="Transparent"/>
+        
         <Style x:Key="ComboBoxStyle" TargetType="ComboBox">
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="Background" Value="{ThemeResource ComboBoxBackgroundThemeBrush}"/>
@@ -367,9 +368,9 @@
         </CommandBar>
     </Page.BottomAppBar>
 
-    <Grid x:Name="contentRoot" d:DataContext="{Binding Source={StaticResource SampleStops}}" Background="#b31b1b">
-        <Pivot x:Name="pivotControl" Title="nexMuni" Background="White" Style="{StaticResource NearbyPivot}" Margin="0,25,0,0" Padding="0,-30,0,0">
-            <PivotItem Header="nearby" Padding="0" Margin="10,13,10,0">
+    <Grid x:Name="contentRoot" d:DataContext="{Binding Source={StaticResource SampleStops}}">
+        <Pivot x:Name="pivotControl" Title="nexMuni" Background="White" Style="{StaticResource NearbyPivot}" Margin="0,20,0,0" Padding="0,-30,0,0">
+            <PivotItem Header="nearby" Margin="10,13,10,0">
                 <Grid>
                     <TextBlock x:Name="noStopsNotice" Text="No stops found" Foreground="#b31b1b" TextAlignment="Center" FontSize="21" Margin="0,220,0,0" Visibility="Collapsed"/>
                     <ListView x:Name="nearbyListView" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Top" 
@@ -452,10 +453,20 @@
                             <Image Source="Assets/RemoveStar.png" Width="30" Height="30" />
                         </Button>
                     </StackPanel>
-                    
+
                     <Maps:MapControl x:Name="searchMapControl" HorizontalAlignment="Center" Margin="0,0,0,0" Grid.Row="1"
                                      VerticalAlignment="Center" MapServiceToken="jjA5Pn6AN4an5lgqKNN_Rg" Height="500" 
-                                     Width="500" ZoomLevel="11.5"/>
+                                     Width="500" ZoomLevel="11.5">
+                        <Maps:MapItemsControl ItemsSource="{Binding LocationPoint}">
+                            <Maps:MapItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Image Source="Assets/Location.png" Height="40" Width="40"
+                                           Maps:MapControl.Location="{Binding Position}"
+                                           Maps:MapControl.NormalizedAnchorPoint="{Binding AnchorPoint}"/>
+                                </DataTemplate>
+                            </Maps:MapItemsControl.ItemTemplate>
+                        </Maps:MapItemsControl>
+                    </Maps:MapControl>
                 </Grid>
             </PivotItem>
         </Pivot>

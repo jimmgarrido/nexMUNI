@@ -9,6 +9,10 @@ using System.Linq;
 using Windows.UI.Xaml.Controls.Maps;
 using Windows.Storage.Streams;
 using System.Threading.Tasks;
+using Windows.UI.Xaml;
+using Windows.Foundation;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace nexMuni
 {
@@ -29,15 +33,19 @@ namespace nexMuni
             Geolocator geolocator = new Geolocator();
             geolocator.DesiredAccuracyInMeters = 50;
 
-            MapIcon icon = new MapIcon();
-            icon.Image = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/Location.png"));
+            //MapIcon icon = new MapIcon();
+            //icon.Image = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/Location.png"));
             var position = await geolocator.GetGeopositionAsync(maximumAge: TimeSpan.FromSeconds(5), timeout: TimeSpan.FromSeconds(30));
             PhoneLocation = position;
-            icon.Location = position.Coordinate.Point;
-            icon.ZIndex = 99;
-            MainPage.searchMap.MapElements.Clear();
-            MainPage.searchMap.MapElements.Add(icon);
-            await MainPage.searchMap.TrySetViewAsync(position.Coordinate.Point, 15);
+            //MainPage.searchMap.Children.Add(LocationPoint());
+            
+            //icon.Location = position.Coordinate.Point;
+            //icon.ZIndex = 99;
+            //MainPage.searchMap.MapElements.Clear();
+            MainPage.LocationPoint.Add(new PositionWrapper(position.Coordinate.Point));
+            //MainPage.searchMap.Children.Add(icon);
+            //MapControl.SetNormalizedAnchorPoint(icon, new Windows.Foundation.Point(0.0, 1.0));
+            //await MainPage.searchMap.TrySetViewAsync(position.Coordinate.Point, 15);
 
 #if WINDOWS_PHONE_APP
             systemTray.ProgressIndicator.Text = "Locating Stops";
@@ -118,6 +126,31 @@ namespace nexMuni
             {
                 stop.DoubleDist = Distance(stop.Lat, stop.Lon);
             }
+        }
+
+        private static DependencyObject LocationPoint()
+        {
+            Image png = new Image();
+            png.Source = new BitmapImage();
+
+            return png;
+        }
+    }
+
+    public class PositionWrapper
+    {
+        public Geopoint Position { get; set; }
+        public static Point AnchorPoint { get; set; }
+
+        static PositionWrapper()
+        {
+            AnchorPoint = new Point(0.32, 0.78);
+        }
+
+        public PositionWrapper(Geopoint p)
+        {
+            Position = p;
+            //AnchorPoint = new Point(0.32, 0.78);
         }
     }
 }
