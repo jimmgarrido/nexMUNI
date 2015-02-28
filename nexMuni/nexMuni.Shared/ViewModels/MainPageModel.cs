@@ -10,60 +10,76 @@ using Windows.Data.Xml;
 using Windows.Storage;
 using System.IO;
 using System.Threading.Tasks;
+using nexMuni.DataModels;
 
 namespace nexMuni
 {
-    class MainPageModel
+    public class MainPageModel
     {
-        public static ObservableCollection<StopData> nearbyStops = new ObservableCollection<StopData>();
-        public static ObservableCollection<StopData> favoritesStops = new ObservableCollection<StopData>();
-        public static bool IsDataLoaded { get; set; }
+        public static ObservableCollection<StopData> NearbyStops { get; private set; }
+        public static ObservableCollection<StopData> FavoritesStops { get; private set;}
+        public static bool IsDataLoaded { get; private set; }
+
+        public MainPageModel() 
+        {
+            NearbyStops = new ObservableCollection<StopData>();
+            FavoritesStops = new ObservableCollection<StopData>();
+        }
 
         public static async void LoadData()
         {
-            await DatabaseHelper.CheckDB();
-            await LocationHelper.UpdateNearbyList();
-            await DatabaseHelper.CheckFavDB();
-            await SearchModel.LoadData();
+            NearbyStops = new ObservableCollection<StopData>();
+            FavoritesStops = new ObservableCollection<StopData>();
+
+            await DatabaseHelper.CheckDatabases();
+            await LocationHelper.UpdateLocation();
+            await UpdateNearbyStops();
+            await LoadFavorites();
+
+            //await SearchModel.LoadData();
 
             IsDataLoaded = true;
         }
 
-        public static void DisplayResults(List<BusStop> r)
-        {
-            int counter = 0;
+        //public static void DisplayResults(List<FavoriteData> r)
+        //{
+        //    MainPage.noFavsText.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
 
-            //Get ditance to each stop
-            foreach (BusStop stop in r)
+            
+        //}
+
+        private static async Task UpdateNearbyStops()
+        {
+            NearbyStops.Clear();
+            List<BusStopData> stops = await DatabaseHelper.QueryForNearby(0.5);
+
+            //Get distance to each stop
+            foreach (BusStopData stop in stops)
             {
                 stop.Distance = LocationHelper.Distance(stop.Latitude, stop.Longitude);
             }
 
             //Sort list of stops by distance
-            IEnumerable<BusStop> sortedList =
-                from s in r
+            IEnumerable<BusStopData> sortedList =
+                from s in stops
                 orderby s.Distance
                 select s;
 
             //Add stops to listview with max of 15
-            foreach (BusStop d in sortedList)
+            foreach (BusStopData stop in sortedList)
             {
-                if (counter < 15)
-                {
-                    MainPageModel.nearbyStops.Add(new StopData(d.StopName, d.Routes, d.StopTags, d.Distance, d.Latitude, d.Longitude));
-                    counter++;
-                }
-                else break;
+                NearbyStops.Add(new StopData(stop.StopName, stop.Routes, stop.StopTags, stop.Distance, stop.Latitude, stop.Longitude));
             }
         }
 
-        public static void DisplayResults(List<FavoriteData> r)
+        private static async Task LoadFavorites()
         {
-            MainPage.noFavsText.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            FavoritesStops.Clear();
+            List<FavoriteData> favorites = await DatabaseHelper.GetFavorites();
 
-            foreach (FavoriteData s in r)
+            foreach (FavoriteData favorite in favorites)
             {
-                MainPageModel.favoritesStops.Add(new StopData(s.Name, s.Routes, s.Tags, 0.000, s.Lat, s.Lon, s.Id.ToString()));
+                FavoritesStops.Add(new StopData(favorite.Name, favorite.Routes, favorite.Tags, 0.000, favorite.Lat, favorite.Lon, favorite.Id.ToString()));
             }
 
             DatabaseHelper.SyncIDS();

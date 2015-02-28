@@ -10,56 +10,44 @@ using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
 using System.Collections.ObjectModel;
 using Windows.ApplicationModel;
+using nexMuni.DataModels;
 
 namespace nexMuni
 {
     class DatabaseHelper
     {
-        protected static string favDBPath = string.Empty;
+        private static string favDBPath = string.Empty;
 
-        public static async Task CheckDB()
+        public static async Task CheckDatabases()
         {
-            bool dbExists = false;
-            try
-            {
-                StorageFile muniDB = await ApplicationData.Current.LocalFolder.GetFileAsync("muni.sqlite");
-                dbExists = true;
-            }
-            catch
-            {
-                dbExists = false;
-            }
-
-            if(!dbExists)
-            {
-                StorageFile dbFile = await Package.Current.InstalledLocation.GetFileAsync("db\\muni.sqlite");
-                await dbFile.CopyAsync(ApplicationData.Current.LocalFolder);
-            }
-
+            await CheckStopsDB();
+            await CheckFavDB();
         }
 
-        public async static Task QueryForNearby(Geopoint point, double dist)
+        public async static Task<List<BusStopData>> QueryForNearby(double dist)
         {
+            Geopoint point = LocationHelper.phoneLocation.Coordinate.Point;
+
             //Get search bounds from location and given radius
             double[][] bounds = LocationHelper.MakeBounds(point, dist);
 
             //Query database for stops
             string query = "SELECT * FROM BusStops WHERE Longitude BETWEEN " + bounds[3][1] + " AND " + bounds[1][1] + " AND Latitude BETWEEN " + bounds[2][0] + " AND " + bounds[0][0];
             SQLiteAsyncConnection db = new SQLiteAsyncConnection("muni.sqlite");
-            var results = await db.QueryAsync<BusStop>(query);
+            var results = await db.QueryAsync<BusStopData>(query);
 
             //Check results for enough stops. If less than 5 returned, call method again with larger radius
-            if (results.Count < 5)
+            if (results.Count >= 12)
             {
-                await QueryForNearby(point, dist += 0.50);
+                return results.GetRange(0, 12);
             }
-            else MainPageModel.DisplayResults(results);
+            else return await QueryForNearby(dist += .50);
         }
 
         public static async Task< List<string>> QueryForRoutes()
         {
             SQLiteAsyncConnection db = new SQLiteAsyncConnection("muni.sqlite");
-            var query = await db.QueryAsync<Routes>("SELECT * FROM Routes");
+            var query = await db.QueryAsync<RouteData>("SELECT * FROM Routes");
 
             List<string> list = new List<string>();
 
@@ -71,30 +59,13 @@ namespace nexMuni
             return list;
         }
 
-        public static async Task CheckFavDB()
+        public static async Task<List<FavoriteData>> GetFavorites()
         {
-            StorageFile file = null;
-            try
-            {
-                file = await ApplicationData.Current.LocalFolder.GetFileAsync("favorites.sqlite");
-                favDBPath = file.Path;
-
-                await GetFavorites();
-            }
-            catch (FileNotFoundException)
-            {
-               MakeFavDB(file);
-            }
-        }
-
-        public static async Task GetFavorites()
-        {
-            if (MainPageModel.favoritesStops != null) MainPageModel.favoritesStops.Clear();
-
             SQLiteAsyncConnection favDB = new SQLiteAsyncConnection(favDBPath);
             var results = await favDB.QueryAsync<FavoriteData>("SELECT * FROM FavoriteData");
-            if (results.Count > 0) MainPageModel.DisplayResults(results);
-            else MainPage.noFavsText.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            
+            return results;
+            //else MainPage.noFavsText.Visibility = Windows.UI.Xaml.Visibility.Visible;
         }
 
         public static async Task MakeFavDB(StorageFile f)
@@ -110,9 +81,9 @@ namespace nexMuni
 
         public static void SyncIDS()
         {
-            foreach (StopData a in MainPageModel.favoritesStops)
+            foreach (StopData a in MainPageModel.FavoritesStops)
             {
-                foreach (StopData b in MainPageModel.nearbyStops)
+                foreach (StopData b in MainPageModel.NearbyStops)
                 {
                     if (a.Name == b.Name)
                     {
@@ -159,7 +130,7 @@ namespace nexMuni
  
             SQLiteAsyncConnection db = new SQLiteAsyncConnection("muni.sqlite");
             string query = "SELECT * FROM BusStops WHERE StopName = \'" + title + "\'";
-            List<BusStop> results = await db.QueryAsync<BusStop>(query);
+            List<BusStopData> results = await db.QueryAsync<BusStopData>(query);
             
             //If stop name not found in db, most likely a stop that was a ducplicate and merged so reverse it and search again
             if(results.Count == 0)
@@ -168,11 +139,11 @@ namespace nexMuni
                 title = temp[1].Substring(1) + " & " + temp[0].Substring(0, (temp[0].Length - 1));
 
                 query = "SELECT * FROM BusStops WHERE StopName = \'" + title + "\'";
-                results = await db.QueryAsync<BusStop>(query);
+                results = await db.QueryAsync<BusStopData>(query);
             }
  
             SQLiteAsyncConnection favDB = new SQLiteAsyncConnection(favDBPath);
-            foreach(BusStop x in results)
+            foreach(BusStopData x in results)
             {              
                 await favDB.InsertAsync(new FavoriteData
                 {
@@ -194,45 +165,48 @@ namespace nexMuni
             await favDB.QueryAsync<FavoriteData>(q);
             await GetFavorites();
         }
-    }
 
-    [Table("BusStops")]
-    public class BusStop
-    {
-        [PrimaryKey, AutoIncrement]
-        public int Id { get; set; }
-        public string StopName { get; set; }
-        public double Longitude { get; set; }
-        public double Latitude { get; set; }
-        public string Routes { get; set; }
-        public string StopTags { get; set; }
-        public double Distance { get; set; }
-    }
-
-    public class FavoriteData
-    {
-        [PrimaryKey, AutoIncrement]
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Routes { get; set; }
-        public string Tags { get; set; }
-        public double Lat { get; set; }
-        public double Lon { get; set; }
-
-        public FavoriteData() { }
-
-        public FavoriteData(string stopName, string routes, string _tags, string d)
+        private static async Task CheckStopsDB()
         {
-            Name = stopName;
-            this.Tags = _tags;
-            this.Routes = routes;
-        }
-    }
+            bool dbExists = false;
+            try
+            {
+                StorageFile muniDB = await ApplicationData.Current.LocalFolder.GetFileAsync("muni.sqlite");
+                dbExists = true;
+            }
+            catch
+            {
+                dbExists = false;
+            }
 
-    public class Routes
-    {
-        [PrimaryKey, AutoIncrement]
-        public int ID { get; set; }
-        public string Title { get; set; }
+            if (!dbExists)
+            {
+                StorageFile dbFile = await Package.Current.InstalledLocation.GetFileAsync("db\\muni.sqlite");
+                await dbFile.CopyAsync(ApplicationData.Current.LocalFolder);
+            }
+        }
+
+        private static async Task CheckFavDB()
+        {
+            bool dbExists = false;
+            StorageFile file = null;
+
+            try
+            {
+                file = await ApplicationData.Current.LocalFolder.GetFileAsync("favorites.sqlite");
+                favDBPath = file.Path;
+                dbExists = true;
+                //await GetFavorites();
+            }
+            catch
+            {
+                dbExists = false;
+            }
+
+            if(!dbExists)
+            {
+                await MakeFavDB(file);
+            }
+        }
     }
 }

@@ -71,14 +71,14 @@ namespace nexMuni
             noTimeText = noTimes;
             noTimes.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
 
-            if (StopDetailModel.routeList == null) StopDetailModel.routeList = new System.Collections.ObjectModel.ObservableCollection<RouteData>();
+            if (StopDetailModel.routeList == null) StopDetailModel.routeList = new System.Collections.ObjectModel.ObservableCollection<Route>();
             else if (StopDetailModel.routeList != null) StopDetailModel.routeList.Clear();
             RouteInfoList.ItemsSource = StopDetailModel.routeList;
 
             //Check if the stop is in user's favorites list
-            if (MainPageModel.favoritesStops.Any(x => x.Name == StopDetailModel.selectedStop.Name))
+            if (MainPageModel.FavoritesStops.Any(x => x.Name == StopDetailModel.selectedStop.Name))
             {
-                foreach (StopData s in MainPageModel.favoritesStops)
+                foreach (StopData s in MainPageModel.FavoritesStops)
                 {
                     if (s.Name == StopDetailModel.selectedStop.Name) StopDetailModel.selectedStop.FavID = s.FavID;
                 }

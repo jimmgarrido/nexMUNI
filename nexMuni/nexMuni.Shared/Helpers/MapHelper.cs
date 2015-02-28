@@ -77,7 +77,7 @@ namespace nexMuni
             
             MapIcon icon = new MapIcon();
             icon.Image = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/Location.png"));
-            icon.Location = LocationHelper.PhoneLocation.Coordinate.Point;
+            icon.Location = LocationHelper.phoneLocation.Coordinate.Point;
             icon.ZIndex = 99;
             RouteMap.routeMap.MapElements.Add(icon);
         }

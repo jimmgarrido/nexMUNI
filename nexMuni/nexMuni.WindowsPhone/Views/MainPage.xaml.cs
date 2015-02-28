@@ -38,8 +38,6 @@ namespace nexMuni
         public static Button favSearchBtn { get; set; }
         public static Button removeSearchBtn { get; set; }
 
-        public static ObservableCollection<PositionWrapper> LocationPoint { get; set; }
-
         public MainPage()
         {
             this.InitializeComponent();
@@ -52,46 +50,50 @@ namespace nexMuni
             pivotControl.SelectionChanged += pivotControl_SelectionChanged;
             if (!MainPageModel.IsDataLoaded)
             {
-                noNearbyText = new TextBlock();
-                noFavsText = new TextBlock();
-                timesText = new TextBlock();
-                dirText = new TextBlock();
-                stopText = new TextBlock();
+                //noNearbyText = new TextBlock();
+                //noFavsText = new TextBlock();
+                //timesText = new TextBlock();
+                //dirText = new TextBlock();
+                //stopText = new TextBlock();
 
-                searchMap = new MapControl();
-                searchMap = searchMapControl;
-                searchMap.Center = new Geopoint(new BasicGeoposition() { Latitude = 37.7599, Longitude = -122.437 });
+                //searchMap = new MapControl();
+                //searchMap = searchMapControl;
+                //searchMap.Center = new Geopoint(new BasicGeoposition() { Latitude = 37.7599, Longitude = -122.437 });
                 
-                routeBtn = new Button();
-                stopBtn = new Button();
-                favSearchBtn = new Button();
-                removeSearchBtn = new Button();
+                //routeBtn = new Button();
+                //stopBtn = new Button();
+                //favSearchBtn = new Button();
+                //removeSearchBtn = new Button();
 
-                routePicker = new ListPickerFlyout();
-                stopPicker = new ListPickerFlyout();
-                dirComboBox = new ComboBox();
+                //routePicker = new ListPickerFlyout();
+                //stopPicker = new ListPickerFlyout();
+                //dirComboBox = new ComboBox();
 
-                noNearbyText = noStopsNotice;
-                noFavsText = noFavsNotice;
-                timesText = searchTimes;
-                dirText = dirLabel;
-                stopText = stopLabel;
+                //noNearbyText = noStopsNotice;
+                //noFavsText = noFavsNotice;
+                //timesText = searchTimes;
+                //dirText = dirLabel;
+                //stopText = stopLabel;
 
-                routeBtn = routeButton;
-                stopBtn = stopButton;
-                favSearchBtn = AddFavSearch;
-                removeSearchBtn = RemoveFavSearch;
+                //routeBtn = routeButton;
+                //stopBtn = stopButton;
+                //favSearchBtn = AddFavSearch;
+                //removeSearchBtn = RemoveFavSearch;
 
-                dirComboBox = dirBox;
-                routePicker = RoutesFlyout;
-                stopPicker = StopsFlyout;
+                //dirComboBox = dirBox;
+                //routePicker = RoutesFlyout;
+                //stopPicker = StopsFlyout;
 
-                LocationPoint = new ObservableCollection<PositionWrapper>();
+                //LocationPoint = new ObservableCollection<PositionWrapper>();
 
-                MainPageModel.LoadData(); 
+                //MainModel = new MainPageModel();
+                //SearchPage = new SearchModel();
 
-                nearbyListView.ItemsSource = MainPageModel.nearbyStops;
-                favoritesListView.ItemsSource = MainPageModel.favoritesStops;
+                MainPageModel.LoadData();
+                //SearchPage.LoadData();              
+
+                nearbyListView.ItemsSource = MainPageModel.NearbyStops;
+                //favoritesListView.ItemsSource = MainModel.FavoritesStops;
             }           
         }
 
@@ -119,9 +121,9 @@ namespace nexMuni
 
         private async void UpdateButton(object sender, RoutedEventArgs e)
         {
-            MainPageModel.nearbyStops.Clear();
+            MainPageModel.NearbyStops.Clear();
             noNearbyText.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-            await LocationHelper.UpdateNearbyList();
+            await LocationHelper.UpdateLocation();
         }
 
         private void StopClicked(object sender, ItemClickEventArgs e)

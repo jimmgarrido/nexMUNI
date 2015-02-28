@@ -13,6 +13,7 @@ using Windows.UI.Xaml;
 using Windows.Foundation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
+using nexMuni.DataModels;
 
 namespace nexMuni
 {
@@ -20,9 +21,9 @@ namespace nexMuni
     {
         private static double PhoneLat { get; set; }
         private static double PhoneLong { get; set; }
-        public static Geoposition PhoneLocation { get; set; }
+        public static Geoposition phoneLocation;
 
-        public static async Task UpdateNearbyList()
+        public static async Task UpdateLocation()
         {
 #if WINDOWS_PHONE_APP
             var systemTray = Windows.UI.ViewManagement.StatusBar.GetForCurrentView();
@@ -33,30 +34,21 @@ namespace nexMuni
             Geolocator geolocator = new Geolocator();
             geolocator.DesiredAccuracyInMeters = 50;
 
-            //MapIcon icon = new MapIcon();
-            //icon.Image = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/Location.png"));
-            var position = await geolocator.GetGeopositionAsync(maximumAge: TimeSpan.FromSeconds(5), timeout: TimeSpan.FromSeconds(30));
-            PhoneLocation = position;
-            //MainPage.searchMap.Children.Add(LocationPoint());
-            
-            //icon.Location = position.Coordinate.Point;
-            //icon.ZIndex = 99;
-            //MainPage.searchMap.MapElements.Clear();
-            MainPage.LocationPoint.Add(new PositionWrapper(position.Coordinate.Point));
-            //MainPage.searchMap.Children.Add(icon);
-            //MapControl.SetNormalizedAnchorPoint(icon, new Windows.Foundation.Point(0.0, 1.0));
-            //await MainPage.searchMap.TrySetViewAsync(position.Coordinate.Point, 15);
+            phoneLocation = await geolocator.GetGeopositionAsync(maximumAge: TimeSpan.FromSeconds(5), timeout: TimeSpan.FromSeconds(30));
 
 #if WINDOWS_PHONE_APP
-            systemTray.ProgressIndicator.Text = "Locating Stops";
-#endif
-            //Find nearby stops in the database
-             await DatabaseHelper.QueryForNearby(position.Coordinate.Point, 0.5);
-
-#if WINDOWS_PHONE_APP           
             systemTray.ProgressIndicator.ProgressValue = 0;
             systemTray.ProgressIndicator.Text = "nexMuni";
 #endif
+            //PhoneLocation = position;
+
+            //MainPage.LocationPoint.Add(new PositionWrapper(position.Coordinate.Point));
+
+//#if WINDOWS_PHONE_APP
+//            systemTray.ProgressIndicator.Text = "Locating Stops";
+//#endif
+//            //Find nearby stops in the database
+//             await DatabaseHelper.QueryForNearby(position.Coordinate.Point, 0.5);
         }
 
         public static double[][] MakeBounds(Geopoint location, double dist)
@@ -111,18 +103,18 @@ namespace nexMuni
         {
             FavoritesDistance();
 
-            ObservableCollection<StopData> tempCollection = new ObservableCollection<StopData>(MainPageModel.favoritesStops.OrderBy(z => z.DoubleDist));
+            ObservableCollection<StopData> tempCollection = new ObservableCollection<StopData>(MainPageModel.FavoritesStops.OrderBy(z => z.DoubleDist));
 
-            MainPageModel.favoritesStops.Clear();
+            MainPageModel.FavoritesStops.Clear();
             foreach (StopData s in tempCollection)
             {
-                MainPageModel.favoritesStops.Add(new StopData(s.Name, s.Routes, s.Tags, s.DoubleDist, s.Lat, s.Lon, s.FavID));
+                MainPageModel.FavoritesStops.Add(new StopData(s.Name, s.Routes, s.Tags, s.DoubleDist, s.Lat, s.Lon, s.FavID));
             }
         }
 
         public static void FavoritesDistance()
         {
-            foreach (StopData stop in MainPageModel.favoritesStops)
+            foreach (StopData stop in MainPageModel.FavoritesStops)
             {
                 stop.DoubleDist = Distance(stop.Lat, stop.Lon);
             }
@@ -134,23 +126,6 @@ namespace nexMuni
             png.Source = new BitmapImage();
 
             return png;
-        }
-    }
-
-    public class PositionWrapper
-    {
-        public Geopoint Position { get; set; }
-        public static Point AnchorPoint { get; set; }
-
-        static PositionWrapper()
-        {
-            AnchorPoint = new Point(0.32, 0.78);
-        }
-
-        public PositionWrapper(Geopoint p)
-        {
-            Position = p;
-            //AnchorPoint = new Point(0.32, 0.78);
         }
     }
 }

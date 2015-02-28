@@ -11,7 +11,7 @@ namespace nexMuni
 {
     class StopDetailModel
     {
-        public static ObservableCollection<RouteData> routeList;
+        public static ObservableCollection<Route> routeList;
         public static string baseURL {get; set;}
         public static StopData selectedStop { get; set; }
 

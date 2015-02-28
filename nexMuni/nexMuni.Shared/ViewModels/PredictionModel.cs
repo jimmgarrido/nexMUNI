@@ -101,7 +101,7 @@ namespace nexMuni
                             if (j < 4) times1[j] = time;
                             j++;
                         }
-                        StopDetailModel.routeList.Add(new RouteData(title, route, dirTitle1, times1));
+                        StopDetailModel.routeList.Add(new Route(title, route, dirTitle1, times1));
                     }  
                 }
                 else
@@ -127,7 +127,7 @@ namespace nexMuni
                             j++;
                         }
                         
-                        foreach (RouteData r in StopDetailModel.routeList)
+                        foreach (Route r in StopDetailModel.routeList)
                         {
                             if (r.RouteNum == route)
                             {

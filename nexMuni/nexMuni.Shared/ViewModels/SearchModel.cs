@@ -221,7 +221,7 @@ namespace nexMuni
 
             MapIcon icon = new MapIcon();
             icon.Image = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/Location.png"));
-            icon.Location = LocationHelper.PhoneLocation.Coordinate.Point;
+            icon.Location = LocationHelper.phoneLocation.Coordinate.Point;
             icon.ZIndex = 99;
             MainPage.searchMap.MapElements.Add(icon);
         }
@@ -306,9 +306,9 @@ namespace nexMuni
                 if (MainPage.favSearchBtn.Visibility == Windows.UI.Xaml.Visibility.Visible) MainPage.favSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
 
                 //Check to see if the stop is in user's favorites list
-                if (MainPageModel.favoritesStops.Any(z => z.Name == title || z.Name == reversed))
+                if (MainPageModel.FavoritesStops.Any(z => z.Name == title || z.Name == reversed))
                 {
-                    foreach (StopData s in MainPageModel.favoritesStops)
+                    foreach (StopData s in MainPageModel.FavoritesStops)
                     {
                         if (s.Name == title) selectedStop.FavID = s.FavID;
                     }

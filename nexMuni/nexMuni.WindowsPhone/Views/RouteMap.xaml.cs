@@ -22,7 +22,7 @@ namespace nexMuni
 {
     public sealed partial class RouteMap : Page
     {
-        public RouteData selectedRoute;
+        public Route selectedRoute;
         public static MapControl routeMap;
         private NavigationHelper navigationHelper;
         private ObservableDictionary defaultViewModel = new ObservableDictionary();
@@ -80,7 +80,7 @@ namespace nexMuni
         /// session.  The state will be null the first time a page is visited.</param>
         private void NavigationHelper_LoadState(object sender, LoadStateEventArgs e)
         {
-            selectedRoute = e.NavigationParameter as RouteData;
+            selectedRoute = e.NavigationParameter as Route;
             routeTitle.Text = selectedRoute.RouteNum + "-" + selectedRoute.RouteName;
 
             MapHelper.LoadDoc(selectedRoute.RouteNum);
