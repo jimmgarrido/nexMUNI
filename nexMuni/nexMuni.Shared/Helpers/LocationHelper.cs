@@ -40,15 +40,6 @@ namespace nexMuni
             systemTray.ProgressIndicator.ProgressValue = 0;
             systemTray.ProgressIndicator.Text = "nexMuni";
 #endif
-            //PhoneLocation = position;
-
-            //MainPage.LocationPoint.Add(new PositionWrapper(position.Coordinate.Point));
-
-//#if WINDOWS_PHONE_APP
-//            systemTray.ProgressIndicator.Text = "Locating Stops";
-//#endif
-//            //Find nearby stops in the database
-//             await DatabaseHelper.QueryForNearby(position.Coordinate.Point, 0.5);
         }
 
         public static double[][] MakeBounds(Geopoint location, double dist)

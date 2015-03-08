@@ -1,4 +1,5 @@
 ﻿using nexMuni.Common;
+using nexMuni.Helpers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,7 +24,8 @@ namespace nexMuni
     {
         private NavigationHelper navigationHelper;
         private ObservableDictionary defaultViewModel = new ObservableDictionary();
-        public static TextBlock noTimeText { get; set; }
+
+        private StopDetailModel detailModel;
 
         public StopDetail()
         {
@@ -34,53 +36,31 @@ namespace nexMuni
             this.navigationHelper.SaveState += this.NavigationHelper_SaveState;
         }
 
-        /// <summary>
-        /// Gets the <see cref="NavigationHelper"/> associated with this <see cref="Page"/>.
-        /// </summary>
         public NavigationHelper NavigationHelper
         {
             get { return this.navigationHelper; }
         }
 
-        /// <summary>
-        /// Gets the view model for this <see cref="Page"/>.
-        /// This can be changed to a strongly typed view model.
-        /// </summary>
         public ObservableDictionary DefaultViewModel
         {
             get { return this.defaultViewModel; }
         }
 
-        /// <summary>
-        /// Populates the page with content passed during navigation.  Any saved state is also
-        /// provided when recreating a page from a prior session.
-        /// </summary>
-        /// <param name="sender">
-        /// The source of the event; typically <see cref="NavigationHelper"/>
-        /// </param>
-        /// <param name="e">Event data that provides both the navigation parameter passed to
-        /// <see cref="Frame.Navigate(Type, Object)"/> when this page was initially requested and
-        /// a dictionary of state preserved by this page during an earlier
-        /// session.  The state will be null the first time a page is visited.</param>
-        private void NavigationHelper_LoadState(object sender, LoadStateEventArgs e)
+        private async void NavigationHelper_LoadState(object sender, LoadStateEventArgs e)
         {
-            StopDetailModel.selectedStop = e.NavigationParameter as StopData;
+            detailModel = new StopDetailModel(e.NavigationParameter as StopData);
 
-            StopHeader.Text = StopDetailModel.selectedStop.Name;
-            noTimeText = new TextBlock();
-            noTimeText = noTimes;
-            noTimes.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            StopHeader.Text = detailModel.SelectedStop.Name;
+            //noTimeText.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
 
-            if (StopDetailModel.routeList == null) StopDetailModel.routeList = new System.Collections.ObjectModel.ObservableCollection<Route>();
-            else if (StopDetailModel.routeList != null) StopDetailModel.routeList.Clear();
-            RouteInfoList.ItemsSource = StopDetailModel.routeList;
+            RouteInfoList.ItemsSource = detailModel.Routes;
 
             //Check if the stop is in user's favorites list
-            if (MainPageModel.FavoritesStops.Any(x => x.Name == StopDetailModel.selectedStop.Name))
+            if (MainPageModel.FavoritesStops.Any(x => x.Name == detailModel.SelectedStop.Name))
             {
                 foreach (StopData s in MainPageModel.FavoritesStops)
                 {
-                    if (s.Name == StopDetailModel.selectedStop.Name) StopDetailModel.selectedStop.FavID = s.FavID;
+                    if (s.Name == detailModel.SelectedStop.Name) detailModel.SelectedStop.FavID = s.FavID;
                 }
                 favBtn.Click += RemoveStop;
                 favBtn.Label = "unfavorite";
@@ -88,30 +68,23 @@ namespace nexMuni
             }
             else favBtn.Click += FavoriteStop;
 
-            StopDetailModel.LoadData(StopDetailModel.selectedStop);
+            await detailModel.LoadTimes();
         }
 
-        /// <summary>
-        /// Preserves state associated with this page in case the application is suspended or the
-        /// page is discarded from the navigation cache.  Values must conform to the serialization
-        /// requirements of <see cref="SuspensionManager.SessionState"/>.
-        /// </summary>
-        /// <param name="sender">The source of the event; typically <see cref="NavigationHelper"/></param>
-        /// <param name="e">Event data that provides an empty dictionary to be populated with
-        /// serializable state.</param>
         private void NavigationHelper_SaveState(object sender, SaveStateEventArgs e)
         {
         }
 
-        private void RefreshTimes(object sender, RoutedEventArgs e)
+        private async void RefreshTimes(object sender, RoutedEventArgs e)
         {
 #if WINDOWS_PHONE_APP
             var systemTray = Windows.UI.ViewManagement.StatusBar.GetForCurrentView();
-            systemTray.ProgressIndicator.Text = "Refreshing Arrival Times";
+            systemTray.ProgressIndicator.Text = "Refreshing Times";
             systemTray.ProgressIndicator.ProgressValue = null;
 #endif
-
-            PredictionModel.UpdateTimes();
+            RefreshBtn.IsEnabled = false;
+            await detailModel.RefreshTimes();
+            RefreshBtn.IsEnabled = true;
 
 #if WINDOWS_PHONE_APP
             systemTray.ProgressIndicator.ProgressValue = 0;
@@ -121,7 +94,7 @@ namespace nexMuni
 
         private async void FavoriteStop(object sender, RoutedEventArgs e)
         {
-            await DatabaseHelper.AddFavorite(StopDetailModel.selectedStop);
+            await DatabaseHelper.AddFavorite(detailModel.SelectedStop);
             favBtn.Click -= FavoriteStop;
             favBtn.Click += RemoveStop;
             favBtn.Icon = new SymbolIcon(Symbol.Remove);
@@ -130,7 +103,7 @@ namespace nexMuni
 
         private async void RemoveStop(object sender, RoutedEventArgs e)
         {
-            await DatabaseHelper.RemoveFavorite(StopDetailModel.selectedStop);
+            await DatabaseHelper.RemoveFavorite(detailModel.SelectedStop);
             favBtn.Click -= RemoveStop;
             favBtn.Click += FavoriteStop;
             favBtn.Icon = new SymbolIcon(Symbol.Favorite);
@@ -159,8 +132,7 @@ namespace nexMuni
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
-            StopDetailModel.routeList.Clear();
-            this.navigationHelper.OnNavigatedFrom(e);
+
         }
 
         #endregion

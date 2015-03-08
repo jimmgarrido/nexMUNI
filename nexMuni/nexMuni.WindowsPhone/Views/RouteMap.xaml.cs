@@ -1,4 +1,5 @@
 ﻿using nexMuni.Common;
+using nexMuni.DataModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -81,9 +82,9 @@ namespace nexMuni
         private void NavigationHelper_LoadState(object sender, LoadStateEventArgs e)
         {
             selectedRoute = e.NavigationParameter as Route;
-            routeTitle.Text = selectedRoute.RouteNum + "-" + selectedRoute.RouteName;
+            routeTitle.Text = selectedRoute.RouteNumber + "-" + selectedRoute.RouteName;
 
-            MapHelper.LoadDoc(selectedRoute.RouteNum);
+            MapHelper.LoadDoc(selectedRoute.RouteNumber);
         }
 
         /// <summary>

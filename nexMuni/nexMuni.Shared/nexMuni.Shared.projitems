@@ -20,15 +20,18 @@
     <Compile Include="$(MSBuildThisFileDirectory)DataModels\PositionWrapper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModels\Route.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModels\RouteData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataModels\RouteDirection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModels\StopData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\DatabaseHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\ErrorHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\LocationHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\MapHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\PredictionHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\WebRequests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\MainPageModel.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\PredictionModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\SearchModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\StopDetailModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\TimesTemplateSelector.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="$(MSBuildThisFileDirectory)assets\AddStar.png" />

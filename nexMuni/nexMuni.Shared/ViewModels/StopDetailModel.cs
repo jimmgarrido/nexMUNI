@@ -6,48 +6,61 @@ using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using nexMuni.Helpers;
+using System.Threading.Tasks;
+using nexMuni.DataModels;
 
 namespace nexMuni
 {
     class StopDetailModel
     {
-        public static ObservableCollection<Route> routeList;
-        public static string baseURL {get; set;}
-        public static StopData selectedStop { get; set; }
+        public ObservableCollection<Route> Routes { get; private set; }
+        public StopData SelectedStop { get; private set; }
 
-        public static async void LoadData(StopData stop)
+        private string URL;
+
+        private StopDetailModel() { }
+
+        public StopDetailModel(StopData stop)
         {
+            Routes = new ObservableCollection<Route>();
+            SelectedStop = stop;
+        }
+
+        public async Task LoadTimes()
+        {
+
 #if WINDOWS_PHONE_APP
             var systemTray = Windows.UI.ViewManagement.StatusBar.GetForCurrentView();
             systemTray.ProgressIndicator.Text = "Getting Arrival Times";
             systemTray.ProgressIndicator.ProgressValue = null;
 #endif
 
-            selectedStop = stop;
-
-            baseURL = "http://webservices.nextbus.com/service/publicXMLFeed?command=predictionsForMultiStops&a=sf-muni";
-            StringBuilder cont = new StringBuilder();
-            
-            int i = 0;
-            string[] splitTags = stop.Tags.Split(',');
-
-            string[] splitRoutes = stop.Routes.Split(',');
+            string[] splitRoutes = SelectedStop.Routes.Split(',');
             splitRoutes[0] = " " + splitRoutes[0];
 
-            while (i < splitTags.Length)
+            URL = WebRequests.GetMulitPredictionURL(SelectedStop.Tags);
+            List<Route> routeList = await PredictionHelper.GetPredictionTimes(URL);
+
+            foreach(Route r in routeList)
             {
-                cont.Append("&stops=" + splitTags[i]);
-                i++;
+                Routes.Add(r);
             }
-
-            string url = baseURL + cont.ToString();
-
-            PredictionModel.GetTimes(await PredictionModel.GetXML(url));
 
 #if WINDOWS_PHONE_APP
             systemTray.ProgressIndicator.ProgressValue = 0;
             systemTray.ProgressIndicator.Text = "nexMuni";
 #endif
+        }
+
+        public async Task RefreshTimes()
+        {
+            Routes.Clear();
+            List<Route> routeList = await PredictionHelper.GetPredictionTimes(URL);
+            foreach (Route r in routeList)
+            {
+                Routes.Add(r);
+            }
         }
     }
 }

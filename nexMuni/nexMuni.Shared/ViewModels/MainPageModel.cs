@@ -11,6 +11,7 @@ using Windows.Storage;
 using System.IO;
 using System.Threading.Tasks;
 using nexMuni.DataModels;
+using nexMuni.Helpers;
 
 namespace nexMuni
 {
@@ -32,7 +33,6 @@ namespace nexMuni
             FavoritesStops = new ObservableCollection<StopData>();
 
             await DatabaseHelper.CheckDatabases();
-            await LocationHelper.UpdateLocation();
             await UpdateNearbyStops();
             await LoadFavorites();
 
@@ -41,16 +41,11 @@ namespace nexMuni
             IsDataLoaded = true;
         }
 
-        //public static void DisplayResults(List<FavoriteData> r)
-        //{
-        //    MainPage.noFavsText.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-
-            
-        //}
-
-        private static async Task UpdateNearbyStops()
+        public static async Task UpdateNearbyStops()
         {
             NearbyStops.Clear();
+
+            await LocationHelper.UpdateLocation();
             List<BusStopData> stops = await DatabaseHelper.QueryForNearby(0.5);
 
             //Get distance to each stop
@@ -65,10 +60,11 @@ namespace nexMuni
                 orderby s.Distance
                 select s;
 
-            //Add stops to listview with max of 15
+            //Add stops to listview with max of 12
             foreach (BusStopData stop in sortedList)
             {
                 NearbyStops.Add(new StopData(stop.StopName, stop.Routes, stop.StopTags, stop.Distance, stop.Latitude, stop.Longitude));
+                if (NearbyStops.Count >= 12) break;
             }
         }
 

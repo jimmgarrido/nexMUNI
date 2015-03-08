@@ -1,4 +1,5 @@
-﻿using System;
+﻿using nexMuni.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -93,7 +94,7 @@ namespace nexMuni
                 //SearchPage.LoadData();              
 
                 nearbyListView.ItemsSource = MainPageModel.NearbyStops;
-                //favoritesListView.ItemsSource = MainModel.FavoritesStops;
+                favoritesListView.ItemsSource = MainPageModel.FavoritesStops;
             }           
         }
 
@@ -121,9 +122,10 @@ namespace nexMuni
 
         private async void UpdateButton(object sender, RoutedEventArgs e)
         {
-            MainPageModel.NearbyStops.Clear();
-            noNearbyText.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-            await LocationHelper.UpdateLocation();
+            //MainPageModel.NearbyStops.Clear();
+            //noNearbyText.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            //await LocationHelper.UpdateLocation();
+            await MainPageModel.UpdateNearbyStops();
         }
 
         private void StopClicked(object sender, ItemClickEventArgs e)

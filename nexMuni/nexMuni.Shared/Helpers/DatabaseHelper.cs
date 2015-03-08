@@ -12,12 +12,12 @@ using System.Collections.ObjectModel;
 using Windows.ApplicationModel;
 using nexMuni.DataModels;
 
-namespace nexMuni
+namespace nexMuni.Helpers
 {
     class DatabaseHelper
     {
         private static string favDBPath = string.Empty;
-
+        private static SQLiteAsyncConnection dbConn;
         public static async Task CheckDatabases()
         {
             await CheckStopsDB();
@@ -33,15 +33,16 @@ namespace nexMuni
 
             //Query database for stops
             string query = "SELECT * FROM BusStops WHERE Longitude BETWEEN " + bounds[3][1] + " AND " + bounds[1][1] + " AND Latitude BETWEEN " + bounds[2][0] + " AND " + bounds[0][0];
-            SQLiteAsyncConnection db = new SQLiteAsyncConnection("muni.sqlite");
-            var results = await db.QueryAsync<BusStopData>(query);
 
-            //Check results for enough stops. If less than 5 returned, call method again with larger radius
+            if (dbConn == null) dbConn = new SQLiteAsyncConnection("muni.sqlite");
+            var results = await dbConn.QueryAsync<BusStopData>(query);
+
+            //Check results for enough stops
             if (results.Count >= 12)
             {
-                return results.GetRange(0, 12);
+                return results;
             }
-            else return await QueryForNearby(dist += .50);
+            else return await QueryForNearby(dist += .5);
         }
 
         public static async Task< List<string>> QueryForRoutes()

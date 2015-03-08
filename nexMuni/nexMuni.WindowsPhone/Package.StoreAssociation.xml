@@ -191,6 +191,8 @@
   </ProductReservedInfo>
   <AccountPackageIdentityNames>
     <MainPackageIdentityName>10642JimmyGarrido.BookEnd</MainPackageIdentityName>
+    <MainPackageIdentityName>10642JimmyGarrido.nexBART</MainPackageIdentityName>
+    <MainPackageIdentityName>10642JimmyGarrido.nexBARTBeta</MainPackageIdentityName>
     <MainPackageIdentityName>10642JimmyGarrido.nexMuni</MainPackageIdentityName>
   </AccountPackageIdentityNames>
   <PackageInfoList LandingUrl="https://dev.windowsphone.com/AppSubmission/AssociationLanding?windowsProductId=86a6c9ee-dc56-4044-883a-1a995fe0d9a7">

@@ -4,59 +4,36 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace nexMuni
+namespace nexMuni.DataModels
 {
-    public class Route : INotifyPropertyChanged
+    public class Route
     {
         private string predictions1 = String.Empty;
         private string predictions2 = String.Empty;
-        //private string temp;
 
-        public string RouteNum { get; set; }
-        public string RouteName { get; set; }
+        public string RouteName { get; private set; }
+        public string RouteNumber { get; private set; }
+        public List<RouteDirection> Directions {get; set;}
         public string Dir1 { get; set; }
         public string Dir2 { get; set; }
 
-        public string Times1 {
-            get
-            {
-                return this.predictions1;
-            }
+        public string Times1 { get; set; }
+        public string Times2 { get; set; }
 
-            set
-            {
-                if (value != this.predictions1)
-                {
-                    this.predictions1 = value;
-                    NotifyPropertyChanged();
-                }
-            }
+        private Route() { }
+
+        public Route(string name, string num)
+        {
+            RouteName = name;
+            RouteNumber = num;
+            Directions = new List<RouteDirection>();
         }
-
-        public string Times2 {
-            get
-            {
-                return this.predictions2;
-            }
-
-            set
-            {
-                if (value != this.predictions2)
-                {
-                    this.predictions2 = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public Route() { }
 
         public Route(string name, string num, string dir, string [] _times)
         {
             int i = 0;
             RouteName = name;
-            RouteNum = num;
+            RouteNumber = num;
             Dir1 = dir;
             if (Dir1.Contains("via Downtown")) Dir1 = Dir1.Replace("via Downtown", "");
             if (Dir1.Contains("&amp;")) Dir1 = Dir1.Replace("&amp;", "&");
@@ -105,14 +82,6 @@ namespace nexMuni
             }
 
             Times2 = Times2 + " mins"; 
-        }
-
-        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
         }
     }
 }

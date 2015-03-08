@@ -13,6 +13,7 @@ using Windows.Foundation;
 using Windows.Storage.Streams;
 using Windows.UI;
 using System.Threading.Tasks;
+using nexMuni.Helpers;
 
 namespace nexMuni
 {
@@ -324,7 +325,7 @@ namespace nexMuni
                 }
 
                 //Get bus predictions for stop
-                PredictionModel.GetSearchTimes(await PredictionModel.GetXML(timesURL));
+                //PredictionHelper.GetSearchTimes(await PredictionHelper.GetXML(timesURL));
 
 #if WINDOWS_PHONE_APP
                 systemTray.ProgressIndicator.ProgressValue = 0;
