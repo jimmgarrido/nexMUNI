@@ -98,12 +98,6 @@
     <Compile Include="Views\RouteMap.xaml.cs">
       <DependentUpon>RouteMap.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SampleData\RouteDataSample\RouteDataSample.xaml.cs">
-      <DependentUpon>RouteDataSample.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="SampleData\SampleStops\SampleStops.xaml.cs">
-      <DependentUpon>SampleStops.xaml</DependentUpon>
-    </Compile>
     <Compile Include="SQLite.cs" />
     <Compile Include="SQLiteAsync.cs" />
     <Compile Include="Views\StopDetail.xaml.cs">
@@ -134,36 +128,6 @@
     <None Include="Package.StoreAssociation.xml">
       <SubType>Designer</SubType>
     </None>
-    <DesignTimeOnly Include="SampleData\RouteDataSample\RouteDataSample_Files\image01.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </DesignTimeOnly>
-    <DesignTimeOnly Include="SampleData\RouteDataSample\RouteDataSample_Files\image02.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </DesignTimeOnly>
-    <DesignTimeOnly Include="SampleData\RouteDataSample\RouteDataSample_Files\image03.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </DesignTimeOnly>
-    <DesignTimeOnly Include="SampleData\RouteDataSample\RouteDataSample_Files\image04.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </DesignTimeOnly>
-    <DesignTimeOnly Include="SampleData\RouteDataSample\RouteDataSample_Files\image05.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </DesignTimeOnly>
-    <DesignTimeOnly Include="SampleData\SampleStops\SampleStops_Files\image01.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </DesignTimeOnly>
-    <DesignTimeOnly Include="SampleData\SampleStops\SampleStops_Files\image02.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </DesignTimeOnly>
-    <DesignTimeOnly Include="SampleData\SampleStops\SampleStops_Files\image03.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </DesignTimeOnly>
-    <DesignTimeOnly Include="SampleData\SampleStops\SampleStops_Files\image04.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </DesignTimeOnly>
-    <DesignTimeOnly Include="SampleData\SampleStops\SampleStops_Files\image05.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </DesignTimeOnly>
   </ItemGroup>
   <ItemGroup>
     <Page Include="Views\AboutPage.xaml">
@@ -174,14 +138,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <DesignTimeOnly Include="SampleData\SampleStops\SampleStops.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </DesignTimeOnly>
-    <DesignTimeOnly Include="SampleData\RouteDataSample\RouteDataSample.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </DesignTimeOnly>
     <Page Include="Views\RouteMap.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -195,20 +151,14 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <DesignTimeOnly Include="SampleData\SampleStops\SampleStops.xsd" />
-  </ItemGroup>
-  <ItemGroup>
     <SDKReference Include="Microsoft.VCLibs, version=12.0">
       <Name>Microsoft Visual C++ 2013 Runtime Package for Windows Phone</Name>
     </SDKReference>
-    <SDKReference Include="SQLite.WP81, Version=3.8.8.1">
-      <Name>SQLite for Windows Phone 8.1 %28SQLite.WP81, Version=3.8.8.1%29</Name>
+    <SDKReference Include="SQLite.WP81, Version=3.8.8.3">
+      <Name>SQLite for Windows Phone 8.1 %28SQLite.WP81, Version=3.8.8.3%29</Name>
     </SDKReference>
   </ItemGroup>
   <ItemGroup />
-  <ItemGroup>
-    <DesignTimeOnly Include="SampleData\RouteDataSample\RouteDataSample.xsd" />
-  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">
     <VisualStudioVersion>12.0</VisualStudioVersion>
   </PropertyGroup>

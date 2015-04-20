@@ -33,10 +33,8 @@ namespace nexMuni
             FavoritesStops = new ObservableCollection<StopData>();
 
             await DatabaseHelper.CheckDatabases();
-            await UpdateNearbyStops();
             await LoadFavorites();
-
-            //await SearchModel.LoadData();
+            await UpdateNearbyStops();
 
             IsDataLoaded = true;
         }
@@ -60,11 +58,11 @@ namespace nexMuni
                 orderby s.Distance
                 select s;
 
-            //Add stops to listview with max of 12
+            //Add stops to listview with max of 15
             foreach (BusStopData stop in sortedList)
             {
                 NearbyStops.Add(new StopData(stop.StopName, stop.Routes, stop.StopTags, stop.Distance, stop.Latitude, stop.Longitude));
-                if (NearbyStops.Count >= 12) break;
+                if (NearbyStops.Count >= 15) break;
             }
         }
 

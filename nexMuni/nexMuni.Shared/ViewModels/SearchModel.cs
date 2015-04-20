@@ -29,7 +29,7 @@ namespace nexMuni
         private static string selectedRoute;
         public static StopData selectedStop { get; set; }
 
-        public static async Task LoadData()
+        public static async void LoadData()
         {
             await LoadRoutes();
 
@@ -60,7 +60,7 @@ namespace nexMuni
 
             selectedRoute = sender.SelectedItem.ToString();
             MainPage.routeBtn.Content = selectedRoute;
-            //MainPage.routePicker.SelectedIndex = sender.SelectedIndex;
+            MainPage.routePicker.SelectedIndex = sender.SelectedIndex;
             MainPage.timesText.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
             MainPage.favSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
 

@@ -7,13 +7,11 @@
     xmlns:Maps="using:Windows.UI.Xaml.Controls.Maps"
     xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
     xmlns:Primitives="clr-namespace:Microsoft.Phone.Controls.Primitives;assembly=Microsoft.Phone"
-    xmlns:SampleData="using:Blend.SampleData.SampleStops"
     
     x:Class="nexMuni.MainPage"
     mc:Ignorable="d" Background="#b31b1b"
     >
     <Page.Resources>
-        <SampleData:SampleStops x:Key="SampleStops" d:IsDataSource="True"/>
         <Thickness x:Key="PivotPortraitThemePadding">19,38,0,0</Thickness>
         <Thickness x:Key="PivotLandscapeThemePadding">19,25,0,0</Thickness>
 
@@ -359,7 +357,7 @@
             <CommandBar.SecondaryCommands>
                 <AppBarButton Label="about" Click="GoToAbout" Foreground="White"/>
             </CommandBar.SecondaryCommands>
-        	<AppBarButton x:Name="refreshBtn"  IsCompact="False" Label="refresh" Click="UpdateButton" Foreground="White">
+        	<AppBarButton x:Name="RefreshBtn"  IsCompact="False" Label="refresh" Click="UpdateButtonPressed" Foreground="White">
         		<AppBarButton.Icon>
         			<BitmapIcon UriSource="Assets/refresh.png"/>
         		</AppBarButton.Icon>
@@ -368,7 +366,7 @@
         </CommandBar>
     </Page.BottomAppBar>
 
-    <Grid x:Name="contentRoot" d:DataContext="{Binding Source={StaticResource SampleStops}}">
+    <Grid x:Name="contentRoot">
         <Pivot x:Name="pivotControl" Title="nexMuni" Background="White" Style="{StaticResource NearbyPivot}" Margin="0,20,0,0" Padding="0,-30,0,0">
             <PivotItem Header="nearby" Margin="10,13,10,0">
                 <Grid>
@@ -386,6 +384,16 @@
                                 </Grid>
                             </DataTemplate>
                         </ListView.ItemTemplate>
+                        <ListView.ItemContainerTransitions>
+                            <TransitionCollection>
+                                <EntranceThemeTransition IsStaggeringEnabled="True" FromHorizontalOffset="0" FromVerticalOffset="200"/>
+                                <AddDeleteThemeTransition />
+                                <NavigationThemeTransition />
+                                <ContentThemeTransition VerticalOffset="200"/>
+                                <RepositionThemeTransition />
+                                <ReorderThemeTransition />
+                            </TransitionCollection>
+                        </ListView.ItemContainerTransitions>
                     </ListView>
                 </Grid>
             </PivotItem>
@@ -417,7 +425,7 @@
 
                     <StackPanel  Background="#b31b1b">
                         <TextBlock Text="Select Route" HorizontalAlignment="Center" Margin="-265,0,0,-7" FontSize="16" FontFamily="Global User Interface"/>
-                        <Button x:Name="routeButton" HorizontalAlignment="Center" Width="350" Style="{StaticResource ButtonStyle}" IsEnabled="False">
+                        <Button x:Name="RouteButton" HorizontalAlignment="Center" Width="350" Style="{StaticResource ButtonStyle}" IsEnabled="False">
                             <Button.Flyout>
                                 <ListPickerFlyout x:Name="RoutesFlyout" Title="SELECT ROUTE" Placement="Right" >
                                     <ListPickerFlyout.ItemTemplate>
@@ -429,11 +437,11 @@
                             </Button.Flyout>
                         </Button>
 
-                        <TextBlock x:Name="dirLabel" Text="Select Direction" HorizontalAlignment="Center" Margin="-245,0,0,-7" FontSize="16" FontFamily="Global User Interface" Visibility="Collapsed"/>
-                        <ComboBox x:Name="dirBox" Width="350" HorizontalAlignment="Center" Style="{StaticResource ComboBoxStyle}" Visibility="Collapsed"/>
+                        <TextBlock x:Name="DirLabel" Text="Select Direction" HorizontalAlignment="Center" Margin="-245,0,0,-7" FontSize="16" FontFamily="Global User Interface" Visibility="Collapsed"/>
+                        <ComboBox x:Name="DirBox" Width="350" HorizontalAlignment="Center" Style="{StaticResource ComboBoxStyle}" Visibility="Collapsed"/>
 
-                        <TextBlock x:Name="stopLabel" Text="Select Stop" HorizontalAlignment="Center" Margin="-275,0,0,-7" FontSize="16" FontFamily="Global User Interface" Visibility="Collapsed"/>
-                        <Button x:Name="stopButton" HorizontalAlignment="Center" Width="350" Style="{StaticResource ButtonStyle}" Visibility="Collapsed" IsEnabled="False" >
+                        <TextBlock x:Name="StopLabel" Text="Select Stop" HorizontalAlignment="Center" Margin="-275,0,0,-7" FontSize="16" FontFamily="Global User Interface" Visibility="Collapsed"/>
+                        <Button x:Name="StopButton" HorizontalAlignment="Center" Width="350" Style="{StaticResource ButtonStyle}" Visibility="Collapsed" IsEnabled="False" >
                             <Button.Flyout>
                                 <ListPickerFlyout x:Name="StopsFlyout" Title="SELECT STOP" Placement="Right">
                                     <ListPickerFlyout.ItemTemplate>
@@ -445,7 +453,7 @@
                             </Button.Flyout>
                         </Button>
 
-                        <TextBlock x:Name="searchTimes" HorizontalAlignment="Left" Margin="90,10,0,0" FontSize="26" FontWeight="Bold" Visibility="Collapsed" />
+                        <TextBlock x:Name="SearchTimes" HorizontalAlignment="Left" Margin="90,10,0,0" FontSize="26" FontWeight="Bold" Visibility="Collapsed" />
                         <Button x:Name="AddFavSearch" Click="FavoriteSearch" Style="{StaticResource ButtonStyle}" MinHeight="30" Margin="0,-47,75,0" HorizontalAlignment="Right" Padding="0" FontFamily="Global User Interface" Visibility="Collapsed">
 							<Image Source="Assets/AddStar.png" Width="30" Height="30" />
 						</Button>
@@ -454,7 +462,7 @@
                         </Button>
                     </StackPanel>
 
-                    <Maps:MapControl x:Name="searchMapControl" HorizontalAlignment="Center" Margin="0,0,0,0" Grid.Row="1"
+                    <Maps:MapControl x:Name="SearchMapControl" HorizontalAlignment="Center" Margin="0,0,0,0" Grid.Row="1"
                                      VerticalAlignment="Center" MapServiceToken="jjA5Pn6AN4an5lgqKNN_Rg" Height="500" 
                                      Width="500" ZoomLevel="11.5">
                         <Maps:MapItemsControl ItemsSource="{Binding LocationPoint}">

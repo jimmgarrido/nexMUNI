@@ -8,10 +8,8 @@
     x:Class="nexMuni.StopDetail"
     mc:Ignorable="d" Background="#FFB31B1B" d:DataContext="{d:DesignData /SampleData/RouteDataSample/RouteDataSample.xaml}"
     Foreground="White">
-    
-	<Page.Resources>
-		<SampleData:RouteDataSample x:Key="RouteDataSample" d:IsDataSource="True"/>
-        
+
+    <Page.Resources>
         <Style x:Key="LabelStyle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="27"/>
             <Setter Property="HorizontalAlignment" Value="Left"/>
