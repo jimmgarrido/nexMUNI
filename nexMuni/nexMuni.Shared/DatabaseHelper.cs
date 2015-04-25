@@ -22,8 +22,18 @@ namespace nexMuni
             bool dbExists = false;
             try
             {
+                
                 StorageFile muniDB = await ApplicationData.Current.LocalFolder.GetFileAsync("muni.sqlite");
-                dbExists = true;
+
+                if(muniDB.DateCreated.Date < DateTime.Today.Date)
+                {
+                    dbExists = false;
+                }
+                else
+                {
+                    dbExists = true;
+                }
+                
             }
             catch
             {
@@ -33,7 +43,7 @@ namespace nexMuni
             if(!dbExists)
             {
                 StorageFile dbFile = await Package.Current.InstalledLocation.GetFileAsync("db\\muni.sqlite");
-                await dbFile.CopyAsync(ApplicationData.Current.LocalFolder);
+                await dbFile.CopyAsync(ApplicationData.Current.LocalFolder, "muni.sqlite", NameCollisionOption.ReplaceExisting);
             }
 
         }
@@ -59,7 +69,7 @@ namespace nexMuni
         public static async Task< List<string>> QueryForRoutes()
         {
             SQLiteAsyncConnection db = new SQLiteAsyncConnection("muni.sqlite");
-            var query = await db.QueryAsync<Routes>("SELECT * FROM Routes");
+            var query = await db.QueryAsync<Routes>("SELECT * FROM RouteData");
 
             List<string> list = new List<string>();
 
