@@ -21,12 +21,6 @@ namespace nexMuni
         public static ObservableCollection<StopData> FavoritesStops { get; private set;}
         public static bool IsDataLoaded { get; private set; }
 
-        public MainPageModel() 
-        {
-            NearbyStops = new ObservableCollection<StopData>();
-            FavoritesStops = new ObservableCollection<StopData>();
-        }
-
         public static async void LoadData()
         {
             NearbyStops = new ObservableCollection<StopData>();
