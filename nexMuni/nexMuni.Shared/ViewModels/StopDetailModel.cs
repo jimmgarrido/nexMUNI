@@ -61,7 +61,6 @@ namespace nexMuni
             foreach (Route r in routeList)
             {
                 Routes.Add(r);
-                await Task.Delay(200);
             }
         }
     }
