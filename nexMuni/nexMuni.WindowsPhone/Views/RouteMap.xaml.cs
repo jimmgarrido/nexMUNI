@@ -46,7 +46,6 @@ namespace nexMuni
             this.navigationHelper.LoadState += this.NavigationHelper_LoadState;
             this.navigationHelper.SaveState += this.NavigationHelper_SaveState;
 
-            routeMap = new MapControl();
             routeMap = routeMapControl;
             routeMap.Center = new Geopoint(new BasicGeoposition() { Latitude = 37.7603, Longitude = -122.427 });
         }

@@ -132,7 +132,7 @@ namespace nexMuni
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
-
+            this.navigationHelper.OnNavigatedFrom(e);
         }
 
         #endregion

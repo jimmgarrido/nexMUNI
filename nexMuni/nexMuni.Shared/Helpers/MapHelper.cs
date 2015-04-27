@@ -10,6 +10,8 @@ using Windows.UI.Xaml.Controls.Maps;
 using Windows.Services.Maps;
 using Windows.UI;
 using Windows.Storage.Streams;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace nexMuni
 {
@@ -75,11 +77,14 @@ namespace nexMuni
                 x++;
             }
             
-            MapIcon icon = new MapIcon();
-            icon.Image = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/Location.png"));
-            icon.Location = LocationHelper.phoneLocation.Coordinate.Point;
-            icon.ZIndex = 99;
-            RouteMap.routeMap.MapElements.Add(icon);
+            Image icon = new Image();
+            icon.Source = new BitmapImage(new Uri("ms-appx:///Assets/Location.png"));
+            icon.Width = 25;
+            icon.Height = 25;
+
+            RouteMap.routeMap.Children.Add(icon);
+            MapControl.SetNormalizedAnchorPoint(icon, new Windows.Foundation.Point(0.5, 0.5));
+            MapControl.SetLocation(icon, LocationHelper.phoneLocation.Coordinate.Point);
         }
     }
 }
