@@ -36,7 +36,6 @@ namespace nexMuni
         public static async Task UpdateNearbyStops()
         {
             NearbyStops.Clear();
-
             await LocationHelper.UpdateLocation();
             List<BusStopData> stops = await DatabaseHelper.QueryForNearby(0.5);
 
@@ -54,10 +53,10 @@ namespace nexMuni
 
             //Add stops to listview with max of 15
             foreach (BusStopData stop in sortedList)
-            {
+            {     
                 NearbyStops.Add(new StopData(stop.StopName, stop.Routes, stop.StopTags, stop.Distance, stop.Latitude, stop.Longitude));
                 if (NearbyStops.Count >= 15) break;
-            }
+            }         
         }
 
         private static async Task LoadFavorites()

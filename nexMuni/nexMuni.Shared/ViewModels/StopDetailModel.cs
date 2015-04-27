@@ -57,9 +57,11 @@ namespace nexMuni
         {
             Routes.Clear();
             List<Route> routeList = await PredictionHelper.GetPredictionTimes(URL);
+
             foreach (Route r in routeList)
             {
                 Routes.Add(r);
+                await Task.Delay(200);
             }
         }
     }

@@ -40,15 +40,15 @@ namespace nexMuni
 
         public RouteMap()
         {
-            this.InitializeComponent();
-
-            routeMap = new MapControl();
-            routeMap = routeMapControl;
-            routeMap.Center = new Geopoint(new BasicGeoposition() { Latitude = 37.7603, Longitude = -122.427 }); 
+            this.InitializeComponent(); 
 
             this.navigationHelper = new NavigationHelper(this);
             this.navigationHelper.LoadState += this.NavigationHelper_LoadState;
             this.navigationHelper.SaveState += this.NavigationHelper_SaveState;
+
+            routeMap = new MapControl();
+            routeMap = routeMapControl;
+            routeMap.Center = new Geopoint(new BasicGeoposition() { Latitude = 37.7603, Longitude = -122.427 });
         }
 
         /// <summary>
@@ -121,7 +121,7 @@ namespace nexMuni
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
-
+            this.navigationHelper.OnNavigatedFrom(e);
         }
 
         #endregion

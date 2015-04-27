@@ -386,12 +386,8 @@
                         </ListView.ItemTemplate>
                         <ListView.ItemContainerTransitions>
                             <TransitionCollection>
-                                <EntranceThemeTransition IsStaggeringEnabled="True" FromHorizontalOffset="0" FromVerticalOffset="200"/>
+                                <EntranceThemeTransition FromHorizontalOffset="0" FromVerticalOffset="200"/>
                                 <AddDeleteThemeTransition />
-                                <NavigationThemeTransition />
-                                <ContentThemeTransition VerticalOffset="200"/>
-                                <RepositionThemeTransition />
-                                <ReorderThemeTransition />
                             </TransitionCollection>
                         </ListView.ItemContainerTransitions>
                     </ListView>
