@@ -7,9 +7,8 @@
     xmlns:Maps="using:Windows.UI.Xaml.Controls.Maps"
     xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
     xmlns:Primitives="clr-namespace:Microsoft.Phone.Controls.Primitives;assembly=Microsoft.Phone"
-    
     x:Class="nexMuni.MainPage"
-    mc:Ignorable="d" Background="#b31b1b"
+    Background="#b31b1b"
     >
     <Page.Resources>
         <Thickness x:Key="PivotPortraitThemePadding">19,38,0,0</Thickness>
@@ -400,7 +399,7 @@
                               ItemsSource="{Binding Items}" SelectionMode="None" IsItemClickEnabled="True" ItemClick="StopClicked" Padding="0,10,0,0">
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <Grid Background="#b31b1b" Margin="0,0,0,11	" Height="120" Width="500">
+                                <Grid Background="#b31b1b" Margin="0,0,0,11	" Height="110" Width="500">
                                     <StackPanel Margin="0,0,0,0">
                                         <TextBlock Text="{Binding Name}"  Margin="10,0,0,0" FontSize="22" Foreground="White"/>
                                         <TextBlock Text="{Binding Distance}" Margin="10,0,0,0" FontSize="16" Foreground="White"/>
