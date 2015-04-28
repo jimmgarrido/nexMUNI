@@ -105,7 +105,8 @@ namespace nexMuni.Helpers
                     Lat = stop.Lat,
                     Lon = stop.Lon
                 });
-            await GetFavorites();
+            //await GetFavorites();
+            await MainPageModel.LoadFavorites();
         }
 
         public static async Task RemoveFavorite(StopData stop)
@@ -113,7 +114,8 @@ namespace nexMuni.Helpers
             SQLiteAsyncConnection favDB = new SQLiteAsyncConnection(favDBPath);
             string q = "DELETE FROM FavoriteData WHERE Id IS " + stop.FavID;
             await favDB.QueryAsync<FavoriteData>(q);
-            await GetFavorites();
+            //await GetFavorites();
+            await MainPageModel.LoadFavorites();
         }
 
 
@@ -156,7 +158,8 @@ namespace nexMuni.Helpers
                 });
             }
             
-            await GetFavorites();
+            //await GetFavorites();
+            await MainPageModel.LoadFavorites();
         }
 
         public static async Task RemoveSearch(StopData selection)
@@ -164,7 +167,8 @@ namespace nexMuni.Helpers
             SQLiteAsyncConnection favDB = new SQLiteAsyncConnection(favDBPath);
             string q = "DELETE FROM FavoriteData WHERE Id IS " + selection.FavID;
             await favDB.QueryAsync<FavoriteData>(q);
-            await GetFavorites();
+            //await GetFavorites();
+            await MainPageModel.LoadFavorites();
         }
 
         private static async Task CheckStopsDB()

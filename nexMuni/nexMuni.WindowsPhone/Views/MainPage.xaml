@@ -451,10 +451,10 @@
 
                         <TextBlock x:Name="SearchTimes" HorizontalAlignment="Left" Margin="90,10,0,0" FontSize="26" FontWeight="Bold" Visibility="Collapsed" />
                         <Button x:Name="AddFavSearch" Click="FavoriteSearch" Style="{StaticResource ButtonStyle}" MinHeight="30" Margin="0,-47,75,0" HorizontalAlignment="Right" Padding="0" FontFamily="Global User Interface" Visibility="Collapsed">
-							<Image Source="Assets/AddStar.png" Width="30" Height="30" />
+							<Image Source="/Assets/AddStar.png" Width="30" Height="30" />
 						</Button>
                         <Button x:Name="RemoveFavSearch" Click="RemoveSearch" Style="{StaticResource ButtonStyle}" MinHeight="30" Margin="0,-47,75,0" HorizontalAlignment="Right" Padding="0" FontFamily="Global User Interface" Visibility="Collapsed">
-                            <Image Source="Assets/RemoveStar.png" Width="30" Height="30" />
+                            <Image Source="/Assets/RemoveStar.png" Width="30" Height="30" />
                         </Button>
                     </StackPanel>
 

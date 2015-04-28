@@ -124,7 +124,7 @@
                     Style="{ThemeResource HeaderTextBlockStyle}" CharacterSpacing="{ThemeResource PivotHeaderItemCharacterSpacing}" />
 
         <Grid Grid.Row="1" x:Name="ContentRoot" >
-            <TextBlock x:Name="noTimes" Text="No busses at this time" FontSize="21" Margin="13,225,0,0" Visibility="Collapsed" TextAlignment="Center"/>
+            <TextBlock x:Name="noTimesBlock" Text="No busses at this time" FontSize="21" Margin="13,225,0,0" Visibility="Collapsed" TextAlignment="Center"/>
             <ListView x:Name="RouteInfoList" IsItemClickEnabled="True" 
                       Margin="0,0,0,0" IsTapEnabled="False" IsHoldingEnabled="False" 
                       ItemClick="ShowRouteMap" ItemTemplateSelector="{StaticResource TemplateSelector}">

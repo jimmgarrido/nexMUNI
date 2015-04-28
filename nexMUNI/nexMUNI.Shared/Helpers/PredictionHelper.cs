@@ -20,7 +20,7 @@ namespace nexMuni.Helpers
         {
             return GetPredictions(await GetXml(url));
         }
-        private static async Task<XDocument> GetXml(string url)
+        public static async Task<XDocument> GetXml(string url)
         {
             var response = new HttpResponseMessage();
             var client = new HttpClient();

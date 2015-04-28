@@ -221,14 +221,17 @@ namespace nexMuni
                 x++;
             }
 
-            Image icon = new Image();
-            icon.Source = new BitmapImage(new Uri("ms-appx:///Assets/Location.png"));
-            icon.Width = 25;
-            icon.Height = 25;
+            if (LocationHelper.phoneLocation != null)
+            {
+                Image icon = new Image();
+                icon.Source = new BitmapImage(new Uri("ms-appx:///Assets/Location.png"));
+                icon.Width = 25;
+                icon.Height = 25;
 
-            MainPage.searchMap.Children.Add(icon);
-            MapControl.SetNormalizedAnchorPoint(icon, new Windows.Foundation.Point(0.5, 0.5));
-            MapControl.SetLocation(icon, LocationHelper.phoneLocation.Coordinate.Point);
+                MainPage.searchMap.Children.Add(icon);
+                MapControl.SetNormalizedAnchorPoint(icon, new Windows.Foundation.Point(0.5, 0.5));
+                MapControl.SetLocation(icon, LocationHelper.phoneLocation.Coordinate.Point);
+            }
         }
 
         public static void DirSelected(object sender, SelectionChangedEventArgs e)
@@ -319,7 +322,7 @@ namespace nexMuni
                     }
                     MainPage.timesText.Visibility = Windows.UI.Xaml.Visibility.Visible;
                     MainPage.favSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-                    //MainPage.removeSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                    MainPage.removeSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
                 }
                 else
                 {
@@ -329,7 +332,7 @@ namespace nexMuni
                 }
 
                 //Get bus predictions for stop
-                //PredictionHelper.GetSearchTimes(await PredictionHelper.GetXML(timesURL));
+                PredictionHelper.GetSearchTimes(await PredictionHelper.GetXml(timesURL));
 
 #if WINDOWS_PHONE_APP
                 systemTray.ProgressIndicator.ProgressValue = 0;

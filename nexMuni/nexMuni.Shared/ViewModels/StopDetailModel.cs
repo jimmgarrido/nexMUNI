@@ -41,7 +41,7 @@ namespace nexMuni
 
             URL = WebRequests.GetMulitPredictionURL(SelectedStop.Tags);
             List<Route> routeList = await PredictionHelper.GetPredictionTimes(URL);
-
+            
             foreach(Route r in routeList)
             {
                 Routes.Add(r);

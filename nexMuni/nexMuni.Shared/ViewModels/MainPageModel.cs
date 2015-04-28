@@ -37,6 +37,7 @@ namespace nexMuni
         {
             NearbyStops.Clear();
             await LocationHelper.UpdateLocation();
+            //MainPage.routeBtn.IsEnabled = true;
             List<BusStopData> stops = await DatabaseHelper.QueryForNearby(0.5);
 
             //Get distance to each stop
@@ -59,7 +60,7 @@ namespace nexMuni
             }         
         }
 
-        private static async Task LoadFavorites()
+        public static async Task LoadFavorites()
         {
             FavoritesStops.Clear();
             List<FavoriteData> favorites = await DatabaseHelper.GetFavorites();

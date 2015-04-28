@@ -34,12 +34,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\TimesTemplateSelector.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="$(MSBuildThisFileDirectory)assets\AddStar.png" />
-    <Content Include="$(MSBuildThisFileDirectory)assets\Marker.png" />
-    <Content Include="$(MSBuildThisFileDirectory)assets\Location.png" />
-    <Content Include="$(MSBuildThisFileDirectory)assets\Marker2.png" />
-    <Content Include="$(MSBuildThisFileDirectory)assets\RemoveStar.png" />
-    <Content Include="$(MSBuildThisFileDirectory)assets\refresh.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\AddStar.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Marker.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Location.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Marker2.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\RemoveStar.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\refresh.png" />
     <Content Include="$(MSBuildThisFileDirectory)db\muni.sqlite" />
   </ItemGroup>
 </Project>

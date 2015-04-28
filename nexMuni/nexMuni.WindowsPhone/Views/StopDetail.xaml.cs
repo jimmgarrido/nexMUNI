@@ -51,7 +51,6 @@ namespace nexMuni
             detailModel = new StopDetailModel(e.NavigationParameter as StopData);
 
             StopHeader.Text = detailModel.SelectedStop.Name;
-            //noTimeText.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
 
             RouteInfoList.ItemsSource = detailModel.Routes;
 
@@ -69,6 +68,9 @@ namespace nexMuni
             else favBtn.Click += FavoriteStop;
 
             await detailModel.LoadTimes();
+
+            if (detailModel.Routes.Count == 0) noTimesBlock.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            else noTimesBlock.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
         }
 
         private void NavigationHelper_SaveState(object sender, SaveStateEventArgs e)
