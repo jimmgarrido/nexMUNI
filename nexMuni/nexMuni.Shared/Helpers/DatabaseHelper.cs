@@ -91,6 +91,11 @@ namespace nexMuni.Helpers
                         b.FavID = a.FavID;
                     }
                 }
+
+                if(SearchModel.selectedStop != null)
+                {
+                    if (SearchModel.selectedStop.Name == a.Name) SearchModel.selectedStop.FavID = a.FavID;
+                }
             }
         }
 

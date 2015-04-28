@@ -6,7 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:SampleData="using:Blend.SampleData.RouteDataSample"
     x:Class="nexMuni.StopDetail"
-    mc:Ignorable="d" Background="#FFB31B1B" d:DataContext="{d:DesignData /SampleData/RouteDataSample/RouteDataSample.xaml}"
+    Background="#FFB31B1B"
     Foreground="White">
 
     <Page.Resources>
@@ -23,17 +23,20 @@
         
         <!-- DataTemplates for times -->
         <DataTemplate x:Key="OneDirection">
-            <Grid Margin="0,0,0,30">
+            <Grid Margin="0,0,0,25">
                 <StackPanel>
                     <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="35"/>
+                        </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <Grid Background="White" Grid.Column="0" Margin="15,0,0,0">
-                            <TextBlock Text="{Binding RouteNumber}" Style="{StaticResource LabelStyle}" Margin="0,-2,0,0" Foreground="#FFB31B1B" Padding="8,0,8,0" FontWeight="Bold"/>
+                            <TextBlock Text="{Binding RouteNumber}" Style="{StaticResource LabelStyle}" Foreground="#FFB31B1B" Padding="8,0,8,0" FontWeight="Bold"/>
                         </Grid>
-                        <TextBlock Text="{Binding RouteName}" Style="{StaticResource LabelStyle}" Margin="5,0,0,5" Padding="10,0" Grid.Column="1"/>
+                        <TextBlock Text="{Binding RouteName}" Style="{StaticResource LabelStyle}" Margin="5,0,0,0" Padding="10,0" Grid.Column="1"/>
                     </Grid>
                     <TextBlock Text="{Binding Directions[0].Title}" Style="{StaticResource DetailText}" Margin="15,8,0,0" FontWeight="Bold" />
                     <TextBlock Text="{Binding Directions[0].Times,Mode=OneWay}" Style="{StaticResource DetailText}" Margin="15,0,0,0" />
@@ -42,18 +45,22 @@
         </DataTemplate>
 
         <DataTemplate x:Key="TwoDirection">
-            <Grid Margin="0,0,0,30">
+            <Grid Margin="0,0,0,25">
                 <StackPanel>
                     <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="35"/>
+                        </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <Grid Background="White" Grid.Column="0" Margin="15,0,0,0">
-                            <TextBlock Text="{Binding RouteNumber}" Style="{StaticResource LabelStyle}" Margin="0,-2,0,0" Foreground="#FFB31B1B" Padding="8,0,8,0" FontWeight="Bold"/>
+                            <TextBlock Text="{Binding RouteNumber}" Style="{StaticResource LabelStyle}" Foreground="#FFB31B1B" Padding="8,0,8,0" FontWeight="Bold"/>
                         </Grid>
-                        <TextBlock Text="{Binding RouteName}" Style="{StaticResource LabelStyle}" Margin="5,0,0,5" Padding="10,0" Grid.Column="1"/>
+                        <TextBlock Text="{Binding RouteName}" Style="{StaticResource LabelStyle}" Margin="5,0,0,0" Padding="10,0" Grid.Column="1"/>
                     </Grid>
+                    
                     <TextBlock Text="{Binding Directions[0].Title}" Style="{StaticResource DetailText}" Margin="15,8,0,0" FontWeight="Bold" />
                     <TextBlock Text="{Binding Directions[0].Times,Mode=OneWay}" Style="{StaticResource DetailText}" Margin="15,0,0,0" />
 
@@ -64,17 +71,20 @@
         </DataTemplate>
 
         <DataTemplate x:Key="ThreeDirection">
-            <Grid Margin="0,0,0,30">
+            <Grid Margin="0,0,0,25">
                 <StackPanel>
                     <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="35"/>
+                        </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <Grid Background="White" Grid.Column="0" Margin="15,0,0,0">
-                            <TextBlock Text="{Binding RouteNumber}" Style="{StaticResource LabelStyle}" Margin="0,-2,0,0" Foreground="#FFB31B1B" Padding="8,0,8,0" FontWeight="Bold"/>
+                            <TextBlock Text="{Binding RouteNumber}" Style="{StaticResource LabelStyle}" Foreground="#FFB31B1B" Padding="8,0,8,0" FontWeight="Bold"/>
                         </Grid>
-                        <TextBlock Text="{Binding RouteName}" Style="{StaticResource LabelStyle}" Margin="5,0,0,5" Padding="10,0" Grid.Column="1"/>
+                        <TextBlock Text="{Binding RouteName}" Style="{StaticResource LabelStyle}" Margin="5,0,0,0" Padding="10,0" Grid.Column="1"/>
                     </Grid>
                     <TextBlock Text="{Binding Directions[0].Title}" Style="{StaticResource DetailText}" Margin="15,8,0,0" FontWeight="Bold" />
                     <TextBlock Text="{Binding Directions[0].Times,Mode=OneWay}" Style="{StaticResource DetailText}" Margin="15,0,0,0" />
