@@ -182,7 +182,7 @@ namespace nexMuni.Helpers
             try
             {
                 StorageFile muniDB = await ApplicationData.Current.LocalFolder.GetFileAsync("muni.sqlite");
-                if (muniDB.DateCreated < new DateTime(2015, 4, 19))
+                if (muniDB.DateCreated.Date < new DateTime(2015, 4, 28))
                     dbExists = false;
                 else
                     dbExists = true;
@@ -195,7 +195,7 @@ namespace nexMuni.Helpers
             if (!dbExists)
             {
                 StorageFile dbFile = await Package.Current.InstalledLocation.GetFileAsync("db\\muni.sqlite");
-                await dbFile.CopyAsync(ApplicationData.Current.LocalFolder, "muni.sqlite",NameCollisionOption.ReplaceExisting);
+                await dbFile.CopyAsync(ApplicationData.Current.LocalFolder, "muni.sqlite", NameCollisionOption.ReplaceExisting);
             }
         }
 
