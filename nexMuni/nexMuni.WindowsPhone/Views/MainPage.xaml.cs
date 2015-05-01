@@ -30,6 +30,7 @@ namespace nexMuni
 
         public static ComboBox dirComboBox { get; set; }
         public static MapControl searchMap { get; set; }
+        public static Pivot mainPivot { get; set; }
         
         public static ListPickerFlyout routePicker { get; set; }
         public static ListPickerFlyout stopPicker { get; set; }
@@ -48,15 +49,16 @@ namespace nexMuni
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            pivotControl.SelectionChanged += pivotControl_SelectionChanged;
+            MainPivot.SelectionChanged += pivotControl_SelectionChanged;
             if (!MainPageModel.IsDataLoaded)
             {
-                noNearbyText = noStopsNotice;
-                noFavsText = noFavsNotice;
+                noNearbyText = NoStopsNotice;
+                noFavsText = NoFavsNotice;
                 timesText = SearchTimes;
                 dirText = DirLabel;
                 stopText = StopLabel;
 
+                mainPivot = MainPivot;
                 searchMap = SearchMapControl;
                 searchMap.Center = new Geopoint(new BasicGeoposition() { Latitude = 37.7599, Longitude = -122.437 });
 
@@ -74,7 +76,7 @@ namespace nexMuni
 
                 nearbyListView.ItemsSource = MainPageModel.NearbyStops;
                 favoritesListView.ItemsSource = MainPageModel.FavoritesStops;
-            }           
+            }
         }
 
         void pivotControl_SelectionChanged(object sender, SelectionChangedEventArgs e)

@@ -76,15 +76,18 @@ namespace nexMuni
                 RouteMap.routeMap.MapElements.Add(route[x]);
                 x++;
             }
-            
-            Image icon = new Image();
-            icon.Source = new BitmapImage(new Uri("ms-appx:///Assets/Location.png"));
-            icon.Width = 25;
-            icon.Height = 25;
 
-            RouteMap.routeMap.Children.Add(icon);
-            MapControl.SetNormalizedAnchorPoint(icon, new Windows.Foundation.Point(0.5, 0.5));
-            MapControl.SetLocation(icon, LocationHelper.phoneLocation.Coordinate.Point);
+            if (LocationHelper.phoneLocation != null)
+            {
+                Image icon = new Image();
+                icon.Source = new BitmapImage(new Uri("ms-appx:///Assets/Location.png"));
+                icon.Width = 25;
+                icon.Height = 25;
+
+                RouteMap.routeMap.Children.Add(icon);
+                MapControl.SetNormalizedAnchorPoint(icon, new Windows.Foundation.Point(0.5, 0.5));
+                MapControl.SetLocation(icon, LocationHelper.phoneLocation.Coordinate.Point);
+            }
         }
     }
 }

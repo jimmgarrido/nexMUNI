@@ -336,7 +336,7 @@ namespace nexMuni
 
 #if WINDOWS_PHONE_APP
                 systemTray.ProgressIndicator.ProgressValue = 0;
-                systemTray.ProgressIndicator.Text = "nexMuni";
+                systemTray.ProgressIndicator.Text = "nexMUNI";
 #endif
             }
         }

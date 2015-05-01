@@ -34,11 +34,18 @@ namespace nexMuni
             Geolocator geolocator = new Geolocator();
             geolocator.DesiredAccuracyInMeters = 50;
 
-            phoneLocation = await geolocator.GetGeopositionAsync(maximumAge: TimeSpan.FromSeconds(5), timeout: TimeSpan.FromSeconds(30));
+            if (geolocator.LocationStatus == PositionStatus.Disabled)
+            {
+                MainPage.noNearbyText.Text = "Location services disabled";
+            }
+            else
+            {
+                phoneLocation = await geolocator.GetGeopositionAsync(maximumAge: TimeSpan.FromSeconds(5), timeout: TimeSpan.FromSeconds(30));
+            }
 
 #if WINDOWS_PHONE_APP
             systemTray.ProgressIndicator.ProgressValue = 0;
-            systemTray.ProgressIndicator.Text = "nexMuni";
+            systemTray.ProgressIndicator.Text = "nexMUNI";
 #endif
         }
 
@@ -92,14 +99,17 @@ namespace nexMuni
 
         internal static void SortFavorites()
         {
-            FavoritesDistance();
-
-            ObservableCollection<StopData> tempCollection = new ObservableCollection<StopData>(MainPageModel.FavoritesStops.OrderBy(z => z.DoubleDist));
-
-            MainPageModel.FavoritesStops.Clear();
-            foreach (StopData s in tempCollection)
+            if (phoneLocation != null)
             {
-                MainPageModel.FavoritesStops.Add(new StopData(s.Name, s.Routes, s.Tags, s.DoubleDist, s.Lat, s.Lon, s.FavID));
+                FavoritesDistance();
+
+                ObservableCollection<StopData> tempCollection = new ObservableCollection<StopData>(MainPageModel.FavoritesStops.OrderBy(z => z.DoubleDist));
+
+                MainPageModel.FavoritesStops.Clear();
+                foreach (StopData s in tempCollection)
+                {
+                    MainPageModel.FavoritesStops.Add(new StopData(s.Name, s.Routes, s.Tags, s.DoubleDist, s.Lat, s.Lon, s.FavID));
+                }
             }
         }
 
