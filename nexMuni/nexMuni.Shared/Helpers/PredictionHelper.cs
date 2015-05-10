@@ -17,7 +17,7 @@ namespace nexMuni.Helpers
             return GetPredictions(await GetXml(url));
         }
 
-        public static async Task<XDocument> GetXml(string url)
+        public static async Task<XDocument> GetXml(string url) 
         {
             var client = new HttpClient();
             var xmlDoc = new XDocument();

@@ -6,7 +6,6 @@ using Windows.UI.Xaml.Navigation;
 using nexMuni.Common;
 using nexMuni.Helpers;
 using nexMuni.ViewModels;
-using nexMuni.Views;
 
 namespace nexMuni.Views
 {

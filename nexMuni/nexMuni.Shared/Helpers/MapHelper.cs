@@ -10,7 +10,6 @@ using Windows.UI.Xaml.Controls.Maps;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.Web.Http;
 using Windows.Web.Http.Headers;
-using nexMuni.Helpers;
 using nexMuni.Views;
 
 namespace nexMuni.Helpers
@@ -21,13 +20,9 @@ namespace nexMuni.Helpers
         {
             string URL = "http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=sf-muni&r=";
             URL = URL + route;
-            HttpResponseMessage saved = null;
 
             var response = new HttpResponseMessage();
             var client = new HttpClient();
-            string reader;
-
-            if (saved != null) response = saved;
 
             //Make sure to pull from network not cache everytime predictions are refreshed 
             response.Headers.CacheControl.Add(new HttpNameValueHeaderValue("max-age", "1"));
@@ -36,16 +31,13 @@ namespace nexMuni.Helpers
             response = await client.GetAsync(new Uri(URL));
             response.Content.Headers.Expires = DateTime.Now;
 
-            saved = response;
-
-            reader = await response.Content.ReadAsStringAsync();
+            var reader = await response.Content.ReadAsStringAsync();
             GetPoints(XDocument.Parse(reader));
         }
 
         public static void GetPoints(XDocument doc)
         {
             List<BasicGeoposition> positions = new List<BasicGeoposition>();
-            IEnumerable<XElement> subElements;
             List<MapPolyline> route = new List<MapPolyline>();
 
             IEnumerable<XElement> rootElement =
@@ -58,15 +50,11 @@ namespace nexMuni.Helpers
             
             foreach (XElement el in elements)
             {
-                subElements =
-                    from p in el.Elements("point")
+                var subElements = from p in el.Elements("point")
                     select p;
 
                 if (positions.Count > 0) positions.Clear();
-                foreach (XElement e in subElements)
-                {
-                    positions.Add(new BasicGeoposition() { Latitude = Double.Parse(e.Attribute("lat").Value), Longitude = Double.Parse(e.Attribute("lon").Value) });
-                }
+                positions.AddRange(subElements.Select(e => new BasicGeoposition() {Latitude = double.Parse(e.Attribute("lat").Value), Longitude = double.Parse(e.Attribute("lon").Value)}));
                 route.Add(new MapPolyline());
                 route[x].StrokeColor = Color.FromArgb(255, 179, 27, 27);
                 route[x].StrokeThickness = 2.00;

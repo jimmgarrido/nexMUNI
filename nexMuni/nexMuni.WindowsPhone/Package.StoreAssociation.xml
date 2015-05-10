@@ -184,16 +184,16 @@
     <Language Code="vi-vn" InMinimumRequirementSet="true" />
   </SupportedLocales>
   <ProductReservedInfo>
-    <MainPackageIdentityName>10642JimmyGarrido.nexMuni</MainPackageIdentityName>
+    <MainPackageIdentityName>10642JimmyGarrido.nexMuniBeta</MainPackageIdentityName>
     <ReservedNames>
-      <ReservedName>nexMuni</ReservedName>
+      <ReservedName>nexMuni Beta</ReservedName>
     </ReservedNames>
   </ProductReservedInfo>
   <AccountPackageIdentityNames>
     <MainPackageIdentityName>10642JimmyGarrido.BookEnd</MainPackageIdentityName>
     <MainPackageIdentityName>10642JimmyGarrido.nexBART</MainPackageIdentityName>
     <MainPackageIdentityName>10642JimmyGarrido.nexBARTBeta</MainPackageIdentityName>
-    <MainPackageIdentityName>10642JimmyGarrido.nexMuniBeta</MainPackageIdentityName>
+    <MainPackageIdentityName>10642JimmyGarrido.nexMuni</MainPackageIdentityName>
   </AccountPackageIdentityNames>
   <PackageInfoList LandingUrl="https://dev.windowsphone.com/AppSubmission/AssociationLanding?windowsProductId=d81a8f85-82e7-490a-853e-92169766898d">
     <PackageInfo>
