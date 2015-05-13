@@ -1,22 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Text;
 using System.Linq;
-using System.Xml.Linq;
-using Windows.UI.Xaml.Controls;
-using Windows.Web.Http;
-using Windows.Web.Http.Headers;
-using Windows.Devices.Geolocation;
-using Windows.UI.Xaml.Controls.Maps;
-using Windows.Foundation;
-using Windows.Storage.Streams;
-using Windows.UI;
 using System.Threading.Tasks;
-using nexMuni.Helpers;
+using System.Xml.Linq;
+using Windows.Devices.Geolocation;
+using Windows.Foundation;
+using Windows.UI;
+using Windows.UI.ViewManagement;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Maps;
 using Windows.UI.Xaml.Media.Imaging;
+using Windows.Web.Http;
+using nexMuni.Helpers;
+using nexMuni.ViewModels;
+using nexMuni.Views;
 
-namespace nexMuni
+namespace nexMuni.ViewModels
 {
     class SearchModel
     {
@@ -37,12 +38,12 @@ namespace nexMuni
             DirectionsList = new ObservableCollection<string>();
             stopsList = new ObservableCollection<StopData>();
 
-            MainPage.dirComboBox.ItemsSource = SearchModel.DirectionsList;
-            MainPage.stopPicker.ItemsSource = SearchModel.stopsList;
+            MainPage.dirComboBox.ItemsSource = DirectionsList;
+            MainPage.stopPicker.ItemsSource = stopsList;
 
-            MainPage.routePicker.ItemsPicked += SearchModel.RouteSelected;
-            MainPage.dirComboBox.SelectionChanged += SearchModel.DirSelected;
-            MainPage.stopPicker.ItemsPicked += SearchModel.StopSelected;
+            MainPage.routePicker.ItemsPicked += RouteSelected;
+            MainPage.dirComboBox.SelectionChanged += DirSelected;
+            MainPage.stopPicker.ItemsPicked += StopSelected;
 
         }
 
@@ -55,15 +56,15 @@ namespace nexMuni
         public static async void RouteSelected(ListPickerFlyout sender, ItemsPickedEventArgs args)
         {
             #if WINDOWS_PHONE_APP
-                        var systemTray = Windows.UI.ViewManagement.StatusBar.GetForCurrentView();
+                        var systemTray = StatusBar.GetForCurrentView();
                         systemTray.ProgressIndicator.ProgressValue = null;
             #endif
 
             selectedRoute = sender.SelectedItem.ToString();
             MainPage.routeBtn.Content = selectedRoute;
             MainPage.routePicker.SelectedIndex = sender.SelectedIndex;
-            MainPage.timesText.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-            MainPage.favSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            MainPage.timesText.Visibility = Visibility.Collapsed;
+            MainPage.favSearchBtn.Visibility = Visibility.Collapsed;
 
             if (DirectionsList.Count != 0)
             {
@@ -78,8 +79,8 @@ namespace nexMuni
 
             await LoadDirections(selectedRoute);
 
-            MainPage.dirText.Visibility = Windows.UI.Xaml.Visibility.Visible;
-            MainPage.dirComboBox.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            MainPage.dirText.Visibility = Visibility.Visible;
+            MainPage.dirComboBox.Visibility = Visibility.Visible;
 
             #if WINDOWS_PHONE_APP
                         systemTray.ProgressIndicator.ProgressValue = 0;
@@ -107,7 +108,7 @@ namespace nexMuni
             string reader;
 
             //Make sure to pull from network not cache everytime predictions are refreshed 
-            client.DefaultRequestHeaders.IfModifiedSince = System.DateTime.Now;
+            client.DefaultRequestHeaders.IfModifiedSince = DateTime.Now;
             try
             {
                 response = await client.GetAsync(new Uri(dirURL));
@@ -223,13 +224,15 @@ namespace nexMuni
 
             if (LocationHelper.phoneLocation != null)
             {
-                Image icon = new Image();
-                icon.Source = new BitmapImage(new Uri("ms-appx:///Assets/Location.png"));
-                icon.Width = 25;
-                icon.Height = 25;
+                Image icon = new Image
+                {
+                    Source = new BitmapImage(new Uri("ms-appx:///Assets/Location.png")),
+                    Width = 25,
+                    Height = 25
+                };
 
                 MainPage.searchMap.Children.Add(icon);
-                MapControl.SetNormalizedAnchorPoint(icon, new Windows.Foundation.Point(0.5, 0.5));
+                MapControl.SetNormalizedAnchorPoint(icon, new Point(0.5, 0.5));
                 MapControl.SetLocation(icon, LocationHelper.phoneLocation.Coordinate.Point);
             }
         }
@@ -269,10 +272,10 @@ namespace nexMuni
 
             MainPage.stopBtn.IsEnabled = true;
             MainPage.stopBtn.Content = String.Empty;
-            MainPage.stopText.Visibility = Windows.UI.Xaml.Visibility.Visible;
-            MainPage.stopBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
-            MainPage.timesText.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-            MainPage.favSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            MainPage.stopText.Visibility = Visibility.Visible;
+            MainPage.stopBtn.Visibility = Visibility.Visible;
+            MainPage.timesText.Visibility = Visibility.Collapsed;
+            MainPage.favSearchBtn.Visibility = Visibility.Collapsed;
         }
 
         public static async void StopSelected(ListPickerFlyout sender, ItemsPickedEventArgs args)
@@ -280,7 +283,7 @@ namespace nexMuni
             if (sender.SelectedIndex != -1)
             {
 #if WINDOWS_PHONE_APP
-                var systemTray = Windows.UI.ViewManagement.StatusBar.GetForCurrentView();
+                var systemTray = StatusBar.GetForCurrentView();
                 systemTray.ProgressIndicator.Text = "Getting Arrival Times";
                 systemTray.ProgressIndicator.ProgressValue = null;
 #endif
@@ -310,8 +313,8 @@ namespace nexMuni
 
                 //await MainPage.searchMap.TrySetViewAsync(new Geopoint(new BasicGeoposition() { Latitude = selectedStop.Lat, Longitude = selectedStop.Lon }), 16.5);
 
-                if (MainPage.timesText.Visibility == Windows.UI.Xaml.Visibility.Visible) MainPage.timesText.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-                if (MainPage.favSearchBtn.Visibility == Windows.UI.Xaml.Visibility.Visible) MainPage.favSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                if (MainPage.timesText.Visibility == Visibility.Visible) MainPage.timesText.Visibility = Visibility.Collapsed;
+                if (MainPage.favSearchBtn.Visibility == Visibility.Visible) MainPage.favSearchBtn.Visibility = Visibility.Collapsed;
 
                 //Check to see if the stop is in user's favorites list
                 if (MainPageModel.FavoritesStops.Any(z => z.Name == title || z.Name == reversed))
@@ -320,15 +323,15 @@ namespace nexMuni
                     {
                         if (s.Name == title) selectedStop.FavID = s.FavID;
                     }
-                    MainPage.timesText.Visibility = Windows.UI.Xaml.Visibility.Visible;
-                    MainPage.favSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-                    MainPage.removeSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                    MainPage.timesText.Visibility = Visibility.Visible;
+                    MainPage.favSearchBtn.Visibility = Visibility.Collapsed;
+                    MainPage.removeSearchBtn.Visibility = Visibility.Visible;
                 }
                 else
                 {
-                    MainPage.timesText.Visibility = Windows.UI.Xaml.Visibility.Visible;
-                    MainPage.favSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
-                    MainPage.removeSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                    MainPage.timesText.Visibility = Visibility.Visible;
+                    MainPage.favSearchBtn.Visibility = Visibility.Visible;
+                    MainPage.removeSearchBtn.Visibility = Visibility.Collapsed;
                 }
 
                 //Get bus predictions for stop

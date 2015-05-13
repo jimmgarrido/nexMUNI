@@ -1,19 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Text;
 using System.Linq;
-using Windows.Devices.Geolocation;
-using Windows.Data;
-using System.Xml;
-using Windows.Data.Xml;
-using Windows.Storage;
-using System.IO;
 using System.Threading.Tasks;
+using Windows.Storage;
+using Windows.UI.Xaml;
 using nexMuni.DataModels;
 using nexMuni.Helpers;
+using nexMuni.Views;
 
-namespace nexMuni
+namespace nexMuni.ViewModels
 {
     public class MainPageModel
     {
@@ -28,7 +23,7 @@ namespace nexMuni
             NearbyStops = new ObservableCollection<StopData>();
             FavoritesStops = new ObservableCollection<StopData>();
 
-            localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+            localSettings = ApplicationData.Current.LocalSettings;
 
             await DatabaseHelper.CheckDatabases();
             await LoadFavorites();
@@ -49,7 +44,7 @@ namespace nexMuni
 
                     if (LocationHelper.phoneLocation != null)
                     {
-                        MainPage.noNearbyText.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                        MainPage.noNearbyText.Visibility = Visibility.Collapsed;
                         List<BusStopData> stops = await DatabaseHelper.QueryForNearby(0.5);
 
                         //Get distance to each stop
@@ -75,7 +70,7 @@ namespace nexMuni
                     {
                         await Task.Delay(400);
                         MainPage.mainPivot.SelectedIndex = 1;
-                        MainPage.noNearbyText.Visibility = Windows.UI.Xaml.Visibility.Visible; 
+                        MainPage.noNearbyText.Visibility = Visibility.Visible; 
                     }
             //    }
             //}
@@ -88,11 +83,11 @@ namespace nexMuni
 
             if (favorites.Count == 0)
             {
-                MainPage.noFavsText.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                MainPage.noFavsText.Visibility = Visibility.Visible;
             }
             else
             {
-                MainPage.noFavsText.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                MainPage.noFavsText.Visibility = Visibility.Collapsed;
                 foreach (FavoriteData favorite in favorites)
                 {
                     FavoritesStops.Add(new StopData(favorite.Name, favorite.Routes, favorite.Tags, 0.000, favorite.Lat, favorite.Lon, favorite.Id.ToString()));

@@ -1,16 +1,11 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Generic;
-using System.Text;
-using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using nexMuni.Helpers;
 using System.Threading.Tasks;
+using Windows.UI.ViewManagement;
 using nexMuni.DataModels;
+using nexMuni.Helpers;
 
-namespace nexMuni
+namespace nexMuni.ViewModels
 {
     class StopDetailModel
     {
@@ -31,7 +26,7 @@ namespace nexMuni
         {
 
 #if WINDOWS_PHONE_APP
-            var systemTray = Windows.UI.ViewManagement.StatusBar.GetForCurrentView();
+            StatusBar systemTray = StatusBar.GetForCurrentView();
             systemTray.ProgressIndicator.Text = "Getting Arrival Times";
             systemTray.ProgressIndicator.ProgressValue = null;
 #endif

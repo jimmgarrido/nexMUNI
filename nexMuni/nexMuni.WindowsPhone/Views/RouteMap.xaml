@@ -1,6 +1,6 @@
 ﻿<Page 
     xmlns:Maps="using:Windows.UI.Xaml.Controls.Maps" 
-    x:Class="nexMuni.RouteMap"
+    x:Class="nexMuni.Views.RouteMap"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:nexMuni"
@@ -29,7 +29,7 @@
 
         <!--TODO: Content should be placed within the following grid-->
         <Grid Grid.Row="1" x:Name="ContentRoot" Margin="0,0,0,0">
-            <Maps:MapControl x:Name="routeMapControl" HorizontalAlignment="Left" Margin="0,0,0,0" Grid.Row="1" VerticalAlignment="Top"
+            <Maps:MapControl x:Name="routeMapControl" HorizontalAlignment="Left" Margin="0,0,0,0"  VerticalAlignment="Top"
                              MapServiceToken="jjA5Pn6AN4an5lgqKNN_Rg" Height="590" Width="500" ZoomLevel="12" />
         </Grid>
     </Grid>

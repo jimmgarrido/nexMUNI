@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Xml.Linq;
 using System.Linq;
+using System.Xml.Linq;
+using Windows.Devices.Geolocation;
+using Windows.Foundation;
+using Windows.UI;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Maps;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.Web.Http;
 using Windows.Web.Http.Headers;
-using Windows.Devices.Geolocation;
-using Windows.UI.Xaml.Controls.Maps;
-using Windows.Services.Maps;
-using Windows.UI;
-using Windows.Storage.Streams;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media.Imaging;
+using nexMuni.Helpers;
+using nexMuni.Views;
 
-namespace nexMuni
+namespace nexMuni.Helpers
 {
     class MapHelper
     {
@@ -34,7 +34,7 @@ namespace nexMuni
             client.DefaultRequestHeaders.CacheControl.Add(new HttpNameValueHeaderValue("max-age", "1"));
             if (response.Content != null) client.DefaultRequestHeaders.IfModifiedSince = response.Content.Headers.Expires;
             response = await client.GetAsync(new Uri(URL));
-            response.Content.Headers.Expires = System.DateTime.Now;
+            response.Content.Headers.Expires = DateTime.Now;
 
             saved = response;
 
@@ -79,13 +79,15 @@ namespace nexMuni
 
             if (LocationHelper.phoneLocation != null)
             {
-                Image icon = new Image();
-                icon.Source = new BitmapImage(new Uri("ms-appx:///Assets/Location.png"));
-                icon.Width = 25;
-                icon.Height = 25;
+                Image icon = new Image
+                {
+                    Source = new BitmapImage(new Uri("ms-appx:///Assets/Location.png")),
+                    Width = 25,
+                    Height = 25
+                };
 
                 RouteMap.routeMap.Children.Add(icon);
-                MapControl.SetNormalizedAnchorPoint(icon, new Windows.Foundation.Point(0.5, 0.5));
+                MapControl.SetNormalizedAnchorPoint(icon, new Point(0.5, 0.5));
                 MapControl.SetLocation(icon, LocationHelper.phoneLocation.Coordinate.Point);
             }
         }

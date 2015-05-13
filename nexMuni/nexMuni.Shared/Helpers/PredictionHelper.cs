@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Xml;
-using System.Xml.Linq;
-using System.IO;
-using System.Collections.ObjectModel;
-using System.Threading.Tasks;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Xml.Linq;
 using Windows.Web.Http;
-using Windows.Web.Http.Headers;
-using Windows.UI.Popups;
 using nexMuni.DataModels;
+using nexMuni.Views;
 
 namespace nexMuni.Helpers
 {
@@ -20,20 +16,20 @@ namespace nexMuni.Helpers
         {
             return GetPredictions(await GetXml(url));
         }
+
         public static async Task<XDocument> GetXml(string url)
         {
-            var response = new HttpResponseMessage();
             var client = new HttpClient();
-            XDocument xmlDoc = new XDocument();
-            string reader;
+            var xmlDoc = new XDocument();
 
             //Make sure to pull from network not cache everytime predictions are refreshed 
-            client.DefaultRequestHeaders.IfModifiedSince = System.DateTime.Now;
+
+            client.DefaultRequestHeaders.IfModifiedSince = DateTime.Now;
             try
             {
-                response = await client.GetAsync(new Uri(url));
+                HttpResponseMessage response = await client.GetAsync(new Uri(url));
                 response.EnsureSuccessStatusCode();
-                reader = await response.Content.ReadAsStringAsync();
+                string reader = await response.Content.ReadAsStringAsync();
                 xmlDoc = XDocument.Parse(reader);
             }
             catch(Exception)
@@ -46,9 +42,11 @@ namespace nexMuni.Helpers
 
         private static List<Route> GetPredictions(XDocument doc)
         {
+            List<Route> routes = new List<Route>();
+            if (doc.Root == null) return routes;
+
             IEnumerable<XElement> rootElements = doc.Element("body").Elements("predictions");
             XElement subElement;
-            List<Route> routes = new List<Route>();
 
             string routeTitle, routeNum, fullTitle;
             string[] times1 = new string[4];
@@ -72,7 +70,7 @@ namespace nexMuni.Helpers
                 }
 
                 //Check to see if the route has already been added to the collection
-                if (!routes.Any(z => z.RouteNumber == routeNum))
+                if (routes.All(z => z.RouteNumber != routeNum))
                 {
                     Route tempRoute = new Route(routeTitle, routeNum);
                     

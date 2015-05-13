@@ -1,24 +1,12 @@
-﻿using nexMuni.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Devices.Geolocation;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+﻿using Windows.Devices.Geolocation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Maps;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using Windows.UI.Xaml.Shapes;
+using nexMuni.Helpers;
+using nexMuni.ViewModels;
 
-namespace nexMuni
+namespace nexMuni.Views
 {
     public sealed partial class MainPage : Page
     {
@@ -84,19 +72,19 @@ namespace nexMuni
             switch (((Pivot)sender).SelectedIndex)
             {
                 case 0:
-                    RefreshBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                    RefreshBtn.Visibility = Visibility.Visible;
                     appBar.ClosedDisplayMode = AppBarClosedDisplayMode.Compact;
-                    sortBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                    sortBtn.Visibility = Visibility.Collapsed;
                     break;
                 case 1:
                     appBar.ClosedDisplayMode = AppBarClosedDisplayMode.Compact;
-                    sortBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
-                    RefreshBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                    sortBtn.Visibility = Visibility.Visible;
+                    RefreshBtn.Visibility = Visibility.Collapsed;
                     break;
                 case 2:
                     appBar.ClosedDisplayMode = AppBarClosedDisplayMode.Minimal;
-                    sortBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-                    RefreshBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                    sortBtn.Visibility = Visibility.Collapsed;
+                    RefreshBtn.Visibility = Visibility.Collapsed;
                     break;
             }
         }
@@ -126,15 +114,15 @@ namespace nexMuni
         private async void FavoriteSearch(object sender, RoutedEventArgs e)
         {
             await DatabaseHelper.FavoriteFromSearch(SearchModel.selectedStop);
-            favSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-            removeSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            favSearchBtn.Visibility = Visibility.Collapsed;
+            removeSearchBtn.Visibility = Visibility.Visible;
         }
 
         private async void RemoveSearch(object sender, RoutedEventArgs e)
         {
             await DatabaseHelper.RemoveSearch(SearchModel.selectedStop);
-            removeSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-            favSearchBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            removeSearchBtn.Visibility = Visibility.Collapsed;
+            favSearchBtn.Visibility = Visibility.Visible;
         }
     }
 }

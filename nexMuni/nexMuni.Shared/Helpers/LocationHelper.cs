@@ -1,21 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using Windows.Devices.Geolocation;
-using Windows.Storage;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Windows.UI.Xaml.Controls.Maps;
-using Windows.Storage.Streams;
 using System.Threading.Tasks;
+using Windows.Devices.Geolocation;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
-using Windows.Foundation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
-using nexMuni.DataModels;
+using nexMuni.ViewModels;
+using nexMuni.Views;
 
-namespace nexMuni
+namespace nexMuni.Helpers
 {
     class LocationHelper
     {
@@ -26,13 +21,12 @@ namespace nexMuni
         public static async Task UpdateLocation()
         {
 #if WINDOWS_PHONE_APP
-            var systemTray = Windows.UI.ViewManagement.StatusBar.GetForCurrentView();
+            var systemTray = StatusBar.GetForCurrentView();
             systemTray.ProgressIndicator.Text = "Getting Location";
             systemTray.ProgressIndicator.ProgressValue = null;
 #endif
 
-            Geolocator geolocator = new Geolocator();
-            geolocator.DesiredAccuracyInMeters = 50;
+            Geolocator geolocator = new Geolocator { DesiredAccuracyInMeters = 50 };
 
             if (geolocator.LocationStatus == PositionStatus.Disabled)
             {
@@ -103,7 +97,7 @@ namespace nexMuni
             {
                 FavoritesDistance();
 
-                ObservableCollection<StopData> tempCollection = new ObservableCollection<StopData>(MainPageModel.FavoritesStops.OrderBy(z => z.DoubleDist));
+                var tempCollection = new ObservableCollection<StopData>(MainPageModel.FavoritesStops.OrderBy(z => z.DoubleDist));
 
                 MainPageModel.FavoritesStops.Clear();
                 foreach (StopData s in tempCollection)
@@ -123,8 +117,7 @@ namespace nexMuni
 
         private static DependencyObject LocationPoint()
         {
-            Image png = new Image();
-            png.Source = new BitmapImage();
+            Image png = new Image { Source = new BitmapImage() };
 
             return png;
         }

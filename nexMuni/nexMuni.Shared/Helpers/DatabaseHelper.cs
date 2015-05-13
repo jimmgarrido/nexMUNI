@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.IO;
-using System.Linq;
-using SQLite;
+using System.Threading.Tasks;
+using Windows.ApplicationModel;
 using Windows.Devices.Geolocation;
 using Windows.Storage;
-using System.Threading.Tasks;
-using Windows.UI.Xaml.Controls;
-using System.Collections.ObjectModel;
-using Windows.ApplicationModel;
 using nexMuni.DataModels;
+using nexMuni.ViewModels;
+using SQLite;
 
 namespace nexMuni.Helpers
 {

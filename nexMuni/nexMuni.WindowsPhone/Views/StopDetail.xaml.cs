@@ -1,24 +1,14 @@
-﻿using nexMuni.Common;
-using nexMuni.Helpers;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.Graphics.Display;
+﻿using System.Linq;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using nexMuni.Common;
+using nexMuni.Helpers;
+using nexMuni.ViewModels;
+using nexMuni.Views;
 
-namespace nexMuni
+namespace nexMuni.Views
 {
     public sealed partial class StopDetail : Page
     {
@@ -69,8 +59,7 @@ namespace nexMuni
 
             await detailModel.LoadTimes();
 
-            if (detailModel.Routes.Count == 0) noTimesBlock.Visibility = Windows.UI.Xaml.Visibility.Visible;
-            else noTimesBlock.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            noTimesBlock.Visibility = detailModel.Routes.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void NavigationHelper_SaveState(object sender, SaveStateEventArgs e)
@@ -80,13 +69,14 @@ namespace nexMuni
         private async void RefreshTimes(object sender, RoutedEventArgs e)
         {
 #if WINDOWS_PHONE_APP
-            var systemTray = Windows.UI.ViewManagement.StatusBar.GetForCurrentView();
+            var systemTray = StatusBar.GetForCurrentView();
             systemTray.ProgressIndicator.Text = "Refreshing Times";
             systemTray.ProgressIndicator.ProgressValue = null;
 #endif
             RefreshBtn.IsEnabled = false;
             await detailModel.RefreshTimes();
             RefreshBtn.IsEnabled = true;
+            noTimesBlock.Visibility = detailModel.Routes.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
 
 #if WINDOWS_PHONE_APP
             systemTray.ProgressIndicator.ProgressValue = 0;
