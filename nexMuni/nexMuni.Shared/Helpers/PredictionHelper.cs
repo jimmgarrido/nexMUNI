@@ -192,7 +192,7 @@ namespace nexMuni.Helpers
             if (times == null) times = "No busses at this time";
             else times = times + " mins";
 
-            MainPage.timesText.Text = times;
+            //MainPage.timesText.Text = times;
         }
 
         //internal static async Task SearchPredictions(string route, string url)

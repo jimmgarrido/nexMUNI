@@ -53,7 +53,7 @@
                         </Grid>-->
                 <TextBlock Text="{Binding RouteNumber}" Style="{StaticResource LabelStyle}" FontSize="30" Padding="16,2,0,0" VerticalAlignment="Top" TextAlignment="Right"  Grid.Column="0" TextWrapping="Wrap" LineStackingStrategy="BlockLineHeight" LineHeight="32" FontFamily="Global User Interface" />
                 <StackPanel Grid.Column="1" Margin="0,0,0,0">
-                    <TextBlock Text="{Binding RouteName}" Style="{StaticResource LabelStyle}" FontSize="27"  Margin="10,0,0,0" Padding="0,0,0,0" VerticalAlignment="Top" TextWrapping="WrapWholeWords" LineStackingStrategy="M" LineHeight="30" FontFamily="Global User Interface"/>
+                    <TextBlock Text="{Binding RouteName}" Style="{StaticResource LabelStyle}" FontSize="27"  Margin="10,0,0,0" Padding="0,0,0,0" VerticalAlignment="Top" TextWrapping="WrapWholeWords" LineStackingStrategy="BlockLineHeight" LineHeight="30" FontFamily="Global User Interface"/>
 
                     <TextBlock Text="{Binding Directions[0].Title}" Style="{StaticResource DetailText}" Margin="12,2,0,0" FontWeight="Bold" TextWrapping="WrapWholeWords" LineStackingStrategy="BlockLineHeight" LineHeight="20" FontFamily="Global User Interface" />
                     <TextBlock Text="{Binding Directions[0].Times,Mode=OneWay}" Style="{StaticResource DetailText}" Margin="12,0,0,0" FontFamily="Global User Interface" />

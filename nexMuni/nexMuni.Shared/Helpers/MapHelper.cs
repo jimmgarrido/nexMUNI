@@ -18,24 +18,26 @@ namespace nexMuni.Helpers
     {
         public static async void LoadDoc(string route)
         {
-            string URL = "http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=sf-muni&r=";
-            URL = URL + route;
+            string url = "http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=sf-muni&r=";
+            url = url + route;
 
-            var response = new HttpResponseMessage();
             var client = new HttpClient();
+            client.DefaultRequestHeaders.IfModifiedSince = DateTime.Now; //Make sure to pull from network not cache everytime predictions are refreshed 
 
-            //Make sure to pull from network not cache everytime predictions are refreshed 
-            response.Headers.CacheControl.Add(new HttpNameValueHeaderValue("max-age", "1"));
-            client.DefaultRequestHeaders.CacheControl.Add(new HttpNameValueHeaderValue("max-age", "1"));
-            if (response.Content != null) client.DefaultRequestHeaders.IfModifiedSince = response.Content.Headers.Expires;
-            response = await client.GetAsync(new Uri(URL));
-            response.Content.Headers.Expires = DateTime.Now;
-
-            var reader = await response.Content.ReadAsStringAsync();
-            GetPoints(XDocument.Parse(reader));
+            try
+            {
+                HttpResponseMessage response = await client.GetAsync(new Uri(url));
+                response.EnsureSuccessStatusCode();
+                string reader = await response.Content.ReadAsStringAsync();
+                GetPoints(XDocument.Parse(reader));
+            }
+            catch (Exception)
+            {
+                ErrorHandler.NetworkError("Error getting route info. Check network connection and try again.");
+            }
         }
 
-        public static void GetPoints(XDocument doc)
+        private static void GetPoints(XDocument doc)
         {
             List<BasicGeoposition> positions = new List<BasicGeoposition>();
             List<MapPolyline> route = new List<MapPolyline>();
@@ -65,7 +67,7 @@ namespace nexMuni.Helpers
                 x++;
             }
 
-            if (LocationHelper.phoneLocation != null)
+            if (LocationHelper.Location != null)
             {
                 Image icon = new Image
                 {
@@ -76,7 +78,7 @@ namespace nexMuni.Helpers
 
                 RouteMap.routeMap.Children.Add(icon);
                 MapControl.SetNormalizedAnchorPoint(icon, new Point(0.5, 0.5));
-                MapControl.SetLocation(icon, LocationHelper.phoneLocation.Coordinate.Point);
+                MapControl.SetLocation(icon, LocationHelper.Location.Coordinate.Point);
             }
         }
     }

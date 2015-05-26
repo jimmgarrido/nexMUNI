@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace nexMuni
+namespace nexMuni.DataModels
 {
     public class StopData
     {

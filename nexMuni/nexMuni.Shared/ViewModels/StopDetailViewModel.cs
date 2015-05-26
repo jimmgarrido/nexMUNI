@@ -7,16 +7,16 @@ using nexMuni.Helpers;
 
 namespace nexMuni.ViewModels
 {
-    class StopDetailModel
+    class StopDetailViewModel
     {
         public ObservableCollection<Route> Routes { get; private set; }
-        public StopData SelectedStop { get; private set; }
+        public Stop SelectedStop { get; private set; }
 
         private string URL;
 
-        private StopDetailModel() { }
+        private StopDetailViewModel() { }
 
-        public StopDetailModel(StopData stop)
+        public StopDetailViewModel(Stop stop)
         {
             Routes = new ObservableCollection<Route>();
             SelectedStop = stop;
@@ -34,7 +34,7 @@ namespace nexMuni.ViewModels
             string[] splitRoutes = SelectedStop.Routes.Split(',');
             splitRoutes[0] = " " + splitRoutes[0];
 
-            URL = WebRequests.GetMulitPredictionURL(SelectedStop.Tags);
+            URL = WebRequests.GetMulitPredictionURL(SelectedStop.StopTags);
             List<Route> routeList = await PredictionHelper.GetPredictionTimes(URL);
             
             foreach(Route r in routeList)

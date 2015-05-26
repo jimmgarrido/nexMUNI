@@ -3,17 +3,24 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
+using SQLite;
 
 namespace nexMuni.DataModels
 {
     public class Route
     {
+        [PrimaryKey, AutoIncrement]
+        public int Id { get; set; }
+        public string Title { get; set; }
+
+        //public List<RouteDirection> Directions { get; set; } 
+
         private string predictions1 = String.Empty;
         private string predictions2 = String.Empty;
 
         public string RouteName { get; private set; }
         public string RouteNumber { get; private set; }
-        public List<RouteDirection> Directions {get; set;}
+        public List<RouteDirection> Directions { get; set; }
         public string Dir1 { get; set; }
         public string Dir2 { get; set; }
 
@@ -29,7 +36,7 @@ namespace nexMuni.DataModels
             Directions = new List<RouteDirection>();
         }
 
-        public Route(string name, string num, string dir, string [] _times)
+        public Route(string name, string num, string dir, string[] _times)
         {
             int i = 0;
             RouteName = name;
@@ -45,7 +52,7 @@ namespace nexMuni.DataModels
                 {
                     if (_times[0] == "0") Times1 = "<1";
                     else Times1 = _times[0];
-                    
+
                     i++;
                 }
                 else if (_times[i] != null)
@@ -58,9 +65,9 @@ namespace nexMuni.DataModels
             Times1 = Times1 + " mins";
         }
 
-        public void AddDir2(string _inTitle, string [] _times)
+        public void AddDir2(string _inTitle, string[] _times)
         {
-            int i= 0;
+            int i = 0;
             Dir2 = _inTitle;
             if (Dir2.Contains("via Downtown")) Dir2 = Dir2.Replace("via Downtown", "");
             if (Dir2.Contains("&amp;")) Dir2 = Dir2.Replace("&amp;", "&");
@@ -81,7 +88,7 @@ namespace nexMuni.DataModels
                 }
             }
 
-            Times2 = Times2 + " mins"; 
+            Times2 = Times2 + " mins";
         }
     }
 }

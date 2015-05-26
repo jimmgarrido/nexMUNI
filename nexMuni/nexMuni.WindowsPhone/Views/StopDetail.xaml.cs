@@ -6,6 +6,7 @@ using Windows.UI.Xaml.Navigation;
 using nexMuni.Common;
 using nexMuni.Helpers;
 using nexMuni.ViewModels;
+using nexMuni.DataModels;
 
 namespace nexMuni.Views
 {
@@ -14,7 +15,7 @@ namespace nexMuni.Views
         private NavigationHelper navigationHelper;
         private ObservableDictionary defaultViewModel = new ObservableDictionary();
 
-        private StopDetailModel detailModel;
+        private StopDetailViewModel detailModel;
 
         public StopDetail()
         {
@@ -37,24 +38,24 @@ namespace nexMuni.Views
 
         private async void NavigationHelper_LoadState(object sender, LoadStateEventArgs e)
         {
-            detailModel = new StopDetailModel(e.NavigationParameter as StopData);
+            detailModel = new StopDetailViewModel(e.NavigationParameter as Stop);
 
-            StopHeader.Text = detailModel.SelectedStop.Name;
+            StopHeader.Text = detailModel.SelectedStop.StopName;
 
             RouteInfoList.ItemsSource = detailModel.Routes;
 
             //Check if the stop is in user's favorites list
-            if (MainPageModel.FavoritesStops.Any(x => x.Name == detailModel.SelectedStop.Name))
-            {
-                foreach (StopData s in MainPageModel.FavoritesStops)
-                {
-                    if (s.Name == detailModel.SelectedStop.Name) detailModel.SelectedStop.FavID = s.FavID;
-                }
-                favBtn.Click += RemoveStop;
-                favBtn.Label = "unfavorite";
-                favBtn.Icon = new SymbolIcon(Symbol.Remove);
-            }
-            else favBtn.Click += FavoriteStop;
+            //if (MainViewModel.FavoritesStops.Any(x => x.Name == detailModel.SelectedStop.Name))
+            //{
+            //    foreach (StopData s in MainViewModel.FavoritesStops)
+            //    {
+            //        if (s.Name == detailModel.SelectedStop.Name) detailModel.SelectedStop.FavID = s.FavID;
+            //    }
+            //    favBtn.Click += RemoveStop;
+            //    favBtn.Label = "unfavorite";
+            //    favBtn.Icon = new SymbolIcon(Symbol.Remove);
+            //}
+            //else favBtn.Click += FavoriteStop;
 
             await detailModel.LoadTimes();
 
@@ -85,7 +86,7 @@ namespace nexMuni.Views
 
         private async void FavoriteStop(object sender, RoutedEventArgs e)
         {
-            await DatabaseHelper.AddFavorite(detailModel.SelectedStop);
+            //await DatabaseHelper.AddFavorite(detailModel.SelectedStop);
             favBtn.Click -= FavoriteStop;
             favBtn.Click += RemoveStop;
             favBtn.Icon = new SymbolIcon(Symbol.Remove);
@@ -94,7 +95,7 @@ namespace nexMuni.Views
 
         private async void RemoveStop(object sender, RoutedEventArgs e)
         {
-            await DatabaseHelper.RemoveFavorite(detailModel.SelectedStop);
+            //await DatabaseHelper.RemoveFavorite(detailModel.SelectedStop);
             favBtn.Click -= RemoveStop;
             favBtn.Click += FavoriteStop;
             favBtn.Icon = new SymbolIcon(Symbol.Favorite);
