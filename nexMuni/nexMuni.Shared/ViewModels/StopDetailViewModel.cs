@@ -7,11 +7,12 @@ using nexMuni.Helpers;
 
 namespace nexMuni.ViewModels
 {
-    class StopDetailViewModel
+    public class StopDetailViewModel
     {
         public ObservableCollection<Route> Routes { get; private set; }
         public Stop SelectedStop { get; private set; }
 
+        private Task _initialize;
         private string URL;
 
         private StopDetailViewModel() { }

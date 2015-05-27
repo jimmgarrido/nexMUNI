@@ -365,7 +365,7 @@
         <Pivot x:Name="MainPivot" Title="nexMUNI" Background="White" Style="{StaticResource NearbyPivot}" Margin="0,25,0,0" Padding="0,-30,0,0">
             <PivotItem x:Name="NearbyPivot" Header="nearby" Margin="10,13,10,0">
                 <Grid>
-                    <TextBlock x:Name="NoStopsNotice" Text="No stops found" Foreground="#b31b1b" TextAlignment="Center" FontSize="21" Margin="0,220,0,0" Visibility="Collapsed"/>
+                    <TextBlock x:Name="NoStopsNotice" Text="{Binding NoStopsText}" Foreground="#b31b1b" TextAlignment="Center" FontSize="21" Margin="0,220,0,0"/>
                     <ListView x:Name="NearbyListView" ItemsSource="{Binding NearbyStops}" HorizontalAlignment="Left" VerticalAlignment="Top" 
 							  SelectionMode="None" IsItemClickEnabled="True" ItemClick="StopClicked" Padding="0,10,0,0">
                         <ListView.ItemTemplate>
@@ -389,9 +389,9 @@
                 </Grid>
             </PivotItem>
 
-            <PivotItem Header="favorites"  Margin="10,13,10,0">
+            <PivotItem x:Name="FavoritesPivot" Header="favorites"  Margin="10,13,10,0">
                 <Grid>
-                    <TextBlock x:Name="NoFavsNotice" Text="Add favorites by pressing &#xE00A; on a stop" Foreground="#b31b1b" TextAlignment="Center" FontFamily="Segoe UI Symbol" FontSize="21" Margin="0,220,0,0" Visibility="Collapsed" Width="250" TextWrapping="Wrap"/>
+                    <TextBlock x:Name="NoFavsNotice" Text="{Binding NoFavoritesText}" Foreground="#b31b1b" TextAlignment="Center" FontFamily="Segoe UI Symbol" FontSize="21" Margin="0,220,0,0" Width="250" TextWrapping="WrapWholeWords"/>
                     <ListView x:Name="FavoritesListView" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Top" 
                               ItemsSource="{Binding FavoritesStops}" SelectionMode="None" IsItemClickEnabled="True" ItemClick="StopClicked" Padding="0,10,0,0">
                         <ListView.ItemTemplate>

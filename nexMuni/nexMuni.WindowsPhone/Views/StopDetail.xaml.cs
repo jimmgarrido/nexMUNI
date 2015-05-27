@@ -15,7 +15,7 @@ namespace nexMuni.Views
         private NavigationHelper navigationHelper;
         private ObservableDictionary defaultViewModel = new ObservableDictionary();
 
-        private StopDetailViewModel detailModel;
+        public StopDetailViewModel detailVm;
 
         public StopDetail()
         {
@@ -38,11 +38,10 @@ namespace nexMuni.Views
 
         private async void NavigationHelper_LoadState(object sender, LoadStateEventArgs e)
         {
-            detailModel = new StopDetailViewModel(e.NavigationParameter as Stop);
-
-            StopHeader.Text = detailModel.SelectedStop.StopName;
-
-            RouteInfoList.ItemsSource = detailModel.Routes;
+            detailVm = new StopDetailViewModel(e.NavigationParameter as Stop);
+            ContentRoot.DataContext = detailVm;
+            StopHeader.Text = detailVm.SelectedStop.StopName;
+            RouteInfoList.ItemsSource = detailVm.Routes;
 
             //Check if the stop is in user's favorites list
             //if (MainViewModel.FavoritesStops.Any(x => x.Name == detailModel.SelectedStop.Name))
@@ -57,9 +56,9 @@ namespace nexMuni.Views
             //}
             //else favBtn.Click += FavoriteStop;
 
-            await detailModel.LoadTimes();
+            await detailVm.LoadTimes();
 
-            noTimesBlock.Visibility = detailModel.Routes.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
+            noTimesBlock.Visibility = detailVm.Routes.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void NavigationHelper_SaveState(object sender, SaveStateEventArgs e)
@@ -74,9 +73,9 @@ namespace nexMuni.Views
             systemTray.ProgressIndicator.ProgressValue = null;
 #endif
             RefreshBtn.IsEnabled = false;
-            await detailModel.RefreshTimes();
+            await detailVm.RefreshTimes();
             RefreshBtn.IsEnabled = true;
-            noTimesBlock.Visibility = detailModel.Routes.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
+            noTimesBlock.Visibility = detailVm.Routes.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
 
 #if WINDOWS_PHONE_APP
             systemTray.ProgressIndicator.ProgressValue = 0;

@@ -10,8 +10,6 @@ namespace nexMuni.Views
 {
     public sealed partial class MainPage : Page
     {
-        //public static TextBlock noNearbyText { get; set; }
-        //public static TextBlock noFavsText { get; set; }
         //public static TextBlock timesText { get; set; }
         //public static TextBlock dirText { get; set; }
         //public static TextBlock stopText { get; set; }
@@ -31,6 +29,8 @@ namespace nexMuni.Views
         public MainViewModel MainVm;
         public SearchViewModel SearchVm;
 
+        private bool alreadyLoaded;
+
         public MainPage()
         {
             this.InitializeComponent();
@@ -39,37 +39,39 @@ namespace nexMuni.Views
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            MainPivot.SelectionChanged += pivotControl_SelectionChanged;
-            MainVm = new MainViewModel();
-            //SearchVm = new SearchViewModel();
+            if (!alreadyLoaded)
+            {
+                MainPivot.SelectionChanged += pivotControl_SelectionChanged;
+                MainVm = new MainViewModel();
+                //SearchVm = new SearchViewModel();
 
-            NearbyPivot.DataContext = MainVm;
-      
-            //noNearbyText = NoStopsNotice;
-            //noFavsText = NoFavsNotice;
-            //timesText = SearchTimes;
-            //dirText = DirLabel;
-            //stopText = StopLabel;
+                NearbyPivot.DataContext = MainVm;
+                FavoritesPivot.DataContext = MainVm;
 
-            //mainPivot = MainPivot;
-            //searchMap = SearchMapControl;
-            //searchMap.Center = new Geopoint(new BasicGeoposition() { Latitude = 37.7599, Longitude = -122.437 });
+                alreadyLoaded = true;
+                //timesText = SearchTimes;
+                //dirText = DirLabel;
+                //stopText = StopLabel;
 
-            //routeBtn = RouteButton;
-            //stopBtn = StopButton;
-            //favSearchBtn = AddFavSearch;
-            //removeSearchBtn = RemoveFavSearch;
+                //mainPivot = MainPivot;
+                //searchMap = SearchMapControl;
+                //searchMap.Center = new Geopoint(new BasicGeoposition() { Latitude = 37.7599, Longitude = -122.437 });
 
-            //routePicker = RoutesFlyout;
-            //stopPicker = StopsFlyout;
-            //dirComboBox = DirBox;
+                //routeBtn = RouteButton;
+                //stopBtn = StopButton;
+                //favSearchBtn = AddFavSearch;
+                //removeSearchBtn = RemoveFavSearch;
 
-            //MainViewModel.LoadData();
-            //SearchViewModel.LoadData();
+                //routePicker = RoutesFlyout;
+                //stopPicker = StopsFlyout;
+                //dirComboBox = DirBox;
 
-            //NearbyListView.ItemsSource = MainViewModel.NearbyStops;
-            //FavoritesListView.ItemsSource = MainViewModel.FavoritesStops;
+                //MainViewModel.LoadData();
+                //SearchViewModel.LoadData();
 
+                //NearbyListView.ItemsSource = MainViewModel.NearbyStops;
+                //FavoritesListView.ItemsSource = MainViewModel.FavoritesStops;
+            }
         }
 
         void pivotControl_SelectionChanged(object sender, SelectionChangedEventArgs e)

@@ -7,16 +7,43 @@ using Windows.UI.Xaml;
 using nexMuni.DataModels;
 using nexMuni.Helpers;
 using nexMuni.Views;
+using System.ComponentModel;
 
 namespace nexMuni.ViewModels
 {
-    public class MainViewModel
+    public class MainViewModel : INotifyPropertyChanged
     {
         public ObservableCollection<Stop> NearbyStops { get; private set; }
         public ObservableCollection<Stop> FavoritesStops { get; private set;}
+        public string NoStopsText
+        {
+            get
+            {
+                return _noStopsText;
+            }
+            set
+            {
+                _noStopsText = value;
+                NotifyPropertyChanged("NoStopsText");
+            }
+        }
+        public string NoFavoritesText
+        {
+            get
+            {
+                return _noFavoritesText;
+            }
+            set
+            {
+                _noFavoritesText = value;
+                NotifyPropertyChanged("NoFavoritesText");
+            }
+        }
 
         private ApplicationDataContainer _localSettings;
         private Task _initialize;
+        private string _noStopsText;
+        private string _noFavoritesText;
 
         public MainViewModel()
         {
@@ -41,7 +68,7 @@ namespace nexMuni.ViewModels
 
             if (LocationHelper.Location != null)
             {
-                //MainPage.noNearbyText.Visibility = Visibility.Collapsed;
+                NoStopsText = "";
                 List<BusStopData> stops = await DatabaseHelper.QueryForNearby(0.5);
 
                 //Get distance to each stop
@@ -65,9 +92,7 @@ namespace nexMuni.ViewModels
             }
             else
             {
-                await Task.Delay(400);
-                //MainPage.mainPivot.SelectedIndex = 1;
-                //MainPage.noNearbyText.Visibility = Visibility.Visible;
+                NoStopsText = "No nearby stops found";
             }
             //    }
             //}
@@ -79,11 +104,11 @@ namespace nexMuni.ViewModels
 
             if (favorites.Count == 0)
             {
-                //MainPage.noFavsText.Visibility = Visibility.Visible;
+                NoFavoritesText = "Add favorites by pressing &#xE00A; on a stop";
             }
             else
             {
-                //MainPage.noFavsText.Visibility = Visibility.Collapsed;
+                NoFavoritesText = "";
                 FavoritesStops.Clear();
                 foreach (FavoriteData fav in favorites)
                 {
@@ -107,6 +132,17 @@ namespace nexMuni.ViewModels
                 }
             }
         }
+
+        private void NotifyPropertyChanged(string property)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(property));
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
     }
 }
 
