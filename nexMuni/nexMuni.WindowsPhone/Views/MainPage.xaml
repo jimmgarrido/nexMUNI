@@ -349,7 +349,7 @@
             <CommandBar.PrimaryCommands>
                 <AppBarButton x:Name="RefreshBtn"  IsCompact="False" Label="refresh" Click="UpdateButtonPressed" Foreground="White">
                     <AppBarButton.Icon>
-                        <BitmapIcon UriSource="../nexMuni.Shared/Assets/refresh.png"/>
+                        <BitmapIcon UriSource="Assets/refresh.png"/>
                     </AppBarButton.Icon>
                 </AppBarButton>
                 <AppBarButton x:Name="SortBtn" Icon="sort"  IsCompact="False" Label="sort" Click="SortFavorites" Visibility="Collapsed" Foreground="White"/>
@@ -409,7 +409,7 @@
                 </Grid>
             </PivotItem>
             
-            <PivotItem Header="search" Padding="-20,-10,-20,0" Foreground="White" >
+            <PivotItem x:Name="SearchPivot" Header="search" Padding="-20,-10,-20,0" Foreground="White" >
                 <Grid HorizontalAlignment="Center" Width="400" Margin="0,0,0,0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="275"/>
@@ -418,7 +418,7 @@
 
                     <StackPanel  Background="#b31b1b">
                         <TextBlock Text="Select Route" HorizontalAlignment="Center" Margin="-265,0,0,-7" FontSize="16" FontFamily="Global User Interface"/>
-                        <Button x:Name="RouteButton" HorizontalAlignment="Center" Width="350" Style="{StaticResource ButtonStyle}" IsEnabled="True">
+                        <Button x:Name="RouteButton" HorizontalAlignment="Center" Width="350" Style="{StaticResource ButtonStyle}" IsEnabled="True" Content="{Binding SelectedRoute}">
                             <Button.Flyout>
                                 <ListPickerFlyout x:Name="RoutesFlyout" Title="SELECT ROUTE" ItemsSource="{Binding RoutesList}" Placement="Right" >
                                     <ListPickerFlyout.ItemTemplate>

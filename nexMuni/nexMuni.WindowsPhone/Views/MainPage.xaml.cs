@@ -26,8 +26,8 @@ namespace nexMuni.Views
         //public static Button favSearchBtn { get; set; }
         //public static Button removeSearchBtn { get; set; }
 
-        public MainViewModel MainVm;
-        public SearchViewModel SearchVm;
+        public MainViewModel mainVm;
+        public SearchViewModel searchVm;
 
         private bool alreadyLoaded;
 
@@ -37,16 +37,21 @@ namespace nexMuni.Views
             this.NavigationCacheMode = NavigationCacheMode.Required;
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             if (!alreadyLoaded)
             {
                 MainPivot.SelectionChanged += pivotControl_SelectionChanged;
-                MainVm = new MainViewModel();
-                //SearchVm = new SearchViewModel();
+                await DatabaseHelper.CheckDatabasesAsync();
 
-                NearbyPivot.DataContext = MainVm;
-                FavoritesPivot.DataContext = MainVm;
+                mainVm = new MainViewModel();
+                searchVm = new SearchViewModel();
+
+                NearbyPivot.DataContext = mainVm;
+                FavoritesPivot.DataContext = mainVm;
+                SearchPivot.DataContext = searchVm;
+
+                RoutesFlyout.ItemsPicked += searchVm.RouteSelected;
 
                 alreadyLoaded = true;
                 //timesText = SearchTimes;
@@ -99,7 +104,7 @@ namespace nexMuni.Views
         private async void UpdateButtonPressed(object sender, RoutedEventArgs e)
         {
             RefreshBtn.IsEnabled = false;
-            
+            await mainVm.UpdateNearbyStops();
             RefreshBtn.IsEnabled = true;
         }
 

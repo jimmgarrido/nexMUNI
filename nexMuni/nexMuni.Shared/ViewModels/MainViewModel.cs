@@ -13,6 +13,9 @@ namespace nexMuni.ViewModels
 {
     public class MainViewModel : INotifyPropertyChanged
     {
+        private string _noStopsText;
+        private string _noFavoritesText;
+
         public ObservableCollection<Stop> NearbyStops { get; private set; }
         public ObservableCollection<Stop> FavoritesStops { get; private set;}
         public string NoStopsText
@@ -42,8 +45,6 @@ namespace nexMuni.ViewModels
 
         private ApplicationDataContainer _localSettings;
         private Task _initialize;
-        private string _noStopsText;
-        private string _noFavoritesText;
 
         public MainViewModel()
         {
@@ -55,12 +56,11 @@ namespace nexMuni.ViewModels
             NearbyStops = new ObservableCollection<Stop>();
             FavoritesStops = new ObservableCollection<Stop>();
 
-            await DatabaseHelper.CheckDatabasesAsync();
             await LoadFavoritesAsync();
             await UpdateNearbyStops();
         }
 
-        private async Task UpdateNearbyStops()
+        public async Task UpdateNearbyStops()
         {
             //Make sure user has given permission to access location
             NearbyStops.Clear();
@@ -133,6 +133,7 @@ namespace nexMuni.ViewModels
             }
         }
 
+        #region INotify Methods
         private void NotifyPropertyChanged(string property)
         {
             if (PropertyChanged != null)
@@ -142,7 +143,7 @@ namespace nexMuni.ViewModels
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
+        #endregion
     }
 }
 

@@ -5,7 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Class="nexMuni.Views.StopDetail"
-    Background="#FFB31B1B"
+    Background="#b31b1b"
     Foreground="White">
 
     <Page.Resources>
@@ -53,13 +53,13 @@
                         </Grid>-->
                 <TextBlock Text="{Binding RouteNumber}" Style="{StaticResource LabelStyle}" FontSize="30" Padding="16,2,0,0" VerticalAlignment="Top" TextAlignment="Right"  Grid.Column="0" TextWrapping="Wrap" LineStackingStrategy="BlockLineHeight" LineHeight="32" FontFamily="Global User Interface" />
                 <StackPanel Grid.Column="1" Margin="0,0,0,0">
-                    <TextBlock Text="{Binding RouteName}" Style="{StaticResource LabelStyle}" FontSize="27"  Margin="10,0,0,0" Padding="0,0,0,0" VerticalAlignment="Top" TextWrapping="WrapWholeWords" LineStackingStrategy="BlockLineHeight" LineHeight="30" FontFamily="Global User Interface"/>
+                    <TextBlock Text="{Binding RouteName}" Style="{StaticResource LabelStyle}" FontSize="26.5" Margin="10,0,0,0" Padding="0,0,0,0" VerticalAlignment="Top" TextWrapping="WrapWholeWords" LineStackingStrategy="BlockLineHeight" LineHeight="30" FontFamily="Global User Interface"/>
 
-                    <TextBlock Text="{Binding Directions[0].Title}" Style="{StaticResource DetailText}" Margin="12,2,0,0" FontWeight="Bold" TextWrapping="WrapWholeWords" LineStackingStrategy="BlockLineHeight" LineHeight="20" FontFamily="Global User Interface" />
-                    <TextBlock Text="{Binding Directions[0].Times,Mode=OneWay}" Style="{StaticResource DetailText}" Margin="12,0,0,0" FontFamily="Global User Interface" />
+                    <TextBlock Text="{Binding Directions[0].Title}" Style="{StaticResource DetailText}" FontSize="16" Margin="12,2,0,0" FontWeight="Normal" TextWrapping="WrapWholeWords" LineStackingStrategy="BlockLineHeight" LineHeight="20" FontFamily="Global User Interface" />
+                    <TextBlock Text="{Binding Directions[0].Times,Mode=OneWay}" Style="{StaticResource DetailText}"  FontWeight="Bold" Margin="12,-3,0,0" FontFamily="Global User Interface" />
 
-                    <TextBlock Text="{Binding Directions[1].Title}" Style="{StaticResource DetailText}" Margin="12,2,0,0" FontWeight="Bold" TextWrapping="WrapWholeWords" LineStackingStrategy="BlockLineHeight" LineHeight="20" />
-                    <TextBlock Text="{Binding Directions[1].Times, Mode=OneWay}" Style="{StaticResource DetailText}" Margin="12,0,0,0" FontFamily="Global User Interface" />
+                    <TextBlock Text="{Binding Directions[1].Title}" Style="{StaticResource DetailText}" FontSize="16" Margin="12,2,0,0" FontWeight="Normal" TextWrapping="WrapWholeWords" LineStackingStrategy="BlockLineHeight" LineHeight="20" />
+                    <TextBlock Text="{Binding Directions[1].Times, Mode=OneWay}" Style="{StaticResource DetailText}" FontWeight="Bold" Margin="12,-3,0,0" FontFamily="Global User Interface" />
                 </StackPanel>
             </Grid>
         </DataTemplate>
@@ -110,37 +110,66 @@
         </CommandBar>
     </Page.BottomAppBar>
 
-    <Grid x:Name="LayoutRoot" Background="#FFB31B1B">
+    <Grid x:Name="LayoutRoot">
 
-		<Grid.ChildrenTransitions>
-			<TransitionCollection>
-				<EntranceThemeTransition/>
-			</TransitionCollection>
-		</Grid.ChildrenTransitions>
+        <!--<Pivot Title="24th St &amp; Mission St" Background="#b31b1b">
+            <PivotItem Header="times">
+                <ListView Background="WhiteSmoke" Margin="-20,-20,-20,0">
+                    <ListViewItem>
+                        <Grid Height="150" >
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="60"/>
+                                <ColumnDefinition Width="350"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Background="#3c3c3c" Grid.Column="0">
+                                <TextBlock Text="12" FontSize="28" Foreground="White" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Margin="10,0,0,0" Text="Folsom-Pacific" FontSize="26" Foreground="#b31b1b" HorizontalAlignment="Left"/>
+                                <TextBlock Margin="10,0,0,0" Text="Outbound to the Mission District" FontSize="17" Foreground="#3c3c3c" HorizontalAlignment="Left"/>
+                                <TextBlock Margin="10,-5,0,0" Text="3, 15, 30 mins" FontSize="18" FontWeight="Bold" Foreground="#b31b1b" HorizontalAlignment="Left"/>
+                                <TextBlock Margin="10,0,0,0" Text="Outbound to the Mission District" FontSize="17" Foreground="#3c3c3c" HorizontalAlignment="Left"/>
+                                <TextBlock Margin="10,-5,0,0" Text="3, 15, 30 mins" FontSize="18" FontWeight="Bold" Foreground="#b31b1b" HorizontalAlignment="Left"/>
+                            </StackPanel>
+                        </Grid>
+                    </ListViewItem>
+                </ListView>
+            </PivotItem>
 
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="*"/>
-		</Grid.RowDefinitions>
+            <PivotItem Header="alerts"></PivotItem>
+        </Pivot>-->
 
-		<!-- Title Panel -->
-        <TextBlock x:Name="StopHeader" Margin="18,0,0,15" FontSize="36" Grid.Row="0"
+        <Grid Visibility="Visible">
+            <Grid.ChildrenTransitions>
+                <TransitionCollection>
+                    <EntranceThemeTransition/>
+                </TransitionCollection>
+            </Grid.ChildrenTransitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!--Title Panel-->
+            <TextBlock x:Name="StopHeader" Margin="18,0,0,15" FontSize="36" Grid.Row="0"
                     Style="{ThemeResource HeaderTextBlockStyle}" CharacterSpacing="{ThemeResource PivotHeaderItemCharacterSpacing}" />
 
-        <Grid Grid.Row="1" x:Name="ContentRoot" >
-            <TextBlock x:Name="noTimesBlock" Text="No busses at this time" FontSize="21" Margin="13,225,0,0" Visibility="Collapsed" TextAlignment="Center"/>
-            <ListView x:Name="RouteInfoList" IsItemClickEnabled="True" 
+            <Grid Grid.Row="1" x:Name="ContentRoot" >
+                <TextBlock x:Name="noTimesBlock" Text="No busses at this time" FontSize="21" Margin="13,225,0,0" Visibility="Collapsed" TextAlignment="Center"/>
+                <ListView x:Name="RouteInfoList" IsItemClickEnabled="True" 
                       Margin="0,0,0,0" IsTapEnabled="False" IsHoldingEnabled="False" 
                       ItemClick="ShowRouteMap" ItemTemplateSelector="{StaticResource TemplateSelector}">
-                <ListView.ItemContainerTransitions>
-                    <TransitionCollection>
-                        <EntranceThemeTransition />
-                        <AddDeleteThemeTransition />
-                        <RepositionThemeTransition/>
-                        <ReorderThemeTransition/>
-                    </TransitionCollection>
-                </ListView.ItemContainerTransitions>
-            </ListView>
+                    <ListView.ItemContainerTransitions>
+                        <TransitionCollection>
+                            <EntranceThemeTransition />
+                            <AddDeleteThemeTransition />
+                            <RepositionThemeTransition/>
+                            <ReorderThemeTransition/>
+                        </TransitionCollection>
+                    </ListView.ItemContainerTransitions>
+                </ListView>
+            </Grid>
         </Grid>
-	</Grid>
+    </Grid>
 </Page>

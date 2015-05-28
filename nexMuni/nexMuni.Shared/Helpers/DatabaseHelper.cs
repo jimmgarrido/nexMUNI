@@ -43,10 +43,8 @@ namespace nexMuni.Helpers
 
         public static async Task< List<string>> QueryForRoutes()
         {
-            SQLiteAsyncConnection db = new SQLiteAsyncConnection("muni.sqlite");
-            var query = await db.QueryAsync<RouteData>("SELECT * FROM RouteData");
-
             List<string> list = new List<string>();
+            var query = await _stopsAsyncConnection.QueryAsync<RouteData>("SELECT * FROM RouteData");
 
             foreach (var route in query)
             {

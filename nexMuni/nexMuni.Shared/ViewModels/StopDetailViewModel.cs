@@ -13,7 +13,7 @@ namespace nexMuni.ViewModels
         public Stop SelectedStop { get; private set; }
 
         private Task _initialize;
-        private string URL;
+        private string url;
 
         private StopDetailViewModel() { }
 
@@ -35,8 +35,8 @@ namespace nexMuni.ViewModels
             string[] splitRoutes = SelectedStop.Routes.Split(',');
             splitRoutes[0] = " " + splitRoutes[0];
 
-            URL = WebRequests.GetMulitPredictionURL(SelectedStop.StopTags);
-            List<Route> routeList = await PredictionHelper.GetPredictionTimes(URL);
+            url = WebRequests.GetMulitPredictionURL(SelectedStop.StopTags);
+            List<Route> routeList = await PredictionHelper.GetPredictionTimes(url);
             
             foreach(Route r in routeList)
             {
@@ -52,7 +52,7 @@ namespace nexMuni.ViewModels
         public async Task RefreshTimes()
         {
             Routes.Clear();
-            List<Route> routeList = await PredictionHelper.GetPredictionTimes(URL);
+            List<Route> routeList = await PredictionHelper.GetPredictionTimes(url);
 
             foreach (Route r in routeList)
             {

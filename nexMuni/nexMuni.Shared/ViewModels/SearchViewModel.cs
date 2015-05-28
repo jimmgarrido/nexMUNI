@@ -17,11 +17,13 @@ using nexMuni.Helpers;
 using nexMuni.ViewModels;
 using nexMuni.Views;
 using nexMuni.DataModels;
+using System.ComponentModel;
 
 namespace nexMuni.ViewModels
 {
-    public class SearchViewModel
+    public class SearchViewModel : INotifyPropertyChanged
     {
+        private string _selectedRoute;
         //public static bool IsDataLoaded { get; set; }
         //public static ObservableCollection<string> DirectionsList { get; set; }
         //public static ObservableCollection<StopData> stopsList { get; set; }
@@ -29,9 +31,19 @@ namespace nexMuni.ViewModels
         //public static List<string> inboundStops = new List<string>();
         
         //public static StopData foundStop;
-        //private static string selectedRoute;
-        public static Stop selectedStop { get; set; }
-
+        public string SelectedRoute
+        {
+            get
+            {
+                return _selectedRoute;
+            }
+            set
+            {
+                _selectedRoute = value;
+                NotifyPropertyChanged("SelectedRoute");
+            }
+        }
+        public Stop selectedStop { get; set; }
         public List<string> RoutesList { get; set; }
 
         private Task initialization;
@@ -68,39 +80,39 @@ namespace nexMuni.ViewModels
 //            MainPage.routeBtn.IsEnabled = true;
 //        }
 
-//        public static async void RouteSelected(ListPickerFlyout sender, ItemsPickedEventArgs args)
-//        {
-//            #if WINDOWS_PHONE_APP
-//                        var systemTray = StatusBar.GetForCurrentView();
-//                        systemTray.ProgressIndicator.ProgressValue = null;
-//            #endif
+        public async void RouteSelected(ListPickerFlyout sender, ItemsPickedEventArgs args)
+        {
+            #if WINDOWS_PHONE_APP
+                        var systemTray = StatusBar.GetForCurrentView();
+                        systemTray.ProgressIndicator.ProgressValue = null;
+            #endif
 
-//            selectedRoute = sender.SelectedItem.ToString();
-//            MainPage.routeBtn.Content = selectedRoute;
-//            MainPage.routePicker.SelectedIndex = sender.SelectedIndex;
-//            MainPage.timesText.Visibility = Visibility.Collapsed;
-//            MainPage.favSearchBtn.Visibility = Visibility.Collapsed;
+            SelectedRoute = sender.SelectedItem.ToString();
+            //MainPage.routeBtn.Content = selectedRoute;
+            //MainPage.routePicker.SelectedIndex = sender.SelectedIndex;
+            //MainPage.timesText.Visibility = Visibility.Collapsed;
+            //MainPage.favSearchBtn.Visibility = Visibility.Collapsed;
 
-//            if (DirectionsList.Count != 0)
-//            {
-//                MainPage.dirComboBox.SelectedIndex = -1;
-//                DirectionsList.Clear();
-//            }
-//            if (stopsList.Count != 0)
-//            {
-//                MainPage.stopPicker.SelectedIndex = -1;
-//                stopsList.Clear();
-//            }
+            //if (DirectionsList.Count != 0)
+            //{
+            //    MainPage.dirComboBox.SelectedIndex = -1;
+            //    DirectionsList.Clear();
+            //}
+            //if (stopsList.Count != 0)
+            //{
+            //    MainPage.stopPicker.SelectedIndex = -1;
+            //    stopsList.Clear();
+            //}
 
-//            await LoadDirections(selectedRoute);
+            //await LoadDirections(selectedRoute);
 
-//            MainPage.dirText.Visibility = Visibility.Visible;
-//            MainPage.dirComboBox.Visibility = Visibility.Visible;
+            //MainPage.dirText.Visibility = Visibility.Visible;
+            //MainPage.dirComboBox.Visibility = Visibility.Visible;
 
-//            #if WINDOWS_PHONE_APP
-//                        systemTray.ProgressIndicator.ProgressValue = 0;
-//            #endif
-//        }
+            #if WINDOWS_PHONE_APP
+                        systemTray.ProgressIndicator.ProgressValue = 0;
+            #endif
+        }
 
 //        private static async Task LoadDirections(string _route)
 //        {
@@ -358,5 +370,17 @@ namespace nexMuni.ViewModels
 //#endif
 //            }
 //        }
+
+        #region INotify Methods
+        private void NotifyPropertyChanged(string property)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(property));
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        #endregion
     }
 }
