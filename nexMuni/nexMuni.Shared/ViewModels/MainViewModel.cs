@@ -112,7 +112,7 @@ namespace nexMuni.ViewModels
                 FavoritesStops.Clear();
                 foreach (FavoriteData fav in favorites)
                 {
-                    Stop favStop = new Stop(fav.Name, fav.Routes, fav.Tags, fav.Lat, fav.Lon);
+                    Stop favStop = new Stop(fav.Name, "", fav.Routes, fav.Tags, fav.Lat, fav.Lon);
                     favStop.SetFavoriteId(fav.Id);
                     FavoritesStops.Add(favStop);
                 }

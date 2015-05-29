@@ -21,15 +21,17 @@ namespace nexMuni.DataModels
         }
         public double DistanceAsDouble { get; private set; }
 
+        public string stopId;
         private int _favId;
 
-        public Stop(string name, string routes, string tags, double lat, double lon )
+        public Stop(string name, string id, string routes, string tags, double lat, double lon )
         {
             StopName = name;
             Routes = routes;
             StopTags = tags;
             Latitude = lat;
             Longitude = lon;
+            stopId = id;
         }
 
         public Stop(string name, string routes, string tags, double lat, double lon, double distance)

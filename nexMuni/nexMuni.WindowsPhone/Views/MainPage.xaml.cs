@@ -5,6 +5,7 @@ using Windows.UI.Xaml.Controls.Maps;
 using Windows.UI.Xaml.Navigation;
 using nexMuni.Helpers;
 using nexMuni.ViewModels;
+using nexMuni.DataModels;
 
 namespace nexMuni.Views
 {
@@ -51,7 +52,9 @@ namespace nexMuni.Views
                 FavoritesPivot.DataContext = mainVm;
                 SearchPivot.DataContext = searchVm;
 
-                RoutesFlyout.ItemsPicked += searchVm.RouteSelected;
+                RoutesFlyout.ItemsPicked += RouteSelected;
+                DirBox.SelectionChanged += DirectionSelected;
+                StopsFlyout.ItemsPicked += StopSelected;
 
                 alreadyLoaded = true;
                 //timesText = SearchTimes;
@@ -85,16 +88,16 @@ namespace nexMuni.Views
             {
                 case 0:
                     RefreshBtn.Visibility = Visibility.Visible;
-                    AppBar.ClosedDisplayMode = AppBarClosedDisplayMode.Compact;
                     SortBtn.Visibility = Visibility.Collapsed;
+                    FavoriteBtn.Visibility = Visibility.Collapsed;
                     break;
                 case 1:
-                    AppBar.ClosedDisplayMode = AppBarClosedDisplayMode.Compact;
                     SortBtn.Visibility = Visibility.Visible;
                     RefreshBtn.Visibility = Visibility.Collapsed;
+                    FavoriteBtn.Visibility = Visibility.Collapsed;
                     break;
                 case 2:
-                    AppBar.ClosedDisplayMode = AppBarClosedDisplayMode.Minimal;
+                    FavoriteBtn.Visibility = Visibility.Visible;
                     SortBtn.Visibility = Visibility.Collapsed;
                     RefreshBtn.Visibility = Visibility.Collapsed;
                     break;
@@ -135,6 +138,39 @@ namespace nexMuni.Views
             //await DatabaseHelper.RemoveSearch(SearchViewModel.selectedStop);
             //removeSearchBtn.Visibility = Visibility.Collapsed;
             //favSearchBtn.Visibility = Visibility.Visible;
+        }
+
+        private async void RouteSelected(ListPickerFlyout sender, ItemsPickedEventArgs args)
+        {
+            RoutesFlyout.SelectedIndex = sender.SelectedIndex;
+            await searchVm.RouteSelected(sender.SelectedItem.ToString());
+
+            DirBox.SelectedIndex = 0;
+            StopsFlyout.SelectedIndex = -1;
+
+            DirLabel.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            DirBox.Visibility = Windows.UI.Xaml.Visibility.Visible;
+        }
+
+        public async void DirectionSelected(object sender, SelectionChangedEventArgs e)
+        {
+            if (((ComboBox)sender).SelectedIndex != -1)
+            {
+                StopsFlyout.SelectedIndex = -1;
+                await searchVm.LoadStops(((ComboBox)sender).SelectedItem.ToString());
+
+                StopLabel.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                StopButton.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            }
+        }
+
+        public async void StopSelected(ListPickerFlyout sender, ItemsPickedEventArgs args)
+        {
+            if (sender.SelectedIndex != -1)
+            {
+                await searchVm.StopSelected((Stop)sender.SelectedItem);
+                SearchTimes.Visibility = Visibility.Visible;
+            }
         }
     }
 }

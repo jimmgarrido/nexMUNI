@@ -347,12 +347,13 @@
     <Page.BottomAppBar>
         <CommandBar x:Name="AppBar" Background="#FF9B1414" ClosedDisplayMode="Compact" Foreground="White">
             <CommandBar.PrimaryCommands>
-                <AppBarButton x:Name="RefreshBtn"  IsCompact="False" Label="refresh" Click="UpdateButtonPressed" Foreground="White">
+                <AppBarButton x:Name="RefreshBtn" Label="refresh" Click="UpdateButtonPressed" Foreground="White">
                     <AppBarButton.Icon>
                         <BitmapIcon UriSource="Assets/refresh.png"/>
                     </AppBarButton.Icon>
                 </AppBarButton>
-                <AppBarButton x:Name="SortBtn" Icon="sort"  IsCompact="False" Label="sort" Click="SortFavorites" Visibility="Collapsed" Foreground="White"/>
+                <AppBarButton x:Name="SortBtn" Icon="sort" Label="sort" Click="SortFavorites" Visibility="Collapsed" Foreground="White"/>
+                <AppBarButton x:Name="FavoriteBtn" Icon="Favorite" Label="favorite" Click="FavoriteSearch" Visibility="Collapsed" IsEnabled="False" Foreground="White"/>
             </CommandBar.PrimaryCommands>
             <CommandBar.SecondaryCommands>
                 <AppBarButton Label="about" Click="GoToAbout" Foreground="White"/>
@@ -412,7 +413,7 @@
             <PivotItem x:Name="SearchPivot" Header="search" Padding="-20,-10,-20,0" Foreground="White" >
                 <Grid HorizontalAlignment="Center" Width="400" Margin="0,0,0,0">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="275"/>
+                        <RowDefinition Height="260"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
@@ -431,28 +432,22 @@
                         </Button>
 
                         <TextBlock x:Name="DirLabel" Text="Select Direction" HorizontalAlignment="Center" Margin="-245,0,0,-7" FontSize="16" FontFamily="Global User Interface" Visibility="Collapsed"/>
-                        <ComboBox x:Name="DirBox" Width="350" HorizontalAlignment="Center" Style="{StaticResource ComboBoxStyle}" Visibility="Collapsed"/>
+                        <ComboBox x:Name="DirBox" Width="350" HorizontalAlignment="Center" Style="{StaticResource ComboBoxStyle}" ItemsSource="{Binding DirectionsList}" Visibility="Collapsed"/>
 
                         <TextBlock x:Name="StopLabel" Text="Select Stop" HorizontalAlignment="Center" Margin="-275,0,0,-7" FontSize="16" FontFamily="Global User Interface" Visibility="Collapsed"/>
-                        <Button x:Name="StopButton" HorizontalAlignment="Center" Width="350" Style="{StaticResource ButtonStyle}" Visibility="Collapsed" IsEnabled="False" >
+                        <Button x:Name="StopButton" HorizontalAlignment="Center" Width="350" Style="{StaticResource ButtonStyle}" Content="{Binding SelectedStop.StopName}" Visibility="Collapsed" >
                             <Button.Flyout>
-                                <ListPickerFlyout x:Name="StopsFlyout" Title="SELECT STOP" Placement="Right">
+                                <ListPickerFlyout x:Name="StopsFlyout" Title="SELECT STOP" Placement="Right" ItemsSource="{Binding StopsList}">
                                     <ListPickerFlyout.ItemTemplate>
                                         <DataTemplate>
-                                            <ContentControl Width="350" Content="{Binding Path = Name}"/>
+                                            <ContentControl Width="350" Content="{Binding Path = StopName}"/>
                                         </DataTemplate>
                                     </ListPickerFlyout.ItemTemplate>                               
                                 </ListPickerFlyout>
                             </Button.Flyout>
                         </Button>
 
-                        <TextBlock x:Name="SearchTimes" HorizontalAlignment="Left" Margin="90,10,0,0" FontSize="26" FontWeight="Bold" Visibility="Collapsed" />
-                        <Button x:Name="AddFavSearch" Click="FavoriteSearch" Style="{StaticResource ButtonStyle}" MinHeight="30" Margin="0,-47,75,0" HorizontalAlignment="Right" Padding="0" FontFamily="Global User Interface" Visibility="Collapsed">
-							<Image Source="/Assets/AddStar.png" Width="30" Height="30" />
-						</Button>
-                        <Button x:Name="RemoveFavSearch" Click="RemoveSearch" Style="{StaticResource ButtonStyle}" MinHeight="30" Margin="0,-47,75,0" HorizontalAlignment="Right" Padding="0" FontFamily="Global User Interface" Visibility="Collapsed">
-                            <Image Source="/Assets/RemoveStar.png" Width="30" Height="30" />
-                        </Button>
+                        <TextBlock x:Name="SearchTimes" Text="{Binding SearchTimes}" HorizontalAlignment="Center" Margin="0,5,0,0" FontSize="24" FontWeight="Bold" Visibility="Collapsed" />
                     </StackPanel>
 
                     <maps:MapControl x:Name="SearchMapControl" HorizontalAlignment="Center" Margin="0,0,0,0" Grid.Row="1"

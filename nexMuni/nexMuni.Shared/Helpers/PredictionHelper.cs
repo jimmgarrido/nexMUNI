@@ -154,7 +154,7 @@ namespace nexMuni.Helpers
             return tempDirection;
         }
 
-        public static void GetSearchTimes(XDocument doc)
+        public static string GetSearchTimes(XDocument doc)
         {
             string[] searchTimes = new string[5];
             int i = 0;
@@ -192,7 +192,7 @@ namespace nexMuni.Helpers
             if (times == null) times = "No busses at this time";
             else times = times + " mins";
 
-            //MainPage.timesText.Text = times;
+            return times;
         }
 
         //internal static async Task SearchPredictions(string route, string url)
