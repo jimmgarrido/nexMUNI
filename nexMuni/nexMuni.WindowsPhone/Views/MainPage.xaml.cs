@@ -35,7 +35,7 @@ namespace nexMuni.Views
             this.NavigationCacheMode = NavigationCacheMode.Required;
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
             MainPivot.SelectionChanged += pivotControl_SelectionChanged;
             if (!MainPageModel.IsDataLoaded)
@@ -59,6 +59,7 @@ namespace nexMuni.Views
                 stopPicker = StopsFlyout;
                 dirComboBox = DirBox;
 
+                await DatabaseHelper.CheckDatabases();
                 MainPageModel.LoadData();
                 SearchModel.LoadData();
 

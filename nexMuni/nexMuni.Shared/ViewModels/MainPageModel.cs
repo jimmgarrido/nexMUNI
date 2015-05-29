@@ -25,7 +25,7 @@ namespace nexMuni.ViewModels
 
             localSettings = ApplicationData.Current.LocalSettings;
 
-            await DatabaseHelper.CheckDatabases();
+            //await DatabaseHelper.CheckDatabases();
             await LoadFavorites();
             await UpdateNearbyStops();
 
