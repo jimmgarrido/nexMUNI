@@ -4,7 +4,7 @@ using System.Text;
 
 namespace nexMuni.Helpers
 {
-    class WebRequests
+    public class WebRequests
     {
         private static Dictionary<string, string> URLs = new Dictionary<string, string>()
         {
@@ -12,10 +12,9 @@ namespace nexMuni.Helpers
             {"routeConfig","http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=sf-muni&r="},
         };
 
-        public static string GetMulitPredictionURL(string tags)
+        public static string GetMulitPredictionUrl(string tags)
         {
             StringBuilder cont = new StringBuilder();
-
             string[] splitTags = tags.Split(',');
 
             foreach(string t in splitTags)

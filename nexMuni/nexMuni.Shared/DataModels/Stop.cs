@@ -22,7 +22,7 @@ namespace nexMuni.DataModels
         public double DistanceAsDouble { get; private set; }
 
         public string stopId;
-        private int _favId;
+        public int favId;
 
         public Stop(string name, string id, string routes, string tags, double lat, double lon )
         {
@@ -42,11 +42,6 @@ namespace nexMuni.DataModels
             Latitude = lat;
             Longitude = lon;
             DistanceAsDouble = distance;
-        }
-
-        public void SetFavoriteId(int id)
-        {
-            _favId = id;
         }
     }
 };

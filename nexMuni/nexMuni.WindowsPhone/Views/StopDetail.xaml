@@ -152,12 +152,12 @@
             </Grid.RowDefinitions>
 
             <!--Title Panel-->
-            <TextBlock x:Name="StopHeader" Margin="18,0,0,15" FontSize="36" Grid.Row="0"
+            <TextBlock x:Name="StopHeader" Margin="18,0,0,15" FontSize="36" Grid.Row="0" Text="{Binding SelectedStop.StopName}"
                     Style="{ThemeResource HeaderTextBlockStyle}" CharacterSpacing="{ThemeResource PivotHeaderItemCharacterSpacing}" />
 
             <Grid Grid.Row="1" x:Name="ContentRoot" >
                 <TextBlock x:Name="noTimesBlock" Text="No busses at this time" FontSize="21" Margin="13,225,0,0" Visibility="Collapsed" TextAlignment="Center"/>
-                <ListView x:Name="RouteInfoList" IsItemClickEnabled="True" 
+                <ListView x:Name="RouteInfoList" IsItemClickEnabled="True" ItemsSource="{Binding Routes}"
                       Margin="0,0,0,0" IsTapEnabled="False" IsHoldingEnabled="False" 
                       ItemClick="ShowRouteMap" ItemTemplateSelector="{StaticResource TemplateSelector}">
                     <ListView.ItemContainerTransitions>

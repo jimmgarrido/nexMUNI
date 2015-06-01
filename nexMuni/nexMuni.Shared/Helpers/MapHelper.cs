@@ -11,12 +11,13 @@ using Windows.UI.Xaml.Media.Imaging;
 using Windows.Web.Http;
 using Windows.Web.Http.Headers;
 using nexMuni.Views;
+using System.Threading.Tasks;
 
 namespace nexMuni.Helpers
 {
     class MapHelper
     {
-        public static async void LoadDoc(string route)
+        public static async Task LoadDoc(string route)
         {
             string url = "http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=sf-muni&r=";
             url = url + route;
@@ -29,7 +30,7 @@ namespace nexMuni.Helpers
                 HttpResponseMessage response = await client.GetAsync(new Uri(url));
                 response.EnsureSuccessStatusCode();
                 string reader = await response.Content.ReadAsStringAsync();
-                GetPoints(XDocument.Parse(reader));
+                await GetPoints(XDocument.Parse(reader));
             }
             catch (Exception)
             {
@@ -37,7 +38,7 @@ namespace nexMuni.Helpers
             }
         }
 
-        private static void GetPoints(XDocument doc)
+        private static async Task GetPoints(XDocument doc)
         {
             List<BasicGeoposition> positions = new List<BasicGeoposition>();
             List<MapPolyline> route = new List<MapPolyline>();
@@ -63,8 +64,13 @@ namespace nexMuni.Helpers
                 route[x].ZIndex = 99;
                 route[x].Path = new Geopath(positions);
                 route[x].Visible = true;
-                RouteMap.routeMap.MapElements.Add(route[x]);
+                //RouteMap.routeMap.MapElements.Add(route[x]);
                 x++;
+            }
+
+            foreach(MapPolyline line in route)
+            {
+                RouteMap.routeMap.MapElements.Add(line);
             }
 
             if (LocationHelper.Location != null)

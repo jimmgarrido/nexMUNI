@@ -59,32 +59,32 @@ namespace nexMuni.Helpers
             return await _favoritesAsyncConnection.QueryAsync<FavoriteData>("SELECT * FROM FavoriteData");
         }
 
-        public static async Task AddFavorite(StopData stop)
+        public static async Task AddFavorite(Stop stop)
         {
             await _favoritesAsyncConnection.InsertAsync(new FavoriteData
                 {
-                    Name = stop.Name,
+                    Name = stop.StopName,
                     Routes = stop.Routes,
-                    Tags = stop.Tags,
-                    Lat = stop.Lat,
-                    Lon = stop.Lon
+                    Tags = stop.StopTags,
+                    Lat = stop.Latitude,
+                    Lon = stop.Longitude
                 });
             //await GetFavorites();
             //await MainViewModel.LoadFavorites();
         }
 
-        public static async Task RemoveFavorite(StopData stop)
+        public static async Task RemoveFavoriteAsync(Stop stop)
         {
-            string q = "DELETE FROM FavoriteData WHERE Id IS " + stop.FavID;
+            string q = "DELETE FROM FavoriteData WHERE Id IS " + stop.favId;
             await _favoritesAsyncConnection.QueryAsync<FavoriteData>(q);
             //await GetFavorites();
             //await MainViewModel.LoadFavorites();
         }
 
 
-        public static async Task FavoriteFromSearch(StopData selection)
+        public static async Task FavoriteSearchAsync(Stop stop)
         {
-            string title = selection.Name;
+            string title = stop.StopName;
             if (title.Contains("Inbound"))
             {
                 title = title.Replace(" Inbound", "");
@@ -98,7 +98,7 @@ namespace nexMuni.Helpers
             string query = "SELECT * FROM BusStops WHERE StopName = \'" + title + "\'";
             List<BusStopData> results = await db.QueryAsync<BusStopData>(query);
             
-            //If stop name not found in db, most likely a stop that was a ducplicate and merged so reverse it and search again
+            //If stop name not found in db, most likely a stop that was a duplicate and merged so reverse it and search again
             if(results.Count == 0)
             {
                 string [] temp = title.Split('&');
@@ -120,14 +120,6 @@ namespace nexMuni.Helpers
                 });
             }
             
-            //await GetFavorites();
-            //await MainViewModel.LoadFavorites();
-        }
-
-        public static async Task RemoveSearch(StopData selection)
-        {
-            string q = "DELETE FROM FavoriteData WHERE Id IS " + selection.FavID;
-            await _favoritesAsyncConnection.QueryAsync<FavoriteData>(q);
             //await GetFavorites();
             //await MainViewModel.LoadFavorites();
         }

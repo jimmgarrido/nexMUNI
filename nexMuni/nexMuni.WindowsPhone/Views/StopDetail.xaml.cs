@@ -32,9 +32,7 @@ namespace nexMuni.Views
             if (!alreadyLoaded)
             {
                 detailVm = new StopDetailViewModel(e.NavigationParameter as Stop);
-                ContentRoot.DataContext = detailVm;
-                StopHeader.Text = detailVm.SelectedStop.StopName;
-                RouteInfoList.ItemsSource = detailVm.Routes;
+                DataContext = detailVm;
 
                 //Check if the stop is in user's favorites list
                 //if (MainViewModel.FavoritesStops.Any(x => x.Name == detailModel.SelectedStop.Name))
@@ -48,6 +46,7 @@ namespace nexMuni.Views
                 //    favBtn.Icon = new SymbolIcon(Symbol.Remove);
                 //}
                 //else favBtn.Click += FavoriteStop;
+                alreadyLoaded = true;
             }
 
             await detailVm.LoadTimes();
@@ -130,7 +129,7 @@ namespace nexMuni.Views
 
         private void ShowRouteMap(object sender, ItemClickEventArgs e)
         {
-            this.Frame.Navigate(typeof(RouteMap), e.ClickedItem);
+            Frame.Navigate(typeof(RouteMap), e.ClickedItem);
         }
 
         private void NavigationHelper_SaveState(object sender, SaveStateEventArgs e) { }

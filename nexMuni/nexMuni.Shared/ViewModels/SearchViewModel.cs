@@ -26,6 +26,7 @@ namespace nexMuni.ViewModels
         private string _searchTimes;
         private string _selectedRoute;
         private Stop _selectedStop;
+        private Geopoint _mapCenter;
         
         public string SearchTimes
         {
@@ -67,6 +68,18 @@ namespace nexMuni.ViewModels
         public List<string> RoutesList { get; set; }
         public ObservableCollection<string> DirectionsList { get; set; }
         public ObservableCollection<Stop> StopsList { get; set; }
+        public Geopoint MapCenter
+        {
+            get
+            {
+                return _mapCenter;
+            }
+            set
+            {
+                _mapCenter = value;
+                NotifyPropertyChanged("MapCenter");
+            }
+        }
 
         private Task initialization;
         private Stop foundStop;
@@ -82,6 +95,7 @@ namespace nexMuni.ViewModels
         private async Task LoadDataAsync()
         {
             RoutesList = await DatabaseHelper.QueryForRoutes();
+            MapCenter =  new Geopoint(new BasicGeoposition() { Latitude = 37.7599, Longitude = -122.437 });
             DirectionsList = new ObservableCollection<string>();
             StopsList = new ObservableCollection<Stop>();
 
@@ -90,39 +104,13 @@ namespace nexMuni.ViewModels
             inboundStops = new List<string>();
         }
 
-//        public static async void LoadData()
-//        {
-//            await LoadRoutes();
-
-//            DirectionsList = new ObservableCollection<string>();
-//            stopsList = new ObservableCollection<StopData>();
-
-//            MainPage.dirComboBox.ItemsSource = DirectionsList;
-//            MainPage.stopPicker.ItemsSource = stopsList;
-
-//            MainPage.routePicker.ItemsPicked += RouteSelected;
-//            MainPage.dirComboBox.SelectionChanged += DirSelected;
-//            MainPage.stopPicker.ItemsPicked += StopSelected;
-
-//        }
-
-//        public static async Task LoadRoutes()
-//        {
-//            MainPage.routePicker.ItemsSource = await DatabaseHelper.QueryForRoutes();
-//            MainPage.routeBtn.IsEnabled = true;
-//        }
-
-        public async Task RouteSelected(string route)
+        public async Task LoadDirectionsAsync(string route)
         {
 #if WINDOWS_PHONE_APP
             var systemTray = StatusBar.GetForCurrentView();
             systemTray.ProgressIndicator.ProgressValue = null;
 #endif
-
             SelectedRoute = route;
-            //MainPage.routePicker.SelectedIndex = sender.SelectedIndex;
-            //MainPage.timesText.Visibility = Visibility.Collapsed;
-            //MainPage.favSearchBtn.Visibility = Visibility.Collapsed;
 
             if (DirectionsList.Count != 0)
             {
@@ -133,30 +121,18 @@ namespace nexMuni.ViewModels
                 StopsList.Clear();
             }
 
-            await LoadDirections(SelectedRoute);
-
-            //MainPage.dirText.Visibility = Visibility.Visible;
-            //MainPage.dirComboBox.Visibility = Visibility.Visible;
-
-#if WINDOWS_PHONE_APP
-            systemTray.ProgressIndicator.ProgressValue = 0;
-#endif
-        }
-
-        private async Task LoadDirections(string _route)
-        {
             string dirURL = "http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=sf-muni&r=";
 
-            if (_route.Equals("Powell/Mason Cable Car")) _route = "59";
-            else if (_route.Equals("Powell/Hyde Cable Car")) _route = "60";
-            else if (_route.Equals("California Cable Car")) _route = "61";
+            if (route.Equals("Powell/Mason Cable Car")) route = "59";
+            else if (route.Equals("Powell/Hyde Cable Car")) route = "60";
+            else if (route.Equals("California Cable Car")) route = "61";
             else
             {
-                _route = _route.Substring(0, _route.IndexOf('-'));
+                route = route.Substring(0, route.IndexOf('-'));
             }
 
             //selectedRoute = _route;
-            dirURL = dirURL + _route;
+            dirURL = dirURL + route;
 
             var response = new HttpResponseMessage();
             var client = new HttpClient();
@@ -177,6 +153,110 @@ namespace nexMuni.ViewModels
             {
                 ErrorHandler.NetworkError("Error getting route information. Please try again.");
             }
+
+#if WINDOWS_PHONE_APP
+            systemTray.ProgressIndicator.ProgressValue = 0;
+#endif
+        }
+
+        public async Task LoadStopsAsync(string direction)
+        {
+            if (StopsList.Count != 0) StopsList.Clear();
+
+            if (direction.Contains("Inbound"))
+            {
+                foreach (string s in inboundStops)
+                {
+                    foundStop = allStopsList.Find(z => z.StopTags == s);
+                    //StopsList.Add(new StopData(foundStop.Name, foundStop.StopID, foundStop.Tags, foundStop.Lon.ToString(), foundStop.Lat.ToString()));
+                    StopsList.Add(foundStop);
+                }
+            }
+            else if (direction.Contains("Outbound"))
+            {
+                foreach (string s in outboundStops)
+                {
+                    foundStop = allStopsList.Find(z => z.StopTags == s);
+                    //StopsList.Add(new StopData(FoundStops[0].title, FoundStops[0].stopID, FoundStops[0].tag, FoundStops[0].lon.ToString(), FoundStops[0].lat.ToString()));
+                    StopsList.Add(foundStop);
+                }
+            }
+
+            //MainPage.stopBtn.IsEnabled = true;
+            //MainPage.stopBtn.Content = String.Empty;
+            //MainPage.stopText.Visibility = Visibility.Visible;
+            //MainPage.stopBtn.Visibility = Visibility.Visible;
+            //MainPage.timesText.Visibility = Visibility.Collapsed;
+            //MainPage.favSearchBtn.Visibility = Visibility.Collapsed;
+        }
+
+        public async Task StopSelectedAsync(Stop stop)
+        {
+#if WINDOWS_PHONE_APP
+            var systemTray = StatusBar.GetForCurrentView();
+            systemTray.ProgressIndicator.Text = "Getting Arrival Times";
+            systemTray.ProgressIndicator.ProgressValue = null;
+#endif
+
+            SelectedStop = stop;
+            string title = SelectedStop.StopName;
+
+            if (title.Contains("Inbound"))
+            {
+                title = title.Replace(" Inbound", "");
+            }
+            if (title.Contains("Outbound"))
+            {
+                title = title.Replace(" Outbound", "");
+            }
+
+            string[] temp = SelectedStop.StopName.Split('&');
+            string reversed;
+            if (temp.Count() > 1)
+            {
+                reversed = temp[1].Substring(1) + " & " + temp[0].Substring(0, (temp[0].Length - 1));
+            }
+            else reversed = "";
+
+            string timesURL = "http://webservices.nextbus.com/service/publicXMLFeed?command=predictions&a=sf-muni&stopId=" + SelectedStop.stopId + "&routeTag=" + SelectedRoute.Substring(0, SelectedRoute.IndexOf('-'));
+
+            //await MainPage.searchMap.TrySetViewAsync(new Geopoint(new BasicGeoposition() { Latitude = selectedStop.Lat, Longitude = selectedStop.Lon }), 16.5);
+
+            //Check to see if the stop is in user's favorites list
+            //if (MainPageModel.FavoritesStops.Any(z => z.Name == title || z.Name == reversed))
+            //{
+            //    foreach (StopData s in MainPageModel.FavoritesStops)
+            //    {
+            //        if (s.Name == title) selectedStop.FavID = s.FavID;
+            //    }
+            //    MainPage.timesText.Visibility = Visibility.Visible;
+            //    MainPage.favSearchBtn.Visibility = Visibility.Collapsed;
+            //    MainPage.removeSearchBtn.Visibility = Visibility.Visible;
+            //}
+            //else
+            //{
+            //    MainPage.timesText.Visibility = Visibility.Visible;
+            //    MainPage.favSearchBtn.Visibility = Visibility.Visible;
+            //    MainPage.removeSearchBtn.Visibility = Visibility.Collapsed;
+            //}
+
+            //Get bus predictions for stop
+            SearchTimes = PredictionHelper.GetSearchTimes(await PredictionHelper.GetXml(timesURL));
+
+#if WINDOWS_PHONE_APP
+            systemTray.ProgressIndicator.ProgressValue = 0;
+            systemTray.ProgressIndicator.Text = "nexMUNI";
+#endif
+        }
+
+        public async Task FavoriteSearchAsync()
+        {
+            await DatabaseHelper.FavoriteSearchAsync(SelectedStop);
+        }
+
+        public async Task UnfavoriteSearchAsync()
+        {
+            await DatabaseHelper.RemoveFavoriteAsync(SelectedStop);
         }
 
         private void GetDirections(XDocument doc)
@@ -293,96 +373,6 @@ namespace nexMuni.ViewModels
 //                MapControl.SetLocation(icon, LocationHelper.phoneLocation.Coordinate.Point);
 //            }
 //        }
-
-        public async Task LoadStops(string direction)
-        {
-            if (StopsList.Count != 0) StopsList.Clear();
-
-            if (direction.Contains("Inbound"))
-            {
-                foreach (string s in inboundStops)
-                {
-                    foundStop = allStopsList.Find(z => z.StopTags == s);
-                    //StopsList.Add(new StopData(foundStop.Name, foundStop.StopID, foundStop.Tags, foundStop.Lon.ToString(), foundStop.Lat.ToString()));
-                    StopsList.Add(foundStop);
-                }
-            }
-            else if (direction.Contains("Outbound"))
-            {
-                foreach (string s in outboundStops)
-                {
-                    foundStop = allStopsList.Find(z => z.StopTags == s);
-                    //StopsList.Add(new StopData(FoundStops[0].title, FoundStops[0].stopID, FoundStops[0].tag, FoundStops[0].lon.ToString(), FoundStops[0].lat.ToString()));
-                    StopsList.Add(foundStop);
-                }
-            }
-
-            //MainPage.stopBtn.IsEnabled = true;
-            //MainPage.stopBtn.Content = String.Empty;
-            //MainPage.stopText.Visibility = Visibility.Visible;
-            //MainPage.stopBtn.Visibility = Visibility.Visible;
-            //MainPage.timesText.Visibility = Visibility.Collapsed;
-            //MainPage.favSearchBtn.Visibility = Visibility.Collapsed;
-        }
-
-        public async Task StopSelected(Stop stop)
-        {
-#if WINDOWS_PHONE_APP
-                var systemTray = StatusBar.GetForCurrentView();
-                systemTray.ProgressIndicator.Text = "Getting Arrival Times";
-                systemTray.ProgressIndicator.ProgressValue = null;
-#endif
-
-                SelectedStop = stop;
-                string title = SelectedStop.StopName;
-
-                if (title.Contains("Inbound"))
-                {
-                    title = title.Replace(" Inbound", "");
-                }
-                if (title.Contains("Outbound"))
-                {
-                    title = title.Replace(" Outbound", "");
-                }
-
-                string[] temp = SelectedStop.StopName.Split('&');
-                string reversed;
-                if (temp.Count() > 1)
-                {
-                    reversed = temp[1].Substring(1) + " & " + temp[0].Substring(0, (temp[0].Length - 1));
-                }
-                else reversed = "";
-
-                string timesURL = "http://webservices.nextbus.com/service/publicXMLFeed?command=predictions&a=sf-muni&stopId=" + SelectedStop.stopId + "&routeTag=" + SelectedRoute.Substring(0, SelectedRoute.IndexOf('-'));
-
-                //await MainPage.searchMap.TrySetViewAsync(new Geopoint(new BasicGeoposition() { Latitude = selectedStop.Lat, Longitude = selectedStop.Lon }), 16.5);
-
-                //Check to see if the stop is in user's favorites list
-                //if (MainPageModel.FavoritesStops.Any(z => z.Name == title || z.Name == reversed))
-                //{
-                //    foreach (StopData s in MainPageModel.FavoritesStops)
-                //    {
-                //        if (s.Name == title) selectedStop.FavID = s.FavID;
-                //    }
-                //    MainPage.timesText.Visibility = Visibility.Visible;
-                //    MainPage.favSearchBtn.Visibility = Visibility.Collapsed;
-                //    MainPage.removeSearchBtn.Visibility = Visibility.Visible;
-                //}
-                //else
-                //{
-                //    MainPage.timesText.Visibility = Visibility.Visible;
-                //    MainPage.favSearchBtn.Visibility = Visibility.Visible;
-                //    MainPage.removeSearchBtn.Visibility = Visibility.Collapsed;
-                //}
-
-                //Get bus predictions for stop
-                SearchTimes = PredictionHelper.GetSearchTimes(await PredictionHelper.GetXml(timesURL));
-
-#if WINDOWS_PHONE_APP
-                systemTray.ProgressIndicator.ProgressValue = 0;
-                systemTray.ProgressIndicator.Text = "nexMUNI";
-#endif
-        }
 
         #region INotify Methods
         private void NotifyPropertyChanged(string property)

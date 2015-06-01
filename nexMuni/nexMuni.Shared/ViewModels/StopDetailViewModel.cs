@@ -4,13 +4,26 @@ using System.Threading.Tasks;
 using Windows.UI.ViewManagement;
 using nexMuni.DataModels;
 using nexMuni.Helpers;
+using System.ComponentModel;
 
 namespace nexMuni.ViewModels
 {
-    public class StopDetailViewModel
+    public class StopDetailViewModel : INotifyPropertyChanged
     {
+        private Stop _selectedStop;
+
         public ObservableCollection<Route> Routes { get; private set; }
-        public Stop SelectedStop { get; private set; }
+        public Stop SelectedStop {
+            get
+            {
+                return _selectedStop;
+            }
+            set
+            {
+                _selectedStop = value;
+                NotifyPropertyChanged("SelectedStop");
+            }
+        }
 
         private Task _initialize;
         private string url;
@@ -35,7 +48,7 @@ namespace nexMuni.ViewModels
             string[] splitRoutes = SelectedStop.Routes.Split(',');
             splitRoutes[0] = " " + splitRoutes[0];
 
-            url = WebRequests.GetMulitPredictionURL(SelectedStop.StopTags);
+            url = WebRequests.GetMulitPredictionUrl(SelectedStop.StopTags);
             List<Route> routeList = await PredictionHelper.GetPredictionTimes(url);
             
             foreach(Route r in routeList)
@@ -59,5 +72,17 @@ namespace nexMuni.ViewModels
                 Routes.Add(r);
             }
         }
+
+        #region INotify Methods
+        private void NotifyPropertyChanged(string property)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(property));
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        #endregion
     }
 }

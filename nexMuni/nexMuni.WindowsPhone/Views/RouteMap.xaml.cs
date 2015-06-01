@@ -10,9 +10,6 @@ using Windows.Devices.Geolocation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Maps;
 using Windows.UI.Xaml.Navigation;
-using nexMuni.Common;
-using nexMuni.DataModels;
-using nexMuni.Helpers;
 
 namespace nexMuni.Views
 {
@@ -42,7 +39,7 @@ namespace nexMuni.Views
             this.navigationHelper.SaveState += this.NavigationHelper_SaveState;
 
             routeMap = routeMapControl;
-            routeMap.Center = new Geopoint(new BasicGeoposition() { Latitude = 37.7603, Longitude = -122.427 });
+            
         }
 
         /// <summary>
@@ -73,12 +70,12 @@ namespace nexMuni.Views
         /// <see cref="Frame.Navigate(Type, Object)"/> when this page was initially requested and
         /// a dictionary of state preserved by this page during an earlier
         /// session.  The state will be null the first time a page is visited.</param>
-        private void NavigationHelper_LoadState(object sender, LoadStateEventArgs e)
+        private async void NavigationHelper_LoadState(object sender, LoadStateEventArgs e)
         {
             selectedRoute = e.NavigationParameter as Route;
             routeTitle.Text = selectedRoute.RouteNumber + "-" + selectedRoute.RouteName;
-
-            MapHelper.LoadDoc(selectedRoute.RouteNumber);
+            routeMap.Center = new Geopoint(new BasicGeoposition() { Latitude = 37.7603, Longitude = -122.427 });
+            await MapHelper.LoadDoc(selectedRoute.RouteNumber);
         }
 
         /// <summary>
