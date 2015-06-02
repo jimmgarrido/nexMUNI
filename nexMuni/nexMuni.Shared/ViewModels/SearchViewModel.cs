@@ -241,7 +241,8 @@ namespace nexMuni.ViewModels
             //}
 
             //Get bus predictions for stop
-            SearchTimes = PredictionHelper.GetSearchTimes(await PredictionHelper.GetXml(timesURL));
+            //SearchTimes = PredictionHelper.GetSearchTimes(await PredictionHelper.GetXml(timesURL));
+            SearchTimes = await PredictionHelper.GetSearchTimesAsync(timesURL);
 
 #if WINDOWS_PHONE_APP
             systemTray.ProgressIndicator.ProgressValue = 0;

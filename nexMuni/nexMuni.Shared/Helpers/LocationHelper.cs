@@ -15,8 +15,6 @@ namespace nexMuni.Helpers
 {
     class LocationHelper
     {
-        private static double PhoneLat { get; set; }
-        private static double PhoneLong { get; set; }
         public static Geoposition Location { get; private set; }
         public static Geopoint Point
         {
@@ -26,6 +24,10 @@ namespace nexMuni.Helpers
             }
         }
 
+        private static double latitude;
+        private static double longitude;
+        private static Geolocator geolocator;
+
         public static async Task UpdateLocation()
         {
 #if WINDOWS_PHONE_APP
@@ -33,8 +35,7 @@ namespace nexMuni.Helpers
             systemTray.ProgressIndicator.Text = "Getting Location";
             systemTray.ProgressIndicator.ProgressValue = null;
 #endif
-
-            Geolocator geolocator = new Geolocator { DesiredAccuracyInMeters = 50 };
+            if(geolocator == null) geolocator = new Geolocator { DesiredAccuracyInMeters = 50 };
 
             if (geolocator.LocationStatus == PositionStatus.Disabled)
             {
@@ -53,14 +54,14 @@ namespace nexMuni.Helpers
 
         public static double[][] MakeBounds(double dist)
         {
-            PhoneLat = Point.Position.Latitude;
-            PhoneLong = Point.Position.Longitude;
+            latitude = Point.Position.Latitude;
+            longitude = Point.Position.Longitude;
 
             //Create search radius bounds
-           return new double[][] { Destination(PhoneLat, PhoneLong, 0.0, dist),
-                                                Destination(PhoneLat, PhoneLong, 90.0, dist),
-                                                Destination(PhoneLat, PhoneLong, 180.0, dist),
-                                                Destination(PhoneLat, PhoneLong, 270.0, dist)};
+           return new double[][] { Destination(latitude, longitude, 0.0, dist),
+                                                Destination(latitude, longitude, 90.0, dist),
+                                                Destination(latitude, longitude, 180.0, dist),
+                                                Destination(latitude, longitude, 270.0, dist)};
         }
 
         private static double[] Destination(double lat, double lon, double bearing, double d)
@@ -90,10 +91,10 @@ namespace nexMuni.Helpers
 
         public static double GetDistance(double latB, double lonB)
         {
-            double rLatA = Deg2Rad(PhoneLat);
+            double rLatA = Deg2Rad(latitude);
             double rLatB = Deg2Rad(latB);
-            double rHalfDeltaLat = Deg2Rad((latB - PhoneLat) / 2.0);
-            double rHalfDeltaLon = Deg2Rad((lonB - PhoneLong) / 2.0);
+            double rHalfDeltaLat = Deg2Rad((latB - latitude) / 2.0);
+            double rHalfDeltaLon = Deg2Rad((lonB - longitude) / 2.0);
 
             return (2 * 3963.19) * Math.Asin(Math.Sqrt(Math.Pow(Math.Sin(rHalfDeltaLat), 2) + Math.Cos(rLatA) * Math.Cos(rLatB) * Math.Pow(Math.Sin(rHalfDeltaLon), 2)));
 
@@ -121,13 +122,6 @@ namespace nexMuni.Helpers
             //{
             //    stop.DoubleDist = GetDistance(stop.Lat, stop.Lon);
             //}
-        }
-
-        private static DependencyObject LocationPoint()
-        {
-            Image png = new Image { Source = new BitmapImage() };
-
-            return png;
         }
     }
 }

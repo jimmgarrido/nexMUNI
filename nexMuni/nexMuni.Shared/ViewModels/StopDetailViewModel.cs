@@ -49,7 +49,7 @@ namespace nexMuni.ViewModels
             splitRoutes[0] = " " + splitRoutes[0];
 
             url = WebRequests.GetMulitPredictionUrl(SelectedStop.StopTags);
-            List<Route> routeList = await PredictionHelper.GetPredictionTimes(url);
+            List<Route> routeList = await PredictionHelper.GetPredictionTimesAsync(url);
             
             foreach(Route r in routeList)
             {
@@ -65,7 +65,7 @@ namespace nexMuni.ViewModels
         public async Task RefreshTimes()
         {
             Routes.Clear();
-            List<Route> routeList = await PredictionHelper.GetPredictionTimes(url);
+            List<Route> routeList = await PredictionHelper.GetPredictionTimesAsync(url);
 
             foreach (Route r in routeList)
             {

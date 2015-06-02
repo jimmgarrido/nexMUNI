@@ -10,26 +10,36 @@ using nexMuni.Views;
 
 namespace nexMuni.Helpers
 {
-    class PredictionHelper
+    public class PredictionHelper
     {
-        public static async Task<List<Route>> GetPredictionTimes(string url)
+        private static HttpClient client = new HttpClient();
+        private static XDocument xmlDoc = new XDocument();
+        private static List<Route> routes = new List<Route>();
+
+        public static async Task<List<Route>> GetPredictionTimesAsync(string url)
         {
             return GetPredictions(await GetXml(url));
         }
 
-        public static async Task<XDocument> GetXml(string url) 
+        public static async Task<string> GetSearchTimesAsync(string url)
         {
-            var client = new HttpClient();
-            var xmlDoc = new XDocument();
+            var document = await GetXml(url);
+            var element = document.Element("body").Element("predictions").Element("direction");
 
-            //Make sure to pull from network not cache everytime predictions are refreshed 
+            if (element != null) return ParseTimes(element);
+            else return "No times found";
 
+        }
+
+        private static async Task<XDocument> GetXml(string url) 
+        {
+            //Make sure to pull from the network and not cache everytime predictions are refreshed 
             client.DefaultRequestHeaders.IfModifiedSince = DateTime.Now;
             try
             {
-                HttpResponseMessage response = await client.GetAsync(new Uri(url));
+                var response = await client.GetAsync(new Uri(url));
                 response.EnsureSuccessStatusCode();
-                string reader = await response.Content.ReadAsStringAsync();
+                var reader = await response.Content.ReadAsStringAsync();
                 xmlDoc = XDocument.Parse(reader);
             }
             catch(Exception)
@@ -40,102 +50,57 @@ namespace nexMuni.Helpers
             return xmlDoc;
         }
 
-        private static List<Route> GetPredictions(XDocument doc)
+        private static List<Route> GetPredictions(XDocument document)
         {
-            List<Route> routes = new List<Route>();
-            if (doc.Root == null) return routes;
+            string routeTitle, routeNum;
+            IEnumerable<XElement> rootElements;
 
-            IEnumerable<XElement> rootElements = doc.Element("body").Elements("predictions");
-            XElement subElement;
+            routes.Clear();
+            //If there was an error getting the xml, return an empty list
+            if (document.Root == null) return routes;
+            else rootElements = document.Element("body").Elements("predictions");
 
-            string routeTitle, routeNum, fullTitle;
-            string[] times1 = new string[4];
-            string[] times2 = new string[4];
-
-            foreach(XElement currentElement in rootElements)
+            foreach(XElement predictionElement in rootElements)
             {
-                int index;
-                fullTitle = currentElement.Attribute("routeTitle").Value;
-
-                if (fullTitle.Contains('-'))
-                {
-                    index = fullTitle.IndexOf('-');   
-                    routeTitle = fullTitle.Substring(index + 1, fullTitle.Length - (index + 1));
-                    routeNum = fullTitle.Substring(0, index );
-                } else
-                {
-                    index = fullTitle.IndexOf('"');
-                    routeTitle = fullTitle.Substring(index + 1, (fullTitle.Length - (index+2)));
-                    routeNum = currentElement.Attribute("routeTag").Value;
-                }
+                routeTitle = ParseTitle(predictionElement);
+                routeNum = ParseRouteNum(predictionElement);
 
                 //Check to see if the route has already been added to the collection
-                if (routes.All(z => z.RouteNumber != routeNum))
+                if (!routes.Any(r => r.RouteNumber == routeNum))
                 {
-                    Route tempRoute = new Route(routeTitle, routeNum);
-                    
-                    subElement = currentElement.Element("direction");
+                    Route newRoute = new Route(routeTitle, routeNum);
+
+                    var subElement = predictionElement.Element("direction");
                     if (subElement != null)
                     {
-                        tempRoute.Directions.Add(GetTimes(subElement));
-                        routes.Add(tempRoute);
+                        var dirTitle = subElement.Attribute("title").Value;
+                        var times = ParseTimes(subElement);
+                        newRoute.Directions.Add(new RouteDirection(dirTitle, times));
+                        routes.Add(newRoute);
                     }
-                    //{
-                    //    int j = 0;
-                    //    dirTitle1 = subElement.Attribute("title").Value;
-
-                    //    predictionElements = subElement.Elements("prediction");
-                    //    foreach (XElement element in predictionElements)
-                    //    {                           
-                    //        time = element.Attribute("minutes").Value;
-
-                    //        if (j < 4) times1[j] = time;
-                    //        j++;
-                    //    }
-                    //    routes.Add(new Route(routeTitle, routeNum, dirTitle1, times1));
-                    //}  
                 }
                 else
                 {
                     Route tempRoute = routes.Find(r => r.RouteNumber == routeNum);
 
-                    subElement = currentElement.Element("direction");
+                    var subElement = predictionElement.Element("direction");
                     if (subElement != null)
                     {
-                        tempRoute.Directions.Add(GetTimes(subElement));
+                        var dirTitle = subElement.Attribute("title").Value;
+                        var times = ParseTimes(subElement);
+                        tempRoute.Directions.Add(new RouteDirection(dirTitle, times));
                     }
-                    //{
-                    //    int j = 0;
-                    //    dirTitle2 = subElement.Attribute("title").Value;
 
-                    //    predictionElements = subElement.Elements("prediction");
-                    //    foreach (XElement element in predictionElements)
-                    //    {
-                    //        time = element.Attribute("minutes").Value;
-
-                    //        if (j < 4) times2[j] = time;
-                    //        j++;
-                    //    }
-                        
-                    //    foreach (Route r in routes)
-                    //    {
-                    //        if (r.RouteNumber == routeNum)
-                    //        {
-                    //            r.AddDir2(dirTitle2, times2);
-                    //        }
-                    //    }         
-                    //}     
                 }   
             }
             return routes;
         }
 
-        private static RouteDirection GetTimes(XElement element)
+        private static string ParseTimes(XElement element)
         {
             int maxTimes;
-            StringBuilder builder = new StringBuilder();
-            RouteDirection tempDirection = new RouteDirection(element.Attribute("title").Value);
-            IEnumerable<XElement> predictionElements = element.Elements("prediction");
+            var builder = new StringBuilder();
+            var predictionElements = element.Elements("prediction");
 
             if (predictionElements.Count() < 4)
                 maxTimes = predictionElements.Count();
@@ -149,74 +114,36 @@ namespace nexMuni.Helpers
                 else
                     builder.Append(predictionElements.ElementAt(i).Attribute("minutes").Value + ", ");
             }
-
-            tempDirection.Times = builder.ToString();
-            return tempDirection;
+            return builder.ToString();
         }
 
-        public static string GetSearchTimes(XDocument doc)
+        private static string ParseTitle(XElement element)
         {
-            string[] searchTimes = new string[5];
-            int i = 0;
-            string times = null;
-
-            IEnumerable<XElement> elements =
-                from e in doc.Descendants("predictions").Descendants("direction").Descendants("prediction")
-                select e;
-
-            foreach (XElement el in elements)
+            string fullTitle = element.Attribute("routeTitle").Value;
+            if (fullTitle.Contains('-'))
             {
-                if (i < 5)
-                {
-                    searchTimes[i] = el.Attribute("minutes").Value;
-                    i++;
-                }
+                int index = fullTitle.IndexOf('-');
+                return fullTitle.Substring(index + 1, fullTitle.Length - (index + 1));
             }
-
-            i = 0;
-
-            while (i < searchTimes.Length && searchTimes[i] != null)
+            else
             {
-                if (i == 0)
-                {
-                    times = searchTimes[0];
-                    i++;
-                }
-                else if (searchTimes[i] != null)
-                {
-                    times = times + ", " + searchTimes[i];
-                    i++;
-                }
+                int index = fullTitle.IndexOf('"');
+                return fullTitle.Substring(index + 1, (fullTitle.Length - (index + 2)));
             }
-
-            if (times == null) times = "No busses at this time";
-            else times = times + " mins";
-
-            return times;
         }
 
-        //internal static async Task SearchPredictions(string route, string url)
-        //{
-        //    var response = new HttpResponseMessage();
-        //    var client = new HttpClient();
-        //    XDocument xmlDoc = new XDocument();
-        //    string reader;
+        private static string ParseRouteNum(XElement element)
+        {
+            string fullTitle = element.Attribute("routeTitle").Value;
+            if (fullTitle.Contains('-'))
+            {
+                return fullTitle.Substring(0, fullTitle.IndexOf('-'));
+            }
+            else
+            {
+                return element.Attribute("routeTag").Value;
+            }
+        }
 
-        //    //Make sure to pull from network not cache everytime predictions are refreshed 
-        //    client.DefaultRequestHeaders.IfModifiedSince = System.DateTime.Now;
-        //    try
-        //    {
-        //        response = await client.GetAsync(new Uri(url));
-
-        //        reader = await response.Content.ReadAsStringAsync();
-
-        //        GetTimes(XDocument.Parse(reader));
-
-        //    }
-        //    catch (Exception)
-        //    {
-        //        ErrorHandler.NetworkError("Error getting predictions. Check network connection and try again.");
-        //    }   
-        //}
     }
 }
