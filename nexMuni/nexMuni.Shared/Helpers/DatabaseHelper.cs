@@ -10,10 +10,14 @@ using SQLite;
 
 namespace nexMuni.Helpers
 {
+    public delegate void ChangedEventHandler();
+
     class DatabaseHelper
     {
         private static SQLiteAsyncConnection _stopsAsyncConnection;
         private static SQLiteAsyncConnection _favoritesAsyncConnection;
+        public static List<FavoriteData> FavoritesList { get; private set; }
+        public static ChangedEventHandler FavoritesChanged;
 
         public static async Task CheckDatabasesAsync()
         {
@@ -54,12 +58,7 @@ namespace nexMuni.Helpers
             return list;
         }
 
-        public static async Task<List<FavoriteData>> GetFavoritesAsync()
-        {
-            return await _favoritesAsyncConnection.QueryAsync<FavoriteData>("SELECT * FROM FavoriteData");
-        }
-
-        public static async Task AddFavorite(Stop stop)
+        public static async Task AddFavoriteAsync(Stop stop)
         {
             await _favoritesAsyncConnection.InsertAsync(new FavoriteData
                 {
@@ -69,18 +68,15 @@ namespace nexMuni.Helpers
                     Lat = stop.Latitude,
                     Lon = stop.Longitude
                 });
-            //await GetFavorites();
-            //await MainViewModel.LoadFavorites();
+            await LoadFavoritesAsync();
         }
 
         public static async Task RemoveFavoriteAsync(Stop stop)
         {
             string q = "DELETE FROM FavoriteData WHERE Id IS " + stop.favId;
             await _favoritesAsyncConnection.QueryAsync<FavoriteData>(q);
-            //await GetFavorites();
-            //await MainViewModel.LoadFavorites();
+            await LoadFavoritesAsync();
         }
-
 
         public static async Task FavoriteSearchAsync(Stop stop)
         {
@@ -119,29 +115,18 @@ namespace nexMuni.Helpers
                     Lon = x.Longitude
                 });
             }
-            
-            //await GetFavorites();
-            //await MainViewModel.LoadFavorites();
+
+            await LoadFavoritesAsync();
         }
 
-        //public static void SyncIDS()
-        //{
-        //    foreach (StopData a in MainViewModel.FavoritesStops)
-        //    {
-        //        foreach (StopData b in MainViewModel.NearbyStops)
-        //        {
-        //            if (a.Name == b.Name)
-        //            {
-        //                b.FavID = a.FavID;
-        //            }
-        //        }
-
-        //        if (SearchViewModel.selectedStop != null)
-        //        {
-        //            if (SearchViewModel.selectedStop.Name == a.Name) SearchViewModel.selectedStop.FavID = a.FavID;
-        //        }
-        //    }
-        //}
+        private static async Task LoadFavoritesAsync()
+        {
+            FavoritesList = await _favoritesAsyncConnection.QueryAsync<FavoriteData>("SELECT * FROM FavoriteData");
+            if (FavoritesChanged != null)
+            {
+                FavoritesChanged();
+            }
+        }
 
         private static async Task CheckStopsDatabaseAsync()
         {
@@ -177,6 +162,7 @@ namespace nexMuni.Helpers
             {
                 StorageFile favDb = await ApplicationData.Current.LocalFolder.GetFileAsync("favorites.sqlite");
                 _favoritesAsyncConnection = new SQLiteAsyncConnection(favDb.Path);
+                await LoadFavoritesAsync();
                 dbExists = true;
             }
             catch
@@ -194,6 +180,7 @@ namespace nexMuni.Helpers
 
             _favoritesAsyncConnection = new SQLiteAsyncConnection(favDb.Path);
             await _favoritesAsyncConnection.CreateTableAsync<FavoriteData>();
+            await LoadFavoritesAsync();
         }
     }
 }

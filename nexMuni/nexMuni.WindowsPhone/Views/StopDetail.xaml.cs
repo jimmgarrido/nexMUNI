@@ -35,23 +35,23 @@ namespace nexMuni.Views
                 DataContext = detailVm;
 
                 //Check if the stop is in user's favorites list
-                //if (MainViewModel.FavoritesStops.Any(x => x.Name == detailModel.SelectedStop.Name))
-                //{
-                //    foreach (StopData s in MainViewModel.FavoritesStops)
-                //    {
-                //        if (s.Name == detailModel.SelectedStop.Name) detailModel.SelectedStop.FavID = s.FavID;
-                //    }
-                //    favBtn.Click += RemoveStop;
-                //    favBtn.Label = "unfavorite";
-                //    favBtn.Icon = new SymbolIcon(Symbol.Remove);
-                //}
-                //else favBtn.Click += FavoriteStop;
+                if(detailVm.IsFavorite())
+                {
+                    FavButton.Click += UnfavoriteBtnPressed;
+                    FavButton.Label = "unfavorite";
+                    FavButton.Icon = new SymbolIcon(Symbol.Remove);
+                }
+                else
+                {
+                    FavButton.Click += FavoriteBtnPressed;
+                    FavButton.Label = "favorite";
+                    FavButton.Icon = new SymbolIcon(Symbol.Favorite);
+                }
+
                 alreadyLoaded = true;
             }
 
             await detailVm.LoadTimes();
-
-            //noTimesBlock.Visibility = detailVm.Routes.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private async void RefreshTimes(object sender, RoutedEventArgs e)
@@ -64,7 +64,6 @@ namespace nexMuni.Views
             RefreshBtn.IsEnabled = false;
             await detailVm.RefreshTimes();
             RefreshBtn.IsEnabled = true;
-            noTimesBlock.Visibility = detailVm.Routes.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
 
 #if WINDOWS_PHONE_APP
             systemTray.ProgressIndicator.ProgressValue = 0;
@@ -72,22 +71,22 @@ namespace nexMuni.Views
 #endif
         }
 
-        private async void AddFavoriteBtnPressed(object sender, RoutedEventArgs e)
+        private async void FavoriteBtnPressed(object sender, RoutedEventArgs e)
         {
-            //await DatabaseHelper.AddFavorite(detailModel.SelectedStop);
-            favBtn.Click -= AddFavoriteBtnPressed;
-            favBtn.Click += RemoveFavoriteBtnPressed;
-            favBtn.Icon = new SymbolIcon(Symbol.Remove);
-            favBtn.Label = "unfavorite";
+            await detailVm.AddFavoriteAsync();
+            FavButton.Click -= FavoriteBtnPressed;
+            FavButton.Click += UnfavoriteBtnPressed;
+            FavButton.Icon = new SymbolIcon(Symbol.Remove);
+            FavButton.Label = "unfavorite";
         }
 
-        private async void RemoveFavoriteBtnPressed(object sender, RoutedEventArgs e)
+        private async void UnfavoriteBtnPressed(object sender, RoutedEventArgs e)
         {
-            //await DatabaseHelper.RemoveFavorite(detailModel.SelectedStop);
-            favBtn.Click -= RemoveFavoriteBtnPressed;
-            favBtn.Click += AddFavoriteBtnPressed;
-            favBtn.Icon = new SymbolIcon(Symbol.Favorite);
-            favBtn.Label = "favorite";
+            await detailVm.RemoveFavoriteAsync();
+            FavButton.Click -= UnfavoriteBtnPressed;
+            FavButton.Click += FavoriteBtnPressed;
+            FavButton.Icon = new SymbolIcon(Symbol.Favorite);
+            FavButton.Label = "favorite";
         }
 
         #region NavigationHelper registration

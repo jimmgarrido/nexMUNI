@@ -9,7 +9,7 @@
     <Page.Resources>
         <Thickness x:Key="PivotPortraitThemePadding">19,38,0,0</Thickness>
         <Thickness x:Key="PivotLandscapeThemePadding">19,25,0,0</Thickness>
-
+        
         <Style x:Key="NearbyPivot" TargetType="Pivot">
             <Setter Property="Margin" Value="0"/>
             <Setter Property="Padding" Value="0"/>
@@ -27,20 +27,22 @@
                     <ControlTemplate TargetType="Pivot">
                         <Grid x:Name="RootElement" Background="{TemplateBinding Background}" HorizontalAlignment="{TemplateBinding HorizontalAlignment}" VerticalAlignment="{TemplateBinding VerticalAlignment}">
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
+        						<RowDefinition Height="auto"/>
+        						<RowDefinition Height="*"/>
+        					</Grid.RowDefinitions>
                             <VisualStateManager.VisualStateGroups>
                                 <VisualStateGroup x:Name="Orientation">
                                     <VisualState x:Name="Portrait"/>
                                     <VisualState x:Name="Landscape"/>
                                 </VisualStateGroup>
                             </VisualStateManager.VisualStateGroups>
-                            <ScrollViewer x:Name="ScrollViewer" HorizontalSnapPointsAlignment="Center" HorizontalSnapPointsType="MandatorySingle" HorizontalScrollBarVisibility="Hidden" Margin="{TemplateBinding Padding}" Grid.Row="1" Template="{StaticResource ScrollViewerScrollBarlessTemplate}" VerticalSnapPointsType="None" VerticalScrollBarVisibility="Disabled" VerticalScrollMode="Disabled" VerticalContentAlignment="Stretch" ZoomMode="Disabled" Padding="0,30,0,0">
+                            <Grid Height="7" Background="#FFB31B1B" Grid.Row="0"/>
+                            <ScrollViewer x:Name="ScrollViewer" HorizontalSnapPointsAlignment="Center" HorizontalSnapPointsType="MandatorySingle" HorizontalScrollBarVisibility="Hidden" Margin="0,-2,0,0"
+                                          Grid.Row="1" Template="{StaticResource ScrollViewerScrollBarlessTemplate}" VerticalSnapPointsType="None" VerticalScrollBarVisibility="Disabled" VerticalScrollMode="Disabled" VerticalContentAlignment="Stretch" ZoomMode="Disabled" Padding="0,0,0,0">
                                 <PivotPanel x:Name="Panel" VerticalAlignment="Stretch">
                                     <PivotHeaderPanel x:Name="Header" Background="#FFB31B1B">
                                         <PivotHeaderPanel.RenderTransform>
-                                            <CompositeTransform x:Name="HeaderTranslateTransform" TranslateX="0"/>
+                                            <CompositeTransform x:Name="HeaderTranslateTransform" TranslateX="0"/> 
                                         </PivotHeaderPanel.RenderTransform>
                                     </PivotHeaderPanel>
                                     <ItemsPresenter x:Name="PivotItemPresenter" Margin="0,-13,0,0">
@@ -364,7 +366,7 @@
 
     <!--Main Content -->
     <Grid>
-        <Pivot x:Name="MainPivot" Title="nexMUNI" Background="White" Style="{StaticResource NearbyPivot}" Margin="0,25,0,0" Padding="0,-30,0,0">
+        <Pivot x:Name="MainPivot" Title="nexmuni" Background="White" Style="{StaticResource NearbyPivot}" Margin="0,25,0,0" Padding="0,0,0,0">
             <PivotItem x:Name="NearbyPivot" Header="nearby" Margin="10,13,10,0">
                 <Grid>
                     <TextBlock x:Name="NoStopsNotice" Text="{Binding NoStopsText}" Foreground="#b31b1b" TextAlignment="Center" FontSize="21" Margin="0,220,0,0"/>
@@ -391,18 +393,18 @@
                 </Grid>
             </PivotItem>
 
-            <PivotItem x:Name="FavoritesPivot" Header="favorites"  Margin="10,13,10,0">
+            <PivotItem x:Name="FavoritesPivot" Header="favorites" Margin="10,13,10,0">
                 <Grid>
                     <TextBlock x:Name="NoFavsNotice" Text="{Binding NoFavoritesText}" Foreground="#b31b1b" TextAlignment="Center" FontFamily="Segoe UI Symbol" FontSize="21" Margin="0,220,0,0" Width="250" TextWrapping="WrapWholeWords"/>
                     <ListView x:Name="FavoritesListView" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Top" 
-                              ItemsSource="{Binding FavoritesStops}" SelectionMode="None" IsItemClickEnabled="True" ItemClick="StopClicked" Padding="0,10,0,0">
+                              ItemsSource="{Binding FavoriteStops}" SelectionMode="None" IsItemClickEnabled="True" ItemClick="StopClicked" Padding="0,10,0,0">
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <Grid Background="#b31b1b" Margin="0,0,0,11	" Height="110" Width="500">
+                                <Grid Background="#b31b1b" Margin="0,0,0,11	" Height="100" Width="500">
                                     <StackPanel Margin="0,0,0,0">
-                                        <TextBlock Text="{Binding Name}"  Margin="10,0,0,0" FontSize="22" Foreground="White"/>
-                                        <TextBlock Text="{Binding Distance}" Margin="10,0,0,0" FontSize="16" Foreground="White"/>
-                                        <TextBlock Text="{Binding Routes}" Margin="10,30,0,0" FontSize="18" Foreground="White"/>
+                                        <TextBlock Text="{Binding StopName}"  Margin="10,0,0,0" FontSize="20" Foreground="White"/>
+                                        <TextBlock Text="{Binding DistanceAsString}" Margin="10,0,0,0" FontSize="15" Foreground="White"/>
+                                        <TextBlock Text="{Binding Routes}" Margin="5,25,0,0" FontSize="17" Foreground="White"/>
                                     </StackPanel>
                                 </Grid>
                             </DataTemplate>
@@ -418,7 +420,7 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
-                    <StackPanel  Background="#b31b1b">
+                    <StackPanel Background="#b31b1b">
                         <TextBlock Text="Select Route" HorizontalAlignment="Center" Margin="-265,0,0,-7" FontSize="16" FontFamily="Global User Interface"/>
                         <Button x:Name="RouteButton" HorizontalAlignment="Center" Width="350" Style="{StaticResource ButtonStyle}" IsEnabled="True" Content="{Binding SelectedRoute}">
                             <Button.Flyout>

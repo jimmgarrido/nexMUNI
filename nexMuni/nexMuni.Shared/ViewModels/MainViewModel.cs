@@ -17,7 +17,7 @@ namespace nexMuni.ViewModels
         private string _noFavoritesText;
 
         public ObservableCollection<Stop> NearbyStops { get; private set; }
-        public ObservableCollection<Stop> FavoritesStops { get; private set;}
+        public ObservableCollection<Stop> FavoriteStops { get; private set;}
         public string NoStopsText
         {
             get
@@ -49,14 +49,15 @@ namespace nexMuni.ViewModels
         public MainViewModel()
         {
             _initialize = LoadAsync();
+            DatabaseHelper.FavoritesChanged += LoadFavorites;
         }
 
         private async Task LoadAsync()
         {
             NearbyStops = new ObservableCollection<Stop>();
-            FavoritesStops = new ObservableCollection<Stop>();
+            FavoriteStops = new ObservableCollection<Stop>();
 
-            await LoadFavoritesAsync();
+            LoadFavorites();
             await UpdateNearbyStops();
         }
 
@@ -89,18 +90,18 @@ namespace nexMuni.ViewModels
                     NearbyStops.Add(new Stop(stop.StopName, stop.Routes, stop.StopTags, stop.Latitude, stop.Longitude, stop.Distance));
                     if (NearbyStops.Count >= 15) break;
                 }
+
+                SyncFavoriteIds();
             }
             else
             {
                 NoStopsText = "No nearby stops found";
             }
-            //    }
-            //}
         }
 
-        private async Task LoadFavoritesAsync()
+        private void LoadFavorites()
         {
-            List<FavoriteData> favorites = await DatabaseHelper.GetFavoritesAsync();
+            List<FavoriteData> favorites = DatabaseHelper.FavoritesList;
 
             if (favorites.Count == 0)
             {
@@ -109,26 +110,27 @@ namespace nexMuni.ViewModels
             else
             {
                 NoFavoritesText = "";
-                FavoritesStops.Clear();
+                FavoriteStops.Clear();
                 foreach (FavoriteData fav in favorites)
                 {
                     Stop favStop = new Stop(fav.Name, "", fav.Routes, fav.Tags, fav.Lat, fav.Lon);
                     favStop.favId = fav.Id;
-                    FavoritesStops.Add(favStop);
+                    FavoriteStops.Add(favStop);
                 }
             }
             
             //Check if any stops in NearbyStops are also favorites so users have the ability to remove them
-            SyncFavoriteIds();
-            
+            SyncFavoriteIds();          
         }
+
         private void SyncFavoriteIds()
         {
-            foreach (Stop fav in FavoritesStops)
+            foreach (Stop stop in NearbyStops)
             {
-                if(NearbyStops.Any(s => s.StopName == fav.StopName))
+                if(FavoriteStops.Any(fav => fav.StopName == stop.StopName))
                 {
-
+                    Stop tempStop = FavoriteStops.ToList().Find(s => s.StopName == stop.StopName);
+                    stop.favId = tempStop.favId;
                 }
             }
         }

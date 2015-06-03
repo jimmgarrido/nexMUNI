@@ -90,6 +90,7 @@ namespace nexMuni.ViewModels
         public SearchViewModel()
         {
             initialization = LoadDataAsync();
+            DatabaseHelper.FavoritesChanged += SyncFavoriteIds;
         }
 
         private async Task LoadDataAsync()
@@ -260,6 +261,11 @@ namespace nexMuni.ViewModels
             await DatabaseHelper.RemoveFavoriteAsync(SelectedStop);
         }
 
+        public bool IsFavorite()
+        {
+            return DatabaseHelper.FavoritesList.Any(f => f.Name == SelectedStop.StopName);
+        }
+
         private void GetDirections(XDocument doc)
         {
             IEnumerable<XElement> tagElements;
@@ -322,6 +328,13 @@ namespace nexMuni.ViewModels
             }
 
            // MapRouteView(doc);
+        }
+
+        private void SyncFavoriteIds()
+        {
+            FavoriteData tempStop = DatabaseHelper.FavoritesList.ToList().Find(s => s.Name == SelectedStop.StopName);
+            SelectedStop.favId = tempStop.Id;
+
         }
 
 //        private static async void MapRouteView(XDocument doc)

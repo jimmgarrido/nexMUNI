@@ -5,12 +5,14 @@ using Windows.UI.ViewManagement;
 using nexMuni.DataModels;
 using nexMuni.Helpers;
 using System.ComponentModel;
+using System.Linq;
 
 namespace nexMuni.ViewModels
 {
     public class StopDetailViewModel : INotifyPropertyChanged
     {
         private Stop _selectedStop;
+        private string _noTimes;
 
         public ObservableCollection<Route> Routes { get; private set; }
         public Stop SelectedStop {
@@ -22,6 +24,17 @@ namespace nexMuni.ViewModels
             {
                 _selectedStop = value;
                 NotifyPropertyChanged("SelectedStop");
+            }
+        }
+        public string NoTimesText {
+            get
+            {
+                return _noTimes;
+            }
+            set
+            {
+                _noTimes = value;
+                NotifyPropertyChanged("NoTimesText");
             }
         }
 
@@ -50,10 +63,15 @@ namespace nexMuni.ViewModels
 
             url = WebRequests.GetMulitPredictionUrl(SelectedStop.StopTags);
             List<Route> routeList = await PredictionHelper.GetPredictionTimesAsync(url);
-            
-            foreach(Route r in routeList)
+
+            if (routeList.Count == 0) NoTimesText = "No busses at this time";
+            else
             {
-                Routes.Add(r);
+                foreach (Route r in routeList)
+                {
+                    NoTimesText = "";
+                    Routes.Add(r);
+                }
             }
 
 #if WINDOWS_PHONE_APP
@@ -71,6 +89,21 @@ namespace nexMuni.ViewModels
             {
                 Routes.Add(r);
             }
+        }
+
+        public async Task AddFavoriteAsync()
+        {
+            await DatabaseHelper.AddFavoriteAsync(SelectedStop);
+        }
+
+        public async Task RemoveFavoriteAsync()
+        {
+            await DatabaseHelper.RemoveFavoriteAsync(SelectedStop);
+        }
+
+        public bool IsFavorite()
+        {
+            return DatabaseHelper.FavoritesList.Any(f => f.Name == SelectedStop.StopName);
         }
 
         #region INotify Methods

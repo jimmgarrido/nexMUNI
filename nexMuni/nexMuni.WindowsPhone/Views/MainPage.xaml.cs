@@ -139,6 +139,19 @@ namespace nexMuni.Views
             {
                 await searchVm.StopSelectedAsync((Stop)sender.SelectedItem);
                 SearchTimes.Visibility = Visibility.Visible;
+
+                if (searchVm.IsFavorite())
+                {
+                    FavoriteBtn.Click += UnfavoriteSearch;
+                    FavoriteBtn.Label = "unfavorite";
+                    FavoriteBtn.Icon = new SymbolIcon(Symbol.Remove);
+                }
+                else
+                {
+                    FavoriteBtn.Click += FavoriteSearch;
+                    FavoriteBtn.Label = "favorite";
+                    FavoriteBtn.Icon = new SymbolIcon(Symbol.Favorite);
+                }
                 FavoriteBtn.IsEnabled = true;
             }
         }

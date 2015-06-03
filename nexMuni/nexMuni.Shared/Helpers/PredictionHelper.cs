@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using Windows.Web.Http;
 using nexMuni.DataModels;
-using nexMuni.Views;
 
 namespace nexMuni.Helpers
 {
