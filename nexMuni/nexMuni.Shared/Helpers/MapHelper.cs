@@ -17,11 +17,21 @@ namespace nexMuni.Helpers
 {
     class MapHelper
     {
-        public static async Task LoadDoc(string route)
+        public static async Task<List<MapPolyline>> LoadDoc(string route)
         {
+            List<MapPolyline> path = new List<MapPolyline>();
+
+            if (route.Equals("Powell/Mason Cable Car")) route = "59";
+            else if (route.Equals("Powell/Hyde Cable Car")) route = "60";
+            else if (route.Equals("California Cable Car")) route = "61";
+            else
+            {
+                route = route.Substring(0, route.IndexOf('-'));
+            }
+
             string url = "http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=sf-muni&r=";
             url = url + route;
-
+           
             var client = new HttpClient();
             client.DefaultRequestHeaders.IfModifiedSince = DateTime.Now; //Make sure to pull from network not cache everytime predictions are refreshed 
 
@@ -30,18 +40,20 @@ namespace nexMuni.Helpers
                 HttpResponseMessage response = await client.GetAsync(new Uri(url));
                 response.EnsureSuccessStatusCode();
                 string reader = await response.Content.ReadAsStringAsync();
-                await GetPoints(XDocument.Parse(reader));
+                path = GetPoints(XDocument.Parse(reader));
             }
             catch (Exception)
             {
                 ErrorHandler.NetworkError("Error getting route info. Check network connection and try again.");
             }
+            
+            return path;
         }
 
-        private static async Task GetPoints(XDocument doc)
+        private static List<MapPolyline> GetPoints(XDocument doc)
         {
             List<BasicGeoposition> positions = new List<BasicGeoposition>();
-            List<MapPolyline> route = new List<MapPolyline>();
+            List<MapPolyline> routePath = new List<MapPolyline>();
 
             IEnumerable<XElement> rootElement =
                 from e in doc.Descendants("route")
@@ -58,34 +70,36 @@ namespace nexMuni.Helpers
 
                 if (positions.Count > 0) positions.Clear();
                 positions.AddRange(subElements.Select(e => new BasicGeoposition() {Latitude = double.Parse(e.Attribute("lat").Value), Longitude = double.Parse(e.Attribute("lon").Value)}));
-                route.Add(new MapPolyline());
-                route[x].StrokeColor = Color.FromArgb(255, 179, 27, 27);
-                route[x].StrokeThickness = 2.00;
-                route[x].ZIndex = 99;
-                route[x].Path = new Geopath(positions);
-                route[x].Visible = true;
+                routePath.Add(new MapPolyline());
+                routePath[x].StrokeColor = Color.FromArgb(255, 179, 27, 27);
+                routePath[x].StrokeThickness = 2.00;
+                routePath[x].ZIndex = 99;
+                routePath[x].Path = new Geopath(positions);
+                routePath[x].Visible = true;
                 //RouteMap.routeMap.MapElements.Add(route[x]);
                 x++;
             }
 
-            foreach(MapPolyline line in route)
-            {
-                RouteMap.routeMap.MapElements.Add(line);
-            }
+            return routePath;
 
-            if (LocationHelper.Location != null)
-            {
-                Image icon = new Image
-                {
-                    Source = new BitmapImage(new Uri("ms-appx:///Assets/Location.png")),
-                    Width = 25,
-                    Height = 25
-                };
+            //foreach(MapPolyline line in route)
+            //{
+            //    RouteMap.routeMap.MapElements.Add(line);
+            //}
 
-                RouteMap.routeMap.Children.Add(icon);
-                MapControl.SetNormalizedAnchorPoint(icon, new Point(0.5, 0.5));
-                MapControl.SetLocation(icon, LocationHelper.Location.Coordinate.Point);
-            }
+            //if (LocationHelper.Location != null)
+            //{
+            //    Image icon = new Image
+            //    {
+            //        Source = new BitmapImage(new Uri("/Assets/Location.png")),
+            //        Width = 25,
+            //        Height = 25
+            //    };
+
+            //    RouteMap.routeMap.Children.Add(icon);
+            //    MapControl.SetNormalizedAnchorPoint(icon, new Point(0.5, 0.5));
+            //    MapControl.SetLocation(icon, LocationHelper.Location.Coordinate.Point);
+            //}
         }
     }
 }

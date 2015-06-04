@@ -23,6 +23,7 @@ namespace nexMuni.Helpers
                 return Location.Coordinate.Point;
             }
         }
+        public static ChangedEventHandler LocationChanged;
 
         private static double latitude;
         private static double longitude;
@@ -44,6 +45,7 @@ namespace nexMuni.Helpers
             else
             {
                 Location = await geolocator.GetGeopositionAsync(maximumAge: TimeSpan.FromSeconds(10), timeout: TimeSpan.FromSeconds(30));
+                if (LocationChanged != null) LocationChanged();
             }
 
 #if WINDOWS_PHONE_APP

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 using Windows.ApplicationModel;
 using Windows.Devices.Geolocation;
 using Windows.Storage;
@@ -43,6 +44,25 @@ namespace nexMuni.Helpers
                 return results;
             }
             else return await QueryForNearby(dist += .5);
+        }
+
+        public async static Task<List<BusStopData>> QueryForStop(string stopName)
+        {
+            string query = "SELECT * FROM BusStops WHERE StopName IS \"" + stopName + "\"";
+            var results = await _stopsAsyncConnection.QueryAsync<BusStopData>(query);
+
+            if(!results.Any())
+            {
+                string[] temp = stopName.Split('&');
+                if (temp.Count() > 1)
+                {
+                    stopName = temp[1].Substring(1) + " & " + temp[0].Substring(0, (temp[0].Length - 1));
+                }
+
+                query = "SELECT * FROM BusStops WHERE StopName IS \"" + stopName + "\"";
+                results = await _stopsAsyncConnection.QueryAsync<BusStopData>(query);
+            }
+            return results;
         }
 
         public static async Task< List<string>> QueryForRoutes()

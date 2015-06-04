@@ -6,6 +6,8 @@ using Windows.UI.Xaml.Navigation;
 using nexMuni.Helpers;
 using nexMuni.ViewModels;
 using nexMuni.DataModels;
+using Windows.Foundation;
+using System.Collections.Generic;
 
 namespace nexMuni.Views
 {
@@ -31,6 +33,7 @@ namespace nexMuni.Views
 
                 mainVm = new MainViewModel();
                 searchVm = new SearchViewModel();
+                searchVm.UpdateLocation += UpdateLocationIcon;
 
                 NearbyPivot.DataContext = mainVm;
                 FavoritesPivot.DataContext = mainVm;
@@ -39,6 +42,8 @@ namespace nexMuni.Views
                 RoutesFlyout.ItemsPicked += RouteSelected;
                 DirBox.SelectionChanged += DirectionSelected;
                 StopsFlyout.ItemsPicked += StopSelected;
+
+                MapControl.SetNormalizedAnchorPoint(LocationIcon, new Point(0.5, 0.5));
 
                 alreadyLoaded = true;
             }
@@ -113,24 +118,31 @@ namespace nexMuni.Views
         {
             RoutesFlyout.SelectedIndex = sender.SelectedIndex;
             await searchVm.LoadDirectionsAsync(sender.SelectedItem.ToString());
+            UpdateRoutePath();
 
             DirBox.SelectedIndex = 0;
             StopsFlyout.SelectedIndex = -1;
 
             DirLabel.Visibility = Visibility.Visible;
             DirBox.Visibility = Visibility.Visible;
+
+            FavoriteBtn.IsEnabled = false;
+            DetailBtn.IsEnabled = false;
         }
 
-        private async void DirectionSelected(object sender, SelectionChangedEventArgs e)
+        private void DirectionSelected(object sender, SelectionChangedEventArgs e)
         {
             if (((ComboBox)sender).SelectedIndex != -1)
             {
                 StopsFlyout.SelectedIndex = -1;
-                await searchVm.LoadStopsAsync(((ComboBox)sender).SelectedItem.ToString());
+                searchVm.LoadStops(((ComboBox)sender).SelectedItem.ToString());
 
                 StopLabel.Visibility = Windows.UI.Xaml.Visibility.Visible;
                 StopButton.Visibility = Windows.UI.Xaml.Visibility.Visible;
             }
+
+            FavoriteBtn.IsEnabled = false;
+            DetailBtn.IsEnabled = false;
         }
 
         private async void StopSelected(ListPickerFlyout sender, ItemsPickedEventArgs args)
@@ -153,6 +165,30 @@ namespace nexMuni.Views
                     FavoriteBtn.Icon = new SymbolIcon(Symbol.Favorite);
                 }
                 FavoriteBtn.IsEnabled = true;
+                DetailBtn.IsEnabled = true;
+            }
+        }
+
+        private void DetailButtonPressed(object sender, RoutedEventArgs e)
+        {
+            this.Frame.Navigate(typeof(StopDetail), searchVm.SelectedStop);
+        }
+
+        private void UpdateLocationIcon()
+        {
+            MapControl.SetLocation(LocationIcon, LocationHelper.Location.Coordinate.Point);
+        }
+
+        private async void UpdateRoutePath()
+        {
+            List<MapPolyline> routePath = await MapHelper.LoadDoc(searchVm.SelectedRoute);
+            SearchMap.MapElements.Clear();
+            if(routePath.Count > 0)
+            {
+                foreach (MapPolyline line in routePath)
+                {
+                    SearchMap.MapElements.Add(line);
+                }
             }
         }
     }

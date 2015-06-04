@@ -355,8 +355,8 @@
                     </AppBarButton.Icon>
                 </AppBarButton>
                 <AppBarButton x:Name="SortBtn" Icon="sort" Label="sort" Click="SortFavorites" Visibility="Collapsed" Foreground="White"/>
+                <AppBarButton x:Name="DetailBtn" Icon="List" Label="more" Click="DetailButtonPressed" Visibility="Collapsed" IsEnabled="False" Foreground="White"/>
                 <AppBarButton x:Name="FavoriteBtn" Icon="Favorite" Label="favorite" Visibility="Collapsed" IsEnabled="False" Foreground="White"/>
-                <AppBarButton x:Name="DetailBtn" Icon="List" Label="more" Visibility="Collapsed" IsEnabled="False" Foreground="White"/>
             </CommandBar.PrimaryCommands>
             <CommandBar.SecondaryCommands>
                 <AppBarButton Label="about" Click="GoToAbout" Foreground="White"/>
@@ -453,9 +453,13 @@
                         <TextBlock x:Name="SearchTimes" Text="{Binding SearchTimes}" HorizontalAlignment="Center" Margin="0,5,0,0" FontSize="24" FontWeight="Bold" Visibility="Collapsed" />
                     </StackPanel>
 
-                    <maps:MapControl x:Name="SearchMapControl" Center="{Binding MapCenter}" HorizontalAlignment="Center" Margin="0,0,0,0" Grid.Row="1"
+                    <maps:MapControl x:Name="SearchMap" Center="{Binding MapCenter}" HorizontalAlignment="Center" Margin="0,0,0,0" Grid.Row="1"
                                      VerticalAlignment="Center" MapServiceToken="jjA5Pn6AN4an5lgqKNN_Rg" Height="270" 
-                                     Width="450" ZoomLevel="11.5" />
+                                     Width="450" ZoomLevel="11.5">
+                        <maps:MapControl.Children>
+                            <Image x:Name="LocationIcon" Source="/Assets/Location.png" Height="25" Width="25"/>
+                        </maps:MapControl.Children>
+                    </maps:MapControl>
                 </Grid>
             </PivotItem>
         </Pivot>

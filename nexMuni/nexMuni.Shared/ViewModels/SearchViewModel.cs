@@ -21,6 +21,8 @@ using System.ComponentModel;
 
 namespace nexMuni.ViewModels
 {
+    public delegate void ChangedEventHandler();
+
     public class SearchViewModel : INotifyPropertyChanged
     {
         private string _searchTimes;
@@ -64,6 +66,7 @@ namespace nexMuni.ViewModels
                 NotifyPropertyChanged("SelectedStop");
             }
         }
+        public ChangedEventHandler UpdateLocation;
 
         public List<string> RoutesList { get; set; }
         public ObservableCollection<string> DirectionsList { get; set; }
@@ -91,6 +94,10 @@ namespace nexMuni.ViewModels
         {
             initialization = LoadDataAsync();
             DatabaseHelper.FavoritesChanged += SyncFavoriteIds;
+            LocationHelper.LocationChanged += () =>
+            {
+                if (UpdateLocation != null) UpdateLocation();
+            };
         }
 
         private async Task LoadDataAsync()
@@ -110,8 +117,7 @@ namespace nexMuni.ViewModels
 #if WINDOWS_PHONE_APP
             var systemTray = StatusBar.GetForCurrentView();
             systemTray.ProgressIndicator.ProgressValue = null;
-#endif
-            SelectedRoute = route;
+#endif 
 
             if (DirectionsList.Count != 0)
             {
@@ -122,6 +128,8 @@ namespace nexMuni.ViewModels
                 StopsList.Clear();
             }
 
+            SelectedRoute = route;
+
             string dirURL = "http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=sf-muni&r=";
 
             if (route.Equals("Powell/Mason Cable Car")) route = "59";
@@ -131,6 +139,7 @@ namespace nexMuni.ViewModels
             {
                 route = route.Substring(0, route.IndexOf('-'));
             }
+            
 
             //selectedRoute = _route;
             dirURL = dirURL + route;
@@ -160,16 +169,17 @@ namespace nexMuni.ViewModels
 #endif
         }
 
-        public async Task LoadStopsAsync(string direction)
+        public void LoadStops(string direction)
         {
             if (StopsList.Count != 0) StopsList.Clear();
+            SelectedStop = null;
+            SearchTimes = "";
 
             if (direction.Contains("Inbound"))
             {
                 foreach (string s in inboundStops)
                 {
                     foundStop = allStopsList.Find(z => z.StopTags == s);
-                    //StopsList.Add(new StopData(foundStop.Name, foundStop.StopID, foundStop.Tags, foundStop.Lon.ToString(), foundStop.Lat.ToString()));
                     StopsList.Add(foundStop);
                 }
             }
@@ -178,17 +188,9 @@ namespace nexMuni.ViewModels
                 foreach (string s in outboundStops)
                 {
                     foundStop = allStopsList.Find(z => z.StopTags == s);
-                    //StopsList.Add(new StopData(FoundStops[0].title, FoundStops[0].stopID, FoundStops[0].tag, FoundStops[0].lon.ToString(), FoundStops[0].lat.ToString()));
                     StopsList.Add(foundStop);
                 }
             }
-
-            //MainPage.stopBtn.IsEnabled = true;
-            //MainPage.stopBtn.Content = String.Empty;
-            //MainPage.stopText.Visibility = Visibility.Visible;
-            //MainPage.stopBtn.Visibility = Visibility.Visible;
-            //MainPage.timesText.Visibility = Visibility.Collapsed;
-            //MainPage.favSearchBtn.Visibility = Visibility.Collapsed;
         }
 
         public async Task StopSelectedAsync(Stop stop)
@@ -221,29 +223,11 @@ namespace nexMuni.ViewModels
 
             string timesURL = "http://webservices.nextbus.com/service/publicXMLFeed?command=predictions&a=sf-muni&stopId=" + SelectedStop.stopId + "&routeTag=" + SelectedRoute.Substring(0, SelectedRoute.IndexOf('-'));
 
-            //await MainPage.searchMap.TrySetViewAsync(new Geopoint(new BasicGeoposition() { Latitude = selectedStop.Lat, Longitude = selectedStop.Lon }), 16.5);
-
-            //Check to see if the stop is in user's favorites list
-            //if (MainPageModel.FavoritesStops.Any(z => z.Name == title || z.Name == reversed))
-            //{
-            //    foreach (StopData s in MainPageModel.FavoritesStops)
-            //    {
-            //        if (s.Name == title) selectedStop.FavID = s.FavID;
-            //    }
-            //    MainPage.timesText.Visibility = Visibility.Visible;
-            //    MainPage.favSearchBtn.Visibility = Visibility.Collapsed;
-            //    MainPage.removeSearchBtn.Visibility = Visibility.Visible;
-            //}
-            //else
-            //{
-            //    MainPage.timesText.Visibility = Visibility.Visible;
-            //    MainPage.favSearchBtn.Visibility = Visibility.Visible;
-            //    MainPage.removeSearchBtn.Visibility = Visibility.Collapsed;
-            //}
-
             //Get bus predictions for stop
-            //SearchTimes = PredictionHelper.GetSearchTimes(await PredictionHelper.GetXml(timesURL));
             SearchTimes = await PredictionHelper.GetSearchTimesAsync(timesURL);
+
+            Stop tempStop = await GetStopAsync();
+            if (tempStop != null) SelectedStop = tempStop;
 
 #if WINDOWS_PHONE_APP
             systemTray.ProgressIndicator.ProgressValue = 0;
@@ -264,6 +248,15 @@ namespace nexMuni.ViewModels
         public bool IsFavorite()
         {
             return DatabaseHelper.FavoritesList.Any(f => f.Name == SelectedStop.StopName);
+        }
+
+        private async Task<Stop> GetStopAsync()
+        {
+            List<BusStopData> stops = await DatabaseHelper.QueryForStop(SelectedStop.StopName);
+
+            if (stops.Any())
+                return new Stop(stops[0].StopName, stops[0].Routes, stops[0].StopTags, stops[0].Latitude, stops[0].Longitude, stops[0].Distance);
+            else return null;
         }
 
         private void GetDirections(XDocument doc)
@@ -332,61 +325,64 @@ namespace nexMuni.ViewModels
 
         private void SyncFavoriteIds()
         {
-            FavoriteData tempStop = DatabaseHelper.FavoritesList.ToList().Find(s => s.Name == SelectedStop.StopName);
-            SelectedStop.favId = tempStop.Id;
+            if (SelectedStop != null)
+            {
+                FavoriteData tempStop = DatabaseHelper.FavoritesList.ToList().Find(s => s.Name == SelectedStop.StopName);
+                SelectedStop.favId = tempStop.Id;
+            }
 
         }
 
-//        private static async void MapRouteView(XDocument doc)
-//        {
-//            await MainPage.searchMap.TrySetViewAsync(new Geopoint(new BasicGeoposition() { Latitude = 37.7599, Longitude = -122.437 }), 11.5);
-//            List<BasicGeoposition> positions = new List<BasicGeoposition>();
-//            IEnumerable<XElement> subElements;
-//            List<MapPolyline> route = new List<MapPolyline>();
+        //private static async void MapRouteView(XDocument doc)
+        //{
+        //    await MainPage.searchMap.TrySetViewAsync(new Geopoint(new BasicGeoposition() { Latitude = 37.7599, Longitude = -122.437 }), 11.5);
+        //    List<BasicGeoposition> positions = new List<BasicGeoposition>();
+        //    IEnumerable<XElement> subElements;
+        //    List<MapPolyline> route = new List<MapPolyline>();
 
-//            IEnumerable<XElement> rootElement =
-//                from e in doc.Descendants("route")
-//                select e;
-//            IEnumerable<XElement> elements =
-//                from d in rootElement.ElementAt(0).Elements("path")
-//                select d;
-//            int x = 0;
-//            if (MainPage.searchMap.MapElements.Count > 0) MainPage.searchMap.MapElements.Clear();
-//            foreach (XElement el in elements)
-//            {
-//                subElements =
-//                    from p in el.Elements("point")
-//                    select p;
+        //    IEnumerable<XElement> rootElement =
+        //        from e in doc.Descendants("route")
+        //        select e;
+        //    IEnumerable<XElement> elements =
+        //        from d in rootElement.ElementAt(0).Elements("path")
+        //        select d;
+        //    int x = 0;
+        //    if (MainPage.searchMap.MapElements.Count > 0) MainPage.searchMap.MapElements.Clear();
+        //    foreach (XElement el in elements)
+        //    {
+        //        subElements =
+        //            from p in el.Elements("point")
+        //            select p;
 
-//                if (positions.Count > 0) positions.Clear();
-//                foreach (XElement e in subElements)
-//                {
-//                    positions.Add(new BasicGeoposition() { Latitude = Double.Parse(e.Attribute("lat").Value), Longitude = Double.Parse(e.Attribute("lon").Value) });
-//                }
-//                route.Add(new MapPolyline());
-//                route[x].StrokeColor = Color.FromArgb(255,179,27,27);
-//                route[x].StrokeThickness = 2.00;
-//                route[x].ZIndex = 99;
-//                route[x].Path = new Geopath(positions);
-//                route[x].Visible = true;
-//                MainPage.searchMap.MapElements.Add(route[x]);
-//                x++;
-//            }
+        //        if (positions.Count > 0) positions.Clear();
+        //        foreach (XElement e in subElements)
+        //        {
+        //            positions.Add(new BasicGeoposition() { Latitude = Double.Parse(e.Attribute("lat").Value), Longitude = Double.Parse(e.Attribute("lon").Value) });
+        //        }
+        //        route.Add(new MapPolyline());
+        //        route[x].StrokeColor = Color.FromArgb(255, 179, 27, 27);
+        //        route[x].StrokeThickness = 2.00;
+        //        route[x].ZIndex = 99;
+        //        route[x].Path = new Geopath(positions);
+        //        route[x].Visible = true;
+        //        MainPage.searchMap.MapElements.Add(route[x]);
+        //        x++;
+        //    }
 
-//            if (LocationHelper.phoneLocation != null)
-//            {
-//                Image icon = new Image
-//                {
-//                    Source = new BitmapImage(new Uri("ms-appx:///Assets/Location.png")),
-//                    Width = 25,
-//                    Height = 25
-//                };
+        //    if (LocationHelper.phoneLocation != null)
+        //    {
+        //        Image icon = new Image
+        //        {
+        //            Source = new BitmapImage(new Uri("ms-appx:///Assets/Location.png")),
+        //            Width = 25,
+        //            Height = 25
+        //        };
 
-//                MainPage.searchMap.Children.Add(icon);
-//                MapControl.SetNormalizedAnchorPoint(icon, new Point(0.5, 0.5));
-//                MapControl.SetLocation(icon, LocationHelper.phoneLocation.Coordinate.Point);
-//            }
-//        }
+        //        MainPage.searchMap.Children.Add(icon);
+        //        MapControl.SetNormalizedAnchorPoint(icon, new Point(0.5, 0.5));
+        //        MapControl.SetLocation(icon, LocationHelper.phoneLocation.Coordinate.Point);
+        //    }
+        //}
 
         #region INotify Methods
         private void NotifyPropertyChanged(string property)
