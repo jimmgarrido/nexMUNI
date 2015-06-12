@@ -13,33 +13,31 @@ using Windows.UI.Xaml.Navigation;
 
 namespace nexMuni.Views
 {
-    public sealed partial class RouteMap : Page
+    public sealed partial class RouteMapPage : Page
     {
-        public Route selectedRoute;
-        public static MapControl routeMap;
+        private Route selectedRoute;
+        private List<MapPolyline> routePath;
+
         private NavigationHelper navigationHelper;
         private ObservableDictionary defaultViewModel = new ObservableDictionary();
-        public Geopoint center {
-            get
-            {
-                return this.center;
-            }
-            set
-            {
-                new BasicGeoposition() { Latitude = 37.7603, Longitude = -122.427 };
-            }
-        }
+        //public Geopoint Center {
+        //    get 
+        //    {
+        //        return Center;
+        //    }
+        //    set
+        //    {
+        //        new BasicGeoposition() { Latitude = 37.7603, Longitude = -122.427 };
+        //    }
+        //}
 
-        public RouteMap()
+        public RouteMapPage()
         {
             this.InitializeComponent(); 
 
             this.navigationHelper = new NavigationHelper(this);
             this.navigationHelper.LoadState += this.NavigationHelper_LoadState;
             this.navigationHelper.SaveState += this.NavigationHelper_SaveState;
-
-            routeMap = routeMapControl;
-            
         }
 
         /// <summary>
@@ -74,8 +72,15 @@ namespace nexMuni.Views
         {
             selectedRoute = e.NavigationParameter as Route;
             routeTitle.Text = selectedRoute.RouteNumber + "-" + selectedRoute.RouteName;
-            routeMap.Center = new Geopoint(new BasicGeoposition() { Latitude = 37.7603, Longitude = -122.427 });
-            await MapHelper.LoadDoc(selectedRoute.RouteNumber);
+            RouteMap.Center = new Geopoint(new BasicGeoposition() { Latitude = 37.7603, Longitude = -122.427 });
+            routePath = await MapHelper.LoadDoc(selectedRoute.RouteNumber);
+
+            MapControl.SetLocation(LocationIcon, LocationHelper.Location.Coordinate.Point);
+
+            foreach (MapPolyline line in routePath)
+            {
+                RouteMap.MapElements.Add(line);
+            }
         }
 
         /// <summary>

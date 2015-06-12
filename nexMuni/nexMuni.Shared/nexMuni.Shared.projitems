@@ -36,11 +36,13 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="$(MSBuildThisFileDirectory)Assets\AddStar.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Arrow.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Marker.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Location.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Marker2.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\RemoveStar.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\refresh.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Stop.png" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="$(MSBuildThisFileDirectory)db\muni.sqlite" />

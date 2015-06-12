@@ -181,7 +181,7 @@
                     <TextBlock x:Name="NoTimesBlock" Text="{Binding NoTimesText}" FontSize="21" Margin="13,180,0,0" TextAlignment="Center"/>
                     <ListView x:Name="RouteInfoList" IsItemClickEnabled="True" ItemsSource="{Binding Routes}"
                       Margin="-18,-15,0,0" IsTapEnabled="False" IsHoldingEnabled="False" 
-                      ItemClick="ShowRouteMap" ItemTemplateSelector="{StaticResource TemplateSelector}">
+                      ItemClick="GoToRouteMap" ItemTemplateSelector="{StaticResource TemplateSelector}">
                         <ListView.ItemContainerTransitions>
                             <TransitionCollection>
                                 <EntranceThemeTransition />
@@ -196,7 +196,7 @@
             <PivotItem Header="alerts">
                 <ListView x:Name="AlertsList" IsItemClickEnabled="True" ItemsSource="{Binding Routes}"
                       Margin="-18,-15,0,0" IsTapEnabled="False" IsHoldingEnabled="False" 
-                      ItemClick="ShowRouteMap" ItemTemplateSelector="{StaticResource TemplateSelector}">
+                      ItemClick="GoToRouteMap" ItemTemplateSelector="{StaticResource TemplateSelector}">
                     <ListView.ItemContainerTransitions>
                         <TransitionCollection>
                             <EntranceThemeTransition />

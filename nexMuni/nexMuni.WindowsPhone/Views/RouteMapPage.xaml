@@ -1,0 +1,23 @@
+﻿<Page 
+    xmlns:maps="using:Windows.UI.Xaml.Controls.Maps" 
+    x:Class="nexMuni.Views.RouteMapPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:nexMuni"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="#FFB31B1B">
+
+    <!-- Title Panel -->
+    <StackPanel>
+        <TextBlock x:Name="routeTitle" Text="14-Limited" Style="{ThemeResource TitleTextBlockStyle}" Margin="19,10,0,0"/>
+
+        <maps:MapControl x:Name="RouteMap" HorizontalAlignment="Left" Margin="0,15,0,0"  VerticalAlignment="Top"
+                             MapServiceToken="jjA5Pn6AN4an5lgqKNN_Rg" Height="590" Width="500" ZoomLevel="12">
+            <maps:MapControl.Children>
+                <Image x:Name="LocationIcon" Source="/Assets/Location.png" Height="25" Width="25"/>
+            </maps:MapControl.Children>
+        </maps:MapControl>
+    </StackPanel>
+</Page>

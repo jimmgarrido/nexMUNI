@@ -89,6 +89,11 @@ namespace nexMuni.Views
             FavButton.Label = "favorite";
         }
 
+        private void GoToRouteMap(object sender, ItemClickEventArgs e)
+        {
+            Frame.Navigate(typeof(RouteMapPage), e.ClickedItem);
+        }
+
         #region NavigationHelper registration
 
         /// <summary>
@@ -124,13 +129,9 @@ namespace nexMuni.Views
             get { return this.defaultViewModel; }
         }
 
+        private void NavigationHelper_SaveState(object sender, SaveStateEventArgs e) { }
+
         #endregion
 
-        private void ShowRouteMap(object sender, ItemClickEventArgs e)
-        {
-            Frame.Navigate(typeof(RouteMap), e.ClickedItem);
-        }
-
-        private void NavigationHelper_SaveState(object sender, SaveStateEventArgs e) { }
     }
 }

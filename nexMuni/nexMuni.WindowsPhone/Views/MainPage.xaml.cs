@@ -1,4 +1,5 @@
-﻿using Windows.Devices.Geolocation;
+﻿using System;
+using Windows.Devices.Geolocation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Maps;
@@ -8,6 +9,8 @@ using nexMuni.ViewModels;
 using nexMuni.DataModels;
 using Windows.Foundation;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Linq;
 
 namespace nexMuni.Views
 {
@@ -44,6 +47,7 @@ namespace nexMuni.Views
                 StopsFlyout.ItemsPicked += StopSelected;
 
                 MapControl.SetNormalizedAnchorPoint(LocationIcon, new Point(0.5, 0.5));
+                MapControl.SetNormalizedAnchorPoint(StopIcon, new Point(0.5, 1.0));
 
                 alreadyLoaded = true;
             }
@@ -118,16 +122,18 @@ namespace nexMuni.Views
         {
             RoutesFlyout.SelectedIndex = sender.SelectedIndex;
             await searchVm.LoadDirectionsAsync(sender.SelectedItem.ToString());
-            UpdateRoutePath();
 
             DirBox.SelectedIndex = 0;
             StopsFlyout.SelectedIndex = -1;
 
             DirLabel.Visibility = Visibility.Visible;
             DirBox.Visibility = Visibility.Visible;
+            StopIcon.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
 
             FavoriteBtn.IsEnabled = false;
             DetailBtn.IsEnabled = false;
+
+            await ShowRoutePath();
         }
 
         private void DirectionSelected(object sender, SelectionChangedEventArgs e)
@@ -139,6 +145,7 @@ namespace nexMuni.Views
 
                 StopLabel.Visibility = Windows.UI.Xaml.Visibility.Visible;
                 StopButton.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                StopIcon.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
             }
 
             FavoriteBtn.IsEnabled = false;
@@ -166,7 +173,9 @@ namespace nexMuni.Views
                 }
                 FavoriteBtn.IsEnabled = true;
                 DetailBtn.IsEnabled = true;
-            }
+
+                await ShowStopLocation();
+            } 
         }
 
         private void DetailButtonPressed(object sender, RoutedEventArgs e)
@@ -179,17 +188,29 @@ namespace nexMuni.Views
             MapControl.SetLocation(LocationIcon, LocationHelper.Location.Coordinate.Point);
         }
 
-        private async void UpdateRoutePath()
+        private async Task ShowRoutePath()
         {
             List<MapPolyline> routePath = await MapHelper.LoadDoc(searchVm.SelectedRoute);
             SearchMap.MapElements.Clear();
-            if(routePath.Count > 0)
+
+            if (routePath.Any())
             {
                 foreach (MapPolyline line in routePath)
                 {
                     SearchMap.MapElements.Add(line);
                 }
             }
+
+            await SearchMap.TrySetViewAsync(searchVm.MapCenter, 11.40);
+        }
+
+        private async Task ShowStopLocation()
+        {
+            var stopLocation =  new Geopoint(new BasicGeoposition() { Latitude = searchVm.SelectedStop.Latitude, Longitude = searchVm.SelectedStop.Longitude });
+            StopIcon.Visibility = Windows.UI.Xaml.Visibility.Visible;
+
+            MapControl.SetLocation(StopIcon, stopLocation);
+            await SearchMap.TrySetViewAsync(stopLocation, 13.0);
         }
     }
 }

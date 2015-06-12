@@ -103,7 +103,7 @@ namespace nexMuni.ViewModels
         private async Task LoadDataAsync()
         {
             RoutesList = await DatabaseHelper.QueryForRoutes();
-            MapCenter =  new Geopoint(new BasicGeoposition() { Latitude = 37.7599, Longitude = -122.437 });
+            MapCenter =  new Geopoint(new BasicGeoposition() { Latitude = 37.7480, Longitude = -122.437 });
             DirectionsList = new ObservableCollection<string>();
             StopsList = new ObservableCollection<Stop>();
 
@@ -128,6 +128,7 @@ namespace nexMuni.ViewModels
                 StopsList.Clear();
             }
 
+            SelectedStop = null;
             SelectedRoute = route;
 
             string dirURL = "http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=sf-muni&r=";
@@ -206,11 +207,11 @@ namespace nexMuni.ViewModels
 
             if (title.Contains("Inbound"))
             {
-                title = title.Replace(" Inbound", "");
+                SelectedStop.StopName = title.Replace(" Inbound", "");
             }
             if (title.Contains("Outbound"))
             {
-                title = title.Replace(" Outbound", "");
+                SelectedStop.StopName = title.Replace(" Outbound", "");
             }
 
             string[] temp = SelectedStop.StopName.Split('&');
@@ -332,57 +333,6 @@ namespace nexMuni.ViewModels
             }
 
         }
-
-        //private static async void MapRouteView(XDocument doc)
-        //{
-        //    await MainPage.searchMap.TrySetViewAsync(new Geopoint(new BasicGeoposition() { Latitude = 37.7599, Longitude = -122.437 }), 11.5);
-        //    List<BasicGeoposition> positions = new List<BasicGeoposition>();
-        //    IEnumerable<XElement> subElements;
-        //    List<MapPolyline> route = new List<MapPolyline>();
-
-        //    IEnumerable<XElement> rootElement =
-        //        from e in doc.Descendants("route")
-        //        select e;
-        //    IEnumerable<XElement> elements =
-        //        from d in rootElement.ElementAt(0).Elements("path")
-        //        select d;
-        //    int x = 0;
-        //    if (MainPage.searchMap.MapElements.Count > 0) MainPage.searchMap.MapElements.Clear();
-        //    foreach (XElement el in elements)
-        //    {
-        //        subElements =
-        //            from p in el.Elements("point")
-        //            select p;
-
-        //        if (positions.Count > 0) positions.Clear();
-        //        foreach (XElement e in subElements)
-        //        {
-        //            positions.Add(new BasicGeoposition() { Latitude = Double.Parse(e.Attribute("lat").Value), Longitude = Double.Parse(e.Attribute("lon").Value) });
-        //        }
-        //        route.Add(new MapPolyline());
-        //        route[x].StrokeColor = Color.FromArgb(255, 179, 27, 27);
-        //        route[x].StrokeThickness = 2.00;
-        //        route[x].ZIndex = 99;
-        //        route[x].Path = new Geopath(positions);
-        //        route[x].Visible = true;
-        //        MainPage.searchMap.MapElements.Add(route[x]);
-        //        x++;
-        //    }
-
-        //    if (LocationHelper.phoneLocation != null)
-        //    {
-        //        Image icon = new Image
-        //        {
-        //            Source = new BitmapImage(new Uri("ms-appx:///Assets/Location.png")),
-        //            Width = 25,
-        //            Height = 25
-        //        };
-
-        //        MainPage.searchMap.Children.Add(icon);
-        //        MapControl.SetNormalizedAnchorPoint(icon, new Point(0.5, 0.5));
-        //        MapControl.SetLocation(icon, LocationHelper.phoneLocation.Coordinate.Point);
-        //    }
-        //}
 
         #region INotify Methods
         private void NotifyPropertyChanged(string property)
