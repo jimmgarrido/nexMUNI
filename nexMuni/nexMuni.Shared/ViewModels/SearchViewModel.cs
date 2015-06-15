@@ -222,10 +222,10 @@ namespace nexMuni.ViewModels
             }
             else reversed = "";
 
-            string timesURL = "http://webservices.nextbus.com/service/publicXMLFeed?command=predictions&a=sf-muni&stopId=" + SelectedStop.stopId + "&routeTag=" + SelectedRoute.Substring(0, SelectedRoute.IndexOf('-'));
+            var xmlDoc = await WebHelper.GetSearchPredictions(SelectedStop, SelectedRoute);
 
             //Get bus predictions for stop
-            SearchTimes = await PredictionHelper.GetSearchTimesAsync(timesURL);
+            SearchTimes = await PredictionHelper.ParseSearchTimesAsync(xmlDoc);
 
             Stop tempStop = await GetStopAsync();
             if (tempStop != null) SelectedStop = tempStop;

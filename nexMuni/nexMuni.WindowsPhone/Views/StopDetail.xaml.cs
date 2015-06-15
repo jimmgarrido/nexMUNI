@@ -117,6 +117,7 @@ namespace nexMuni.Views
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             this.navigationHelper.OnNavigatedFrom(e);
+            detailVm.StopTimer();
         }
 
         public NavigationHelper NavigationHelper

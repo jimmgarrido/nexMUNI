@@ -11,45 +11,9 @@ namespace nexMuni.Helpers
 {
     public class PredictionHelper
     {
-        private static HttpClient client = new HttpClient();
-        private static XDocument xmlDoc = new XDocument();
         private static List<Route> routes = new List<Route>();
 
-        public static async Task<List<Route>> GetPredictionTimesAsync(string url)
-        {
-            return GetPredictions(await GetXml(url));
-        }
-
-        public static async Task<string> GetSearchTimesAsync(string url)
-        {
-            var document = await GetXml(url);
-            var element = document.Element("body").Element("predictions").Element("direction");
-
-            if (element != null) return ParseTimes(element);
-            else return "No times found";
-
-        }
-
-        private static async Task<XDocument> GetXml(string url) 
-        {
-            //Make sure to pull from the network and not cache everytime predictions are refreshed 
-            client.DefaultRequestHeaders.IfModifiedSince = DateTime.Now;
-            try
-            {
-                var response = await client.GetAsync(new Uri(url));
-                response.EnsureSuccessStatusCode();
-                var reader = await response.Content.ReadAsStringAsync();
-                xmlDoc = XDocument.Parse(reader);
-            }
-            catch(Exception)
-            {
-                ErrorHandler.NetworkError("Error getting predictions. Check network connection and try again.");
-            }
-
-            return xmlDoc;
-        }
-
-        private static List<Route> GetPredictions(XDocument document)
+        public static async Task<List<Route>> ParsePredictionsAsync(XDocument document)
         {
             string routeTitle, routeNum;
             IEnumerable<XElement> rootElements;
@@ -93,6 +57,41 @@ namespace nexMuni.Helpers
                 }   
             }
             return routes;
+        }
+
+        public static async Task<string> ParseSearchTimesAsync(XDocument document)
+        {
+            var element = document.Element("body").Element("predictions").Element("direction");
+
+            if (element != null) return ParseTimes(element);
+            else return "No times found";
+        }
+
+        public static async Task<List<Alert>> ParseAlerts(XDocument document)
+        {
+            List<Alert> alerts = new List<Alert>();
+            IEnumerable<XElement> rootElements;
+
+            if (document.Root == null) return alerts;
+            else rootElements = document.Element("body").Elements("predictions");
+
+            foreach (XElement predictionElement in rootElements)
+            {
+                var messageElements = predictionElement.Elements("message");
+
+                foreach (XElement messageElement in messageElements)
+                {
+                    if(!messageElement.Attribute("priority").Value.Equals("Low"))
+                    {
+                        var route = predictionElement.Attribute("routeTag").Value;
+                        var message = messageElement.Attribute("text").Value;
+
+                        alerts.Add(new Alert(route, message));
+                    }
+                }
+            }
+
+            return alerts;
         }
 
         private static string ParseTimes(XElement element)

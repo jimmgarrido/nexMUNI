@@ -6,6 +6,8 @@ using nexMuni.DataModels;
 using nexMuni.Helpers;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
+using Windows.UI.Xaml;
 
 namespace nexMuni.ViewModels
 {
@@ -15,6 +17,7 @@ namespace nexMuni.ViewModels
         private string _noTimes;
 
         public ObservableCollection<Route> Routes { get; private set; }
+        public ObservableCollection<Alert> Alerts { get; private set; }
         public Stop SelectedStop {
             get
             {
@@ -38,15 +41,18 @@ namespace nexMuni.ViewModels
             }
         }
 
-        private Task _initialize;
-        private string url;
+        private DispatcherTimer refreshTimer;
 
         private StopDetailViewModel() { }
 
         public StopDetailViewModel(Stop stop)
         {
             Routes = new ObservableCollection<Route>();
+            Alerts = new ObservableCollection<Alert>();
             SelectedStop = stop;
+            refreshTimer = new DispatcherTimer();
+            refreshTimer.Tick += TimerDue;
+            refreshTimer.Interval = new System.TimeSpan(0, 0, 10);
         }
 
         public async Task LoadTimes()
@@ -58,11 +64,11 @@ namespace nexMuni.ViewModels
             systemTray.ProgressIndicator.ProgressValue = null;
 #endif
 
-            string[] splitRoutes = SelectedStop.Routes.Split(',');
-            splitRoutes[0] = " " + splitRoutes[0];
+            //string[] splitRoutes = SelectedStop.Routes.Split(',');
+            //splitRoutes[0] = " " + splitRoutes[0];
 
-            url = WebRequests.GetMulitPredictionUrl(SelectedStop.StopTags);
-            List<Route> routeList = await PredictionHelper.GetPredictionTimesAsync(url);
+            var xmlDoc = await WebHelper.GetMulitPredictions(SelectedStop.StopTags);
+            List<Route> routeList = await PredictionHelper.ParsePredictionsAsync(xmlDoc);
 
             if (routeList.Count == 0) NoTimesText = "No busses at this time";
             else
@@ -74,6 +80,16 @@ namespace nexMuni.ViewModels
                 }
             }
 
+            //Get alerts TODO:Move to seperate method
+            List<Alert> alertList = await PredictionHelper.ParseAlerts(xmlDoc);
+            foreach(Alert a in alertList)
+            {
+                Alerts.Add(a);
+            }
+
+            if(!refreshTimer.IsEnabled) refreshTimer.Start();
+            //refreshTimer.Change(30000, Timeout.Infinite);
+
 #if WINDOWS_PHONE_APP
             systemTray.ProgressIndicator.ProgressValue = 0;
             systemTray.ProgressIndicator.Text = "nexMUNI";
@@ -83,12 +99,15 @@ namespace nexMuni.ViewModels
         public async Task RefreshTimes()
         {
             Routes.Clear();
-            List<Route> routeList = await PredictionHelper.GetPredictionTimesAsync(url);
+            var xmlDoc = await WebHelper.GetMulitPredictions(SelectedStop.StopTags);
+            List<Route> routeList = await PredictionHelper.ParsePredictionsAsync(xmlDoc);
 
             foreach (Route r in routeList)
             {
                 Routes.Add(r);
             }
+
+            //refreshTimer.Change(30000, Timeout.Infinite);
         }
 
         public async Task AddFavoriteAsync()
@@ -104,6 +123,16 @@ namespace nexMuni.ViewModels
         public bool IsFavorite()
         {
             return DatabaseHelper.FavoritesList.Any(f => f.Name == SelectedStop.StopName);
+        }
+
+        public void StopTimer()
+        {
+            refreshTimer.Stop();
+        }
+
+        private async void TimerDue(object sender, object e)
+        {
+            await RefreshTimes();
         }
 
         #region INotify Methods

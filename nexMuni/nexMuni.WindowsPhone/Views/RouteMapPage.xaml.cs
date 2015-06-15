@@ -76,7 +76,7 @@ namespace nexMuni.Views
             routePath = await MapHelper.LoadDoc(selectedRoute.RouteNumber);
 
             MapControl.SetLocation(LocationIcon, LocationHelper.Location.Coordinate.Point);
-
+            LocationIcon.Visibility = Windows.UI.Xaml.Visibility.Visible;
             foreach (MapPolyline line in routePath)
             {
                 RouteMap.MapElements.Add(line);

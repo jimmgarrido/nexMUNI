@@ -206,10 +206,9 @@ namespace nexMuni.Views
 
         private async Task ShowStopLocation()
         {
-            var stopLocation =  new Geopoint(new BasicGeoposition() { Latitude = searchVm.SelectedStop.Latitude, Longitude = searchVm.SelectedStop.Longitude });
-            StopIcon.Visibility = Windows.UI.Xaml.Visibility.Visible;
-
+            var stopLocation =  new Geopoint(new BasicGeoposition() { Latitude = searchVm.SelectedStop.Latitude, Longitude = searchVm.SelectedStop.Longitude });   
             MapControl.SetLocation(StopIcon, stopLocation);
+            StopIcon.Visibility = Windows.UI.Xaml.Visibility.Visible;
             await SearchMap.TrySetViewAsync(stopLocation, 13.0);
         }
     }

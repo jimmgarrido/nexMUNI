@@ -16,7 +16,7 @@
         <maps:MapControl x:Name="RouteMap" HorizontalAlignment="Left" Margin="0,15,0,0"  VerticalAlignment="Top"
                              MapServiceToken="jjA5Pn6AN4an5lgqKNN_Rg" Height="590" Width="500" ZoomLevel="12">
             <maps:MapControl.Children>
-                <Image x:Name="LocationIcon" Source="/Assets/Location.png" Height="25" Width="25"/>
+                <Image x:Name="LocationIcon" Source="/Assets/Location.png" Height="25" Width="25" Visibility="Collapsed"/>
             </maps:MapControl.Children>
         </maps:MapControl>
     </StackPanel>
