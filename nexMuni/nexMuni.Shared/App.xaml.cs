@@ -79,9 +79,7 @@ namespace nexMuni
                 statusBar.ForegroundColor = Colors.White;
                 statusBar.BackgroundColor = Color.FromArgb(100, 179, 27, 27);
                 statusBar.BackgroundOpacity = 1;
-                statusBar.ProgressIndicator.Text = "nexMuni";
-                await statusBar.ProgressIndicator.ShowAsync();
-                statusBar.ProgressIndicator.ProgressValue = 0;
+                await statusBar.ShowAsync();
 
                 // Removes the turnstile navigation for startup.
                 if (rootFrame.ContentTransitions != null)

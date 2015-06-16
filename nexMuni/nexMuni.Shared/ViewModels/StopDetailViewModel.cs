@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Windows.UI.ViewManagement;
@@ -59,55 +60,59 @@ namespace nexMuni.ViewModels
         {
 
 #if WINDOWS_PHONE_APP
-            StatusBar systemTray = StatusBar.GetForCurrentView();
-            systemTray.ProgressIndicator.Text = "Getting Arrival Times";
-            systemTray.ProgressIndicator.ProgressValue = null;
+            StatusBar statusBar = StatusBar.GetForCurrentView();
+            await statusBar.ProgressIndicator.ShowAsync();
+            statusBar.ProgressIndicator.Text = "Getting Arrival Times";
+            statusBar.ProgressIndicator.ProgressValue = null;
 #endif
 
             //string[] splitRoutes = SelectedStop.Routes.Split(',');
             //splitRoutes[0] = " " + splitRoutes[0];
 
-            var xmlDoc = await WebHelper.GetMulitPredictions(SelectedStop.StopTags);
-            List<Route> routeList = await PredictionHelper.ParsePredictionsAsync(xmlDoc);
-
-            if (routeList.Count == 0) NoTimesText = "No busses at this time";
-            else
+            var xmlDoc = await WebHelper.GetMulitPredictionsAsync(SelectedStop.StopTags);
+            if (xmlDoc != null)
             {
-                foreach (Route r in routeList)
+                List<Route> routeList = await PredictionHelper.ParsePredictionsAsync(xmlDoc);
+
+                if (routeList.Count == 0) NoTimesText = "No busses at this time";
+                else
                 {
-                    NoTimesText = "";
-                    Routes.Add(r);
+                    foreach (Route r in routeList)
+                    {
+                        NoTimesText = "";
+                        Routes.Add(r);
+                    }
                 }
-            }
 
-            //Get alerts TODO:Move to seperate method
-            List<Alert> alertList = await PredictionHelper.ParseAlerts(xmlDoc);
-            foreach(Alert a in alertList)
-            {
-                Alerts.Add(a);
-            }
+                //Get alerts TODO:Move to seperate method
+                List<Alert> alertList = await PredictionHelper.ParseAlerts(xmlDoc);
+                foreach (Alert a in alertList)
+                {
+                    Alerts.Add(a);
+                }
 
-            if(!refreshTimer.IsEnabled) refreshTimer.Start();
-            //refreshTimer.Change(30000, Timeout.Infinite);
+                if (!refreshTimer.IsEnabled) refreshTimer.Start();
+            }
 
 #if WINDOWS_PHONE_APP
-            systemTray.ProgressIndicator.ProgressValue = 0;
-            systemTray.ProgressIndicator.Text = "nexMUNI";
+            statusBar.ProgressIndicator.ProgressValue = 0;
+            await statusBar.ProgressIndicator.HideAsync();
 #endif
         }
 
         public async Task RefreshTimes()
         {
             Routes.Clear();
-            var xmlDoc = await WebHelper.GetMulitPredictions(SelectedStop.StopTags);
-            List<Route> routeList = await PredictionHelper.ParsePredictionsAsync(xmlDoc);
-
-            foreach (Route r in routeList)
+            var xmlDoc = await WebHelper.GetMulitPredictionsAsync(SelectedStop.StopTags);
+            if (xmlDoc != null)
             {
-                Routes.Add(r);
-            }
+                List<Route> routeList = await PredictionHelper.ParsePredictionsAsync(xmlDoc);
 
-            //refreshTimer.Change(30000, Timeout.Infinite);
+                foreach (Route r in routeList)
+                {
+                    Routes.Add(r);
+                }
+            }
         }
 
         public async Task AddFavoriteAsync()

@@ -359,6 +359,7 @@
                 <AppBarButton x:Name="FavoriteBtn" Icon="Favorite" Label="favorite" Visibility="Collapsed" IsEnabled="False" Foreground="White"/>
             </CommandBar.PrimaryCommands>
             <CommandBar.SecondaryCommands>
+                <AppBarButton Label="settings" Click="GoToSettings" Foreground="White"/>
                 <AppBarButton Label="about" Click="GoToAbout" Foreground="White"/>
             </CommandBar.SecondaryCommands>
         </CommandBar>

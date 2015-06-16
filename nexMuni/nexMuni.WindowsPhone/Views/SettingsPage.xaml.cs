@@ -7,26 +7,28 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Graphics.Display;
-using Windows.System;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
+// The Basic Page item template is documented at http://go.microsoft.com/fwlink/?LinkID=390556
 
-namespace nexMuni
+namespace nexMuni.Views
 {
-    public sealed partial class AboutPage : Page
+    /// <summary>
+    /// An empty page that can be used on its own or navigated to within a Frame.
+    /// </summary>
+    public sealed partial class SettingsPage : Page
     {
         private NavigationHelper navigationHelper;
         private ObservableDictionary defaultViewModel = new ObservableDictionary();
 
-        public AboutPage()
+        public SettingsPage()
         {
             this.InitializeComponent();
 
@@ -78,47 +80,6 @@ namespace nexMuni
         private void NavigationHelper_SaveState(object sender, SaveStateEventArgs e)
         {
         }
-
-        private async void OnClicked(object sender, TappedRoutedEventArgs e)
-        {
-            var richTB = sender as RichTextBlock;
-            var textPointer = richTB.GetPositionFromPoint(e.GetPosition(richTB));
-
-            var element = textPointer.Parent as TextElement;
-            while (element != null && !(element is Underline))
-            {
-                if (element.ContentStart != null
-                    && element != element.ElementStart.Parent)
-                {
-                    element = element.ElementStart.Parent as TextElement;
-                }
-                else
-                {
-                    element = null;
-                }
-            }
-
-            if (element == null) return;
-
-            var underline = element as Underline;
-            if (underline.Name == "email")
-            {
-                await Launcher.LaunchUriAsync(new Uri("mailto:nexmuni@nexdev.co"));
-            }
-            if (underline.Name == "github")
-            {
-                await Launcher.LaunchUriAsync(new Uri("https://github.com/nexDevelopment/nexMuni"));
-            }
-            if (underline.Name == "twitter")
-            {
-                await Launcher.LaunchUriAsync(new Uri("https://twitter.com/nexdevco"));
-            }
-            if (underline.Name == "website")
-            {
-                await Launcher.LaunchUriAsync(new Uri("http://nexdev.co"));
-            }
-        }
-
 
         #region NavigationHelper registration
 

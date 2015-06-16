@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -13,7 +14,6 @@ namespace nexMuni.Views
     public sealed partial class StopDetail : Page
     {
         private NavigationHelper navigationHelper;
-        private ObservableDictionary defaultViewModel = new ObservableDictionary();
         private bool alreadyLoaded;
 
         public StopDetailViewModel detailVm;
@@ -57,17 +57,18 @@ namespace nexMuni.Views
         private async void RefreshTimes(object sender, RoutedEventArgs e)
         {
 #if WINDOWS_PHONE_APP
-            var systemTray = StatusBar.GetForCurrentView();
-            systemTray.ProgressIndicator.Text = "Refreshing Times";
-            systemTray.ProgressIndicator.ProgressValue = null;
+            var statusBar = StatusBar.GetForCurrentView();
+            await statusBar.ProgressIndicator.ShowAsync();
+            statusBar.ProgressIndicator.Text = "Refreshing Times";
+            statusBar.ProgressIndicator.ProgressValue = null;
 #endif
             RefreshBtn.IsEnabled = false;
             await detailVm.RefreshTimes();
             RefreshBtn.IsEnabled = true;
 
 #if WINDOWS_PHONE_APP
-            systemTray.ProgressIndicator.ProgressValue = 0;
-            systemTray.ProgressIndicator.Text = "nexMuni";
+            statusBar.ProgressIndicator.ProgressValue = 0;
+            await statusBar.ProgressIndicator.HideAsync();
 #endif
         }
 
@@ -96,19 +97,6 @@ namespace nexMuni.Views
 
         #region NavigationHelper registration
 
-        /// <summary>
-        /// The methods provided in this section are simply used to allow
-        /// NavigationHelper to respond to the page's navigation methods.
-        /// <para>
-        /// Page specific logic should be placed in event handlers for the  
-        /// <see cref="NavigationHelper.LoadState"/>
-        /// and <see cref="NavigationHelper.SaveState"/>.
-        /// The navigation parameter is available in the LoadState method 
-        /// in addition to page state preserved during an earlier session.
-        /// </para>
-        /// </summary>
-        /// <param name="e">Provides data for navigation methods and event
-        /// handlers that cannot cancel the navigation request.</param>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             this.navigationHelper.OnNavigatedTo(e);
@@ -123,11 +111,6 @@ namespace nexMuni.Views
         public NavigationHelper NavigationHelper
         {
             get { return this.navigationHelper; }
-        }
-
-        public ObservableDictionary DefaultViewModel
-        {
-            get { return this.defaultViewModel; }
         }
 
         private void NavigationHelper_SaveState(object sender, SaveStateEventArgs e) { }

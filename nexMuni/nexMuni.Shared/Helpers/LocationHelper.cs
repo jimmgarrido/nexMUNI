@@ -32,9 +32,10 @@ namespace nexMuni.Helpers
         public static async Task UpdateLocation()
         {
 #if WINDOWS_PHONE_APP
-            var systemTray = StatusBar.GetForCurrentView();
-            systemTray.ProgressIndicator.Text = "Getting Location";
-            systemTray.ProgressIndicator.ProgressValue = null;
+            var statusBar = StatusBar.GetForCurrentView();
+            await statusBar.ProgressIndicator.ShowAsync();
+            statusBar.ProgressIndicator.Text = "Getting Location";
+            statusBar.ProgressIndicator.ProgressValue = null;
 #endif
             if(geolocator == null) geolocator = new Geolocator { DesiredAccuracyInMeters = 50 };
 
@@ -49,8 +50,8 @@ namespace nexMuni.Helpers
             }
 
 #if WINDOWS_PHONE_APP
-            systemTray.ProgressIndicator.ProgressValue = 0;
-            systemTray.ProgressIndicator.Text = "nexMUNI";
+            statusBar.ProgressIndicator.ProgressValue = 0;
+            await statusBar.ProgressIndicator.HideAsync();
 #endif
         }
 

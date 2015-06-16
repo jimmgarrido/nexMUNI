@@ -32,6 +32,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\PredictionHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\WebHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\MainViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\RouteMapViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\SearchViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\StopDetailViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\TimesTemplateSelector.cs" />

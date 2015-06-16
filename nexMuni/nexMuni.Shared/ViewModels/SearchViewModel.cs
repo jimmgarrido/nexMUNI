@@ -222,13 +222,15 @@ namespace nexMuni.ViewModels
             }
             else reversed = "";
 
-            var xmlDoc = await WebHelper.GetSearchPredictions(SelectedStop, SelectedRoute);
+            var xmlDoc = await WebHelper.GetSearchPredictionsAsync(SelectedStop, SelectedRoute);
+            if (xmlDoc != null)
+            {
+                //Get bus predictions for stop
+                SearchTimes = await PredictionHelper.ParseSearchTimesAsync(xmlDoc);
 
-            //Get bus predictions for stop
-            SearchTimes = await PredictionHelper.ParseSearchTimesAsync(xmlDoc);
-
-            Stop tempStop = await GetStopAsync();
-            if (tempStop != null) SelectedStop = tempStop;
+                Stop tempStop = await GetStopAsync();
+                if (tempStop != null) SelectedStop = tempStop;
+            }
 
 #if WINDOWS_PHONE_APP
             systemTray.ProgressIndicator.ProgressValue = 0;

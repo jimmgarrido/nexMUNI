@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using System.Linq;
 using System.Xml.Linq;
 using Windows.Web.Http;
 
@@ -20,7 +21,7 @@ namespace nexMuni.Helpers
             {"searchPrediction", "http://webservices.nextbus.com/service/publicXMLFeed?command=predictions&a=sf-muni&stopId="}
         };
 
-        public static async Task<XDocument> GetMulitPredictions(string tags)
+        public static async Task<XDocument> GetMulitPredictionsAsync(string tags)
         {
             StringBuilder builder = new StringBuilder();
             string[] splitTags = tags.Split(',');
@@ -44,12 +45,13 @@ namespace nexMuni.Helpers
             catch (Exception)
             {
                 ErrorHandler.NetworkError("Error getting predictions. Check network connection and try again.");
+                return null;
             }
 
             return xmlDoc;
         }
 
-        public static async Task<XDocument> GetSearchPredictions(Stop stop, string route)
+        public static async Task<XDocument> GetSearchPredictionsAsync(Stop stop, string route)
         {
             var url = Urls["searchPrediction"] + stop.stopId + "&routeTag=" + route.Substring(0, route.IndexOf('-'));
 
@@ -65,6 +67,35 @@ namespace nexMuni.Helpers
             catch (Exception)
             {
                 ErrorHandler.NetworkError("Error getting predictions. Check network connection and try again.");
+                return null;
+            }
+
+            return xmlDoc;
+        }
+
+        public static async Task<XDocument> GetRoutePathAsync(string route)
+        {
+            if (route.Equals("Powell/Mason Cable Car")) route = "59";
+            else if (route.Equals("Powell/Hyde Cable Car")) route = "60";
+            else if (route.Equals("California Cable Car")) route = "61";
+            else if (route.Contains('-'))
+            {
+                route = route.Substring(0, route.IndexOf('-'));
+            }
+
+            var url = Urls["routeConfig"] + route;
+
+            try
+            {
+                var response = await client.GetAsync(new Uri(url));
+                response.EnsureSuccessStatusCode();
+                string reader = await response.Content.ReadAsStringAsync();
+                xmlDoc = XDocument.Parse(reader);
+            }
+            catch (Exception)
+            {
+                ErrorHandler.NetworkError("Error getting route info. Check network connection and try again.");
+                return null;
             }
 
             return xmlDoc;

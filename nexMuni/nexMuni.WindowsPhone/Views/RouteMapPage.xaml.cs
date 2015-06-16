@@ -1,6 +1,7 @@
 ﻿using nexMuni.Common;
 using nexMuni.DataModels;
 using nexMuni.Helpers;
+using nexMuni.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,11 +16,11 @@ namespace nexMuni.Views
 {
     public sealed partial class RouteMapPage : Page
     {
-        private Route selectedRoute;
+        //private Route selectedRoute;
         private List<MapPolyline> routePath;
-
         private NavigationHelper navigationHelper;
-        private ObservableDictionary defaultViewModel = new ObservableDictionary();
+        private bool alreadyLoaded;
+
         //public Geopoint Center {
         //    get 
         //    {
@@ -31,6 +32,8 @@ namespace nexMuni.Views
         //    }
         //}
 
+        public RouteMapViewModel routeMapVm;
+
         public RouteMapPage()
         {
             this.InitializeComponent(); 
@@ -40,57 +43,33 @@ namespace nexMuni.Views
             this.navigationHelper.SaveState += this.NavigationHelper_SaveState;
         }
 
-        /// <summary>
-        /// Gets the <see cref="NavigationHelper"/> associated with this <see cref="Page"/>.
-        /// </summary>
         public NavigationHelper NavigationHelper
         {
             get { return this.navigationHelper; }
         }
 
-        /// <summary>
-        /// Gets the view model for this <see cref="Page"/>.
-        /// This can be changed to a strongly typed view model.
-        /// </summary>
-        public ObservableDictionary DefaultViewModel
-        {
-            get { return this.defaultViewModel; }
-        }
 
-        /// <summary>
-        /// Populates the page with content passed during navigation.  Any saved state is also
-        /// provided when recreating a page from a prior session.
-        /// </summary>
-        /// <param name="sender">
-        /// The source of the event; typically <see cref="NavigationHelper"/>
-        /// </param>
-        /// <param name="e">Event data that provides both the navigation parameter passed to
-        /// <see cref="Frame.Navigate(Type, Object)"/> when this page was initially requested and
-        /// a dictionary of state preserved by this page during an earlier
-        /// session.  The state will be null the first time a page is visited.</param>
         private async void NavigationHelper_LoadState(object sender, LoadStateEventArgs e)
         {
-            selectedRoute = e.NavigationParameter as Route;
-            routeTitle.Text = selectedRoute.RouteNumber + "-" + selectedRoute.RouteName;
-            RouteMap.Center = new Geopoint(new BasicGeoposition() { Latitude = 37.7603, Longitude = -122.427 });
-            routePath = await MapHelper.LoadDoc(selectedRoute.RouteNumber);
-
-            MapControl.SetLocation(LocationIcon, LocationHelper.Location.Coordinate.Point);
-            LocationIcon.Visibility = Windows.UI.Xaml.Visibility.Visible;
-            foreach (MapPolyline line in routePath)
+            if (!alreadyLoaded)
             {
-                RouteMap.MapElements.Add(line);
+                routeMapVm = new RouteMapViewModel(e.NavigationParameter as Route);
+                DataContext = routeMapVm;
+
+                //routeTitle.Text = selectedRoute.RouteNumber + "-" + selectedRoute.RouteName;
+                RouteMap.Center = new Geopoint(new BasicGeoposition() { Latitude = 37.7603, Longitude = -122.427 });
+                MapControl.SetLocation(LocationIcon, LocationHelper.Location.Coordinate.Point);
+                LocationIcon.Visibility = Windows.UI.Xaml.Visibility.Visible;
+
+                routePath = await routeMapVm.GetRoutePath();
+                //routePath = await MapHelper.LoadDoc(selectedRoute.RouteNumber);
+                foreach (MapPolyline line in routePath)
+                {
+                    RouteMap.MapElements.Add(line);
+                }
             }
         }
 
-        /// <summary>
-        /// Preserves state associated with this page in case the application is suspended or the
-        /// page is discarded from the navigation cache.  Values must conform to the serialization
-        /// requirements of <see cref="SuspensionManager.SessionState"/>.
-        /// </summary>
-        /// <param name="sender">The source of the event; typically <see cref="NavigationHelper"/></param>
-        /// <param name="e">Event data that provides an empty dictionary to be populated with
-        /// serializable state.</param>
         private void NavigationHelper_SaveState(object sender, SaveStateEventArgs e)
         {
         }

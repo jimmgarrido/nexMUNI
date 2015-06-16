@@ -92,7 +92,12 @@ namespace nexMuni.Views
 
         private void GoToAbout(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(AboutPage));
+            Frame.Navigate(typeof(AboutPage));
+        }
+
+        private void GoToSettings(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(SettingsPage));
         }
 
         private void SortFavorites(object sender, RoutedEventArgs e)

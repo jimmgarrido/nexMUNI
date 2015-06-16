@@ -41,7 +41,7 @@ namespace nexMuni.Helpers
                 HttpResponseMessage response = await client.GetAsync(new Uri(url));
                 response.EnsureSuccessStatusCode();
                 string reader = await response.Content.ReadAsStringAsync();
-                GetPath(XDocument.Parse(reader));
+                //ParseRoutePath(XDocument.Parse(reader));
             }
             catch (Exception)
             {
@@ -51,12 +51,13 @@ namespace nexMuni.Helpers
             return path;
         }
 
-        private static void GetPath(XDocument doc)
+        public static async Task<List<MapPolyline>> ParseRoutePath(XDocument document)
         {
             IEnumerable<XElement> elements =
-                from e in doc.Element("body").Element("route").Elements("path")
+                from e in document.Element("body").Element("route").Elements("path")
                 select e;
-            
+
+            path.Clear();
             foreach (XElement el in elements)
             {
                 points.Clear();
@@ -73,6 +74,8 @@ namespace nexMuni.Helpers
                     ZIndex = 99
                 });
             }
+
+            return path;
         }
     }
 }
