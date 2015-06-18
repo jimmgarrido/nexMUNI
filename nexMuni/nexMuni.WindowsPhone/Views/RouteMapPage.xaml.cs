@@ -10,6 +10,8 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Devices.Geolocation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Maps;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
 namespace nexMuni.Views
@@ -18,6 +20,7 @@ namespace nexMuni.Views
     {
         //private Route selectedRoute;
         private List<MapPolyline> routePath;
+        private List<Bus> busLocations;
         private NavigationHelper navigationHelper;
         private bool alreadyLoaded;
 
@@ -62,10 +65,32 @@ namespace nexMuni.Views
                 LocationIcon.Visibility = Windows.UI.Xaml.Visibility.Visible;
 
                 routePath = await routeMapVm.GetRoutePath();
-                //routePath = await MapHelper.LoadDoc(selectedRoute.RouteNumber);
+
                 foreach (MapPolyline line in routePath)
                 {
                     RouteMap.MapElements.Add(line);
+                }
+
+                busLocations = await routeMapVm.GetBusLocations();
+                foreach(Bus bus in busLocations)
+                {
+                    var icon = new MapIcon
+                    {
+                        Location = new Geopoint(new BasicGeoposition { Latitude = bus.latitude, Longitude = bus.longitude }),
+                        Image = Windows.Storage.Streams.RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/Arrow.png")),
+                        ZIndex = 1000
+                    };
+
+                    var image = new Image
+                    {
+                        Source = new BitmapImage(new Uri("ms-appx:///Assets/Arrow.png")),
+                        Height = 25,
+                        Width = 25
+                    };
+
+                    MapControl.SetLocation(image, new Geopoint(new BasicGeoposition { Latitude = bus.latitude, Longitude = bus.longitude }));
+                    MapControl.SetNormalizedAnchorPoint(image, new Windows.Foundation.Point(0.7, 0.3));
+                    RouteMap.Children.Add(image);
                 }
             }
         }

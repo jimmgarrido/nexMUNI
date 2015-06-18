@@ -68,7 +68,7 @@ namespace nexMuni.Helpers
         public static async Task< List<string>> QueryForRoutes()
         {
             List<string> list = new List<string>();
-            var query = await _stopsAsyncConnection.QueryAsync<RouteData>("SELECT * FROM RouteData");
+            var query = await _stopsAsyncConnection.QueryAsync<Route>("SELECT * FROM RouteData");
 
             foreach (var route in query)
             {

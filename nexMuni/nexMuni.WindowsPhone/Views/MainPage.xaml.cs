@@ -195,7 +195,9 @@ namespace nexMuni.Views
 
         private async Task ShowRoutePath()
         {
-            List<MapPolyline> routePath = await MapHelper.LoadDoc(searchVm.SelectedRoute);
+            var xmlDoc = await WebHelper.GetRoutePathAsync(searchVm.SelectedRoute);
+            List<MapPolyline> routePath = await MapHelper.ParseRoutePath(xmlDoc);
+    
             SearchMap.MapElements.Clear();
 
             if (routePath.Any())

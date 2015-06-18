@@ -12,6 +12,7 @@ using Windows.Web.Http;
 using Windows.Web.Http.Headers;
 using nexMuni.Views;
 using System.Threading.Tasks;
+using nexMuni.DataModels;
 
 namespace nexMuni.Helpers
 {
@@ -20,36 +21,6 @@ namespace nexMuni.Helpers
         private static HttpClient client = new HttpClient();
         private static List<MapPolyline> path = new List<MapPolyline>();
         private static List<BasicGeoposition> points = new List<BasicGeoposition>();
-
-        public static async Task<List<MapPolyline>> LoadDoc(string route)
-        {
-            path.Clear(); 
-
-            if (route.Equals("Powell/Mason Cable Car")) route = "59";
-            else if (route.Equals("Powell/Hyde Cable Car")) route = "60";
-            else if (route.Equals("California Cable Car")) route = "61";
-            else if(route.Contains('-'))
-            {
-                route = route.Substring(0, route.IndexOf('-'));
-            }
-
-            string url = "http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=sf-muni&r=";
-            url = url + route;
-           
-            try
-            {
-                HttpResponseMessage response = await client.GetAsync(new Uri(url));
-                response.EnsureSuccessStatusCode();
-                string reader = await response.Content.ReadAsStringAsync();
-                //ParseRoutePath(XDocument.Parse(reader));
-            }
-            catch (Exception)
-            {
-                ErrorHandler.NetworkError("Error getting route info. Check network connection and try again.");
-            }
-            
-            return path;
-        }
 
         public static async Task<List<MapPolyline>> ParseRoutePath(XDocument document)
         {
@@ -76,6 +47,22 @@ namespace nexMuni.Helpers
             }
 
             return path;
+        }
+
+        public static async Task<List<Bus>> ParseBusLocations(XDocument document)
+        {
+            List<Bus> vehicles = new List<Bus>();
+
+            IEnumerable<XElement> elements =
+                from e in document.Element("body").Elements("vehicle")
+                select e;
+
+            foreach(XElement bus in elements)
+            {
+                vehicles.Add(new Bus(bus.Attribute("id").Value, bus.Attribute("heading").Value, bus.Attribute("lat").Value, bus.Attribute("lon").Value));
+            }
+
+            return vehicles;
         }
     }
 }

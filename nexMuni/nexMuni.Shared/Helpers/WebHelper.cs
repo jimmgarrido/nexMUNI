@@ -18,7 +18,8 @@ namespace nexMuni.Helpers
         {
             {"multiPredictions","http://webservices.nextbus.com/service/publicXMLFeed?command=predictionsForMultiStops&a=sf-muni"},
             {"routeConfig","http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=sf-muni&r="},
-            {"searchPrediction", "http://webservices.nextbus.com/service/publicXMLFeed?command=predictions&a=sf-muni&stopId="}
+            {"searchPrediction", "http://webservices.nextbus.com/service/publicXMLFeed?command=predictions&a=sf-muni&stopId="},
+            {"busLocations", "http://webservices.nextbus.com/service/publicXMLFeed?command=vehicleLocations&a=sf-muni&r="}
         };
 
         public static async Task<XDocument> GetMulitPredictionsAsync(string tags)
@@ -99,6 +100,30 @@ namespace nexMuni.Helpers
             }
 
             return xmlDoc;
+        }
+
+        public async static Task<XDocument> GetBusLocationsAsync(string route)
+        {
+            //Because the API requires an epoch time offset for some reason...
+            TimeSpan epoch = (DateTime.UtcNow - new DateTime(1970, 1, 1));
+            var timestamp = (long)epoch.TotalMilliseconds - TimeSpan.FromMinutes(5).TotalMilliseconds;
+
+            var url = Urls["busLocations"] + route + "&t=" + timestamp;
+
+             try
+            {
+                var response = await client.GetAsync(new Uri(url));
+                response.EnsureSuccessStatusCode();
+                string reader = await response.Content.ReadAsStringAsync();
+                xmlDoc = XDocument.Parse(reader);
+            }
+            catch (Exception)
+            {
+                ErrorHandler.NetworkError("Error getting route info. Check network connection and try again.");
+                return null;
+            }
+
+             return xmlDoc;
         }
     }
 }

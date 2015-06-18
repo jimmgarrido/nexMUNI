@@ -53,7 +53,7 @@ namespace nexMuni.ViewModels
             SelectedStop = stop;
             refreshTimer = new DispatcherTimer();
             refreshTimer.Tick += TimerDue;
-            refreshTimer.Interval = new System.TimeSpan(0, 0, 10);
+            refreshTimer.Interval = new System.TimeSpan(0, 0, 15);
         }
 
         public async Task LoadTimes()
@@ -65,9 +65,6 @@ namespace nexMuni.ViewModels
             statusBar.ProgressIndicator.Text = "Getting Arrival Times";
             statusBar.ProgressIndicator.ProgressValue = null;
 #endif
-
-            //string[] splitRoutes = SelectedStop.Routes.Split(',');
-            //splitRoutes[0] = " " + splitRoutes[0];
 
             var xmlDoc = await WebHelper.GetMulitPredictionsAsync(SelectedStop.StopTags);
             if (xmlDoc != null)
@@ -102,15 +99,25 @@ namespace nexMuni.ViewModels
 
         public async Task RefreshTimes()
         {
-            Routes.Clear();
             var xmlDoc = await WebHelper.GetMulitPredictionsAsync(SelectedStop.StopTags);
             if (xmlDoc != null)
             {
                 List<Route> routeList = await PredictionHelper.ParsePredictionsAsync(xmlDoc);
 
-                foreach (Route r in routeList)
+                if(routeList.Count == Routes.Count)
                 {
-                    Routes.Add(r);
+                    for(int i=0; i< routeList.Count; i++)
+                    {
+                        Routes[i].UpdateTimes(routeList[i].Directions);
+                    }
+                }
+                else
+                {
+                    Routes.Clear();
+                    foreach(Route r in routeList)
+                    {
+                        Routes.Add(r);
+                    }
                 }
             }
         }
