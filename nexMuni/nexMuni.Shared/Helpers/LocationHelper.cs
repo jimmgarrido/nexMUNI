@@ -38,7 +38,6 @@ namespace nexMuni.Helpers
             statusBar.ProgressIndicator.ProgressValue = null;
 #endif
             if(geolocator == null) geolocator = new Geolocator { DesiredAccuracyInMeters = 50 };
-
             if (geolocator.LocationStatus == PositionStatus.Disabled)
             {
                 //MainPage.noNearbyText.Text = "Location services disabled";
@@ -46,6 +45,8 @@ namespace nexMuni.Helpers
             else
             {
                 Location = await geolocator.GetGeopositionAsync(maximumAge: TimeSpan.FromSeconds(10), timeout: TimeSpan.FromSeconds(30));
+                latitude = Point.Position.Latitude;
+                longitude = Point.Position.Longitude;
                 if (LocationChanged != null) LocationChanged();
             }
 
@@ -57,9 +58,6 @@ namespace nexMuni.Helpers
 
         public static double[][] MakeBounds(double dist)
         {
-            latitude = Point.Position.Latitude;
-            longitude = Point.Position.Longitude;
-
             //Create search radius bounds
            return new double[][] { Destination(latitude, longitude, 0.0, dist),
                                                 Destination(latitude, longitude, 90.0, dist),
@@ -99,9 +97,7 @@ namespace nexMuni.Helpers
             double rHalfDeltaLat = Deg2Rad((latB - latitude) / 2.0);
             double rHalfDeltaLon = Deg2Rad((lonB - longitude) / 2.0);
 
-            var temp = (2 * 3963.19) * Math.Asin(Math.Sqrt(Math.Pow(Math.Sin(rHalfDeltaLat), 2) + Math.Cos(rLatA) * Math.Cos(rLatB) * Math.Pow(Math.Sin(rHalfDeltaLon), 2)));
-            return temp;
-
+            return (2 * 3963.19) * Math.Asin(Math.Sqrt(Math.Pow(Math.Sin(rHalfDeltaLat), 2) + Math.Cos(rLatA) * Math.Cos(rLatB) * Math.Pow(Math.Sin(rHalfDeltaLon), 2)));
         }
 
         internal static void SortFavorites()

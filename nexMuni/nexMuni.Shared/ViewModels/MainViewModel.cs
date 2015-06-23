@@ -64,31 +64,45 @@ namespace nexMuni.ViewModels
         public async Task UpdateNearbyStops()
         {
             //Make sure user has given permission to access location
-            NearbyStops.Clear();
             await LocationHelper.UpdateLocation();
 
             if (LocationHelper.Location != null)
             {
                 NoStopsText = "";
-                List<BusStopData> stops = await DatabaseHelper.QueryForNearby(0.5);
+                List<Stop> stops = await DatabaseHelper.QueryForNearby(0.5);
 
                 //Get distance to each stop
-                foreach (BusStopData stop in stops)
+                foreach (Stop stop in stops)
                 {
-                    stop.Distance = LocationHelper.GetDistance(stop.Latitude, stop.Longitude);
+                    //stop.Distance = LocationHelper.GetDistance(stop.Latitude, stop.Longitude);
+                    stop.DistanceAsDouble = LocationHelper.GetDistance(stop.Latitude, stop.Longitude);
                 }
 
                 //Sort list of stops by distance
-                IEnumerable<BusStopData> sortedList =
+                IEnumerable<Stop> sortedList =
                     from s in stops
-                    orderby s.Distance
+                    orderby s.DistanceAsDouble
                     select s;
 
                 //Add stops to listview with max of 15
-                foreach (BusStopData stop in sortedList)
+                if (NearbyStops.Any())
                 {
-                    NearbyStops.Add(new Stop(stop.StopName, stop.Routes, stop.StopTags, stop.Latitude, stop.Longitude, stop.Distance));
-                    if (NearbyStops.Count >= 15) break;
+                    for(int i=0; i<NearbyStops.Count; i++)
+                    {
+                        NearbyStops.RemoveAt(i);
+                        NearbyStops.Insert(i, sortedList.ElementAt(i));
+                        //if (NearbyStops.Count >= 15) break;
+                        //NearbyStops.Add(new Stop(stop.StopName, stop.Routes, stop.StopTags, stop.Latitude, stop.Longitude, stop.Distance))
+                    }
+                }
+                else
+                {
+                    foreach (Stop stop in sortedList)
+                    {
+                        //NearbyStops.Add(new Stop(stop.StopName, stop.Routes, stop.StopTags, stop.Latitude, stop.Longitude, stop.Distance));
+                        NearbyStops.Add(stop);
+                        if (NearbyStops.Count >= 15) break;
+                    }
                 }
 
                 SyncFavoriteIds();
@@ -99,14 +113,22 @@ namespace nexMuni.ViewModels
             }
         }
 
-        public async Task FavoritesDistances()
+        public void FavoritesDistances()
         {
             LocationHelper.FavoritesDistances(FavoriteStops);
         }
 
-        public async Task SortFavorites()
+        public void SortFavorites()
         {
-
+            var sortedFavorites = new List<Stop>(FavoriteStops.OrderBy(s => s.DistanceAsDouble));
+            int i= 0;
+            //MainViewModel.FavoritesStops.Clear();
+            foreach (Stop stop in sortedFavorites)
+            {
+                FavoriteStops.RemoveAt(i);
+                FavoriteStops.Insert(i,stop);
+                i++;
+            }
         }
 
         private void LoadFavorites()

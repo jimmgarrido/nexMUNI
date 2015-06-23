@@ -349,7 +349,7 @@
     <Page.BottomAppBar>
         <CommandBar x:Name="AppBar" Background="#FF9B1414" ClosedDisplayMode="Compact" Foreground="White">
             <CommandBar.PrimaryCommands>
-                <AppBarButton x:Name="RefreshBtn" Label="refresh" Click="UpdateButtonPressed" Foreground="White">
+                <AppBarButton x:Name="RefreshBtn" Label="refresh" Click="UpdateButtonPressed" IsEnabled="False" Foreground="White">
                     <AppBarButton.Icon>
                         <BitmapIcon UriSource="Assets/refresh.png"/>
                     </AppBarButton.Icon>

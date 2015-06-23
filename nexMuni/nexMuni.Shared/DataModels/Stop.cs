@@ -47,6 +47,8 @@ namespace nexMuni.DataModels
         public string stopId;
         public int favId;
 
+        public Stop() {}
+
         public Stop(string name, string id, string routes, string tags, double lat, double lon )
         {
             StopName = name;

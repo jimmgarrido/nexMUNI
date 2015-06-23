@@ -75,9 +75,9 @@ namespace nexMuni.Views
             Frame.Navigate(typeof(SettingsPage));
         }
 
-        private async void SortFavorites(object sender, RoutedEventArgs e)
+        private void SortFavorites(object sender, RoutedEventArgs e)
         {
-           await mainVm.SortFavorites();
+           mainVm.SortFavorites();
         }
 
         private async void FavoriteSearch(object sender, RoutedEventArgs e)
@@ -163,11 +163,12 @@ namespace nexMuni.Views
             this.Frame.Navigate(typeof(StopDetail), searchVm.SelectedStop);
         }
 
-        private async void LocationUpdated()
+        private void LocationUpdated()
         {
-            SortBtn.IsEnabled = true;
+            RefreshBtn.IsEnabled = true;
             MapControl.SetLocation(LocationIcon, LocationHelper.Location.Coordinate.Point);
-            await mainVm.FavoritesDistances();     
+            mainVm.FavoritesDistances();
+            SortBtn.IsEnabled = true;
         }
 
         private async Task ShowRoutePath()

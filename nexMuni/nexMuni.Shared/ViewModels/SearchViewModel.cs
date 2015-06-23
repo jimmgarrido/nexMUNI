@@ -255,10 +255,11 @@ namespace nexMuni.ViewModels
 
         private async Task<Stop> GetStopAsync()
         {
-            List<BusStopData> stops = await DatabaseHelper.QueryForStop(SelectedStop.StopName);
+            List<Stop> stops = await DatabaseHelper.QueryForStop(SelectedStop.StopName);
 
             if (stops.Any())
-                return new Stop(stops[0].StopName, stops[0].Routes, stops[0].StopTags, stops[0].Latitude, stops[0].Longitude, stops[0].Distance);
+                return stops.ElementAt(0);
+            //return new Stop(stops[0].StopName, stops[0].Routes, stops[0].StopTags, stops[0].Latitude, stops[0].Longitude, stops[0].Distance);
             else return null;
         }
 

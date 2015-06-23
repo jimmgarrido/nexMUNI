@@ -26,7 +26,7 @@ namespace nexMuni.Helpers
             await CheckFavoritesDatabaseAsync();
         }
 
-        public async static Task<List<BusStopData>> QueryForNearby(double dist)
+        public async static Task<List<Stop>> QueryForNearby(double dist)
         {
             //Get search bounds from location and given radius
             double[][] bounds = LocationHelper.MakeBounds(dist);
@@ -36,7 +36,7 @@ namespace nexMuni.Helpers
                 " AND " + bounds[1][1] + " AND Latitude BETWEEN " + bounds[2][0] + " AND " + bounds[0][0];
 
             if (_stopsAsyncConnection == null) _stopsAsyncConnection = new SQLiteAsyncConnection("muni.sqlite");
-            var results = await _stopsAsyncConnection.QueryAsync<BusStopData>(query);
+            var results = await _stopsAsyncConnection.QueryAsync<Stop>(query);
 
             //Check results for enough stops
             if (results.Count >= 15)
@@ -46,10 +46,10 @@ namespace nexMuni.Helpers
             else return await QueryForNearby(dist += .5);
         }
 
-        public async static Task<List<BusStopData>> QueryForStop(string stopName)
+        public async static Task<List<Stop>> QueryForStop(string stopName)
         {
             string query = "SELECT * FROM BusStops WHERE StopName IS \"" + stopName + "\"";
-            var results = await _stopsAsyncConnection.QueryAsync<BusStopData>(query);
+            var results = await _stopsAsyncConnection.QueryAsync<Stop>(query);
 
             if(!results.Any())
             {
@@ -60,7 +60,7 @@ namespace nexMuni.Helpers
                 }
 
                 query = "SELECT * FROM BusStops WHERE StopName IS \"" + stopName + "\"";
-                results = await _stopsAsyncConnection.QueryAsync<BusStopData>(query);
+                results = await _stopsAsyncConnection.QueryAsync<Stop>(query);
             }
             return results;
         }
@@ -112,27 +112,27 @@ namespace nexMuni.Helpers
  
             SQLiteAsyncConnection db = new SQLiteAsyncConnection("muni.sqlite");
             string query = "SELECT * FROM BusStops WHERE StopName = \'" + title + "\'";
-            List<BusStopData> results = await db.QueryAsync<BusStopData>(query);
+            List<Stop> results = await db.QueryAsync<Stop>(query);
             
             //If stop name not found in db, most likely a stop that was a duplicate and merged so reverse it and search again
-            if(results.Count == 0)
+            if(!results.Any())
             {
                 string [] temp = title.Split('&');
                 title = temp[1].Substring(1) + " & " + temp[0].Substring(0, (temp[0].Length - 1));
 
                 query = "SELECT * FROM BusStops WHERE StopName = \'" + title + "\'";
-                results = await db.QueryAsync<BusStopData>(query);
+                results = await db.QueryAsync<Stop>(query);
             }
  
-            foreach(BusStopData x in results)
+            foreach(Stop fav in results)
             {
                 await _favoritesAsyncConnection.InsertAsync(new FavoriteData
                 {
-                    Name = x.StopName,
-                    Routes = x.Routes,
-                    Tags = x.StopTags,
-                    Lat = x.Latitude,
-                    Lon = x.Longitude
+                    Name = fav.StopName,
+                    Routes = fav.Routes,
+                    Tags = fav.StopTags,
+                    Lat = fav.Latitude,
+                    Lon = fav.Longitude
                 });
             }
 
