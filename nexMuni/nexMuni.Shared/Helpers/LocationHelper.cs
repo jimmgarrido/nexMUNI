@@ -99,7 +99,8 @@ namespace nexMuni.Helpers
             double rHalfDeltaLat = Deg2Rad((latB - latitude) / 2.0);
             double rHalfDeltaLon = Deg2Rad((lonB - longitude) / 2.0);
 
-            return (2 * 3963.19) * Math.Asin(Math.Sqrt(Math.Pow(Math.Sin(rHalfDeltaLat), 2) + Math.Cos(rLatA) * Math.Cos(rLatB) * Math.Pow(Math.Sin(rHalfDeltaLon), 2)));
+            var temp = (2 * 3963.19) * Math.Asin(Math.Sqrt(Math.Pow(Math.Sin(rHalfDeltaLat), 2) + Math.Cos(rLatA) * Math.Cos(rLatB) * Math.Pow(Math.Sin(rHalfDeltaLon), 2)));
+            return temp;
 
         }
 
@@ -119,12 +120,12 @@ namespace nexMuni.Helpers
             //}
         }
 
-        public static void FavoritesDistance()
+        public static void FavoritesDistances(ObservableCollection<Stop> favorites)
         {
-            //foreach (StopData stop in MainViewModel.FavoritesStops)
-            //{
-            //    stop.DoubleDist = GetDistance(stop.Lat, stop.Lon);
-            //}
+            foreach (Stop stop in favorites)
+            {
+                stop.DistanceAsDouble = GetDistance(stop.Latitude, stop.Longitude);
+            }
         }
     }
 }

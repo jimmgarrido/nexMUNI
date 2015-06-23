@@ -99,6 +99,16 @@ namespace nexMuni.ViewModels
             }
         }
 
+        public async Task FavoritesDistances()
+        {
+            LocationHelper.FavoritesDistances(FavoriteStops);
+        }
+
+        public async Task SortFavorites()
+        {
+
+        }
+
         private void LoadFavorites()
         {
             List<FavoriteData> favorites = DatabaseHelper.FavoritesList;
@@ -134,6 +144,7 @@ namespace nexMuni.ViewModels
                 }
             }
         }
+
 
         #region INotify Methods
         private void NotifyPropertyChanged(string property)

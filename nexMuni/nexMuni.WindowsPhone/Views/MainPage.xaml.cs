@@ -31,12 +31,12 @@ namespace nexMuni.Views
         {
             if (!alreadyLoaded)
             {
-                MainPivot.SelectionChanged += pivotControl_SelectionChanged;
+                MainPivot.SelectionChanged += PivotItemChanged;
                 await DatabaseHelper.CheckDatabasesAsync();
 
                 mainVm = new MainViewModel();
                 searchVm = new SearchViewModel();
-                searchVm.UpdateLocation += UpdateLocationIcon;
+                searchVm.UpdateLocation += LocationUpdated;
 
                 NearbyPivot.DataContext = mainVm;
                 FavoritesPivot.DataContext = mainVm;
@@ -50,31 +50,6 @@ namespace nexMuni.Views
                 MapControl.SetNormalizedAnchorPoint(StopIcon, new Point(0.5, 1.0));
 
                 alreadyLoaded = true;
-            }
-        }
-
-        void pivotControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            switch (((Pivot)sender).SelectedIndex)
-            {
-                case 0:
-                    RefreshBtn.Visibility = Visibility.Visible;
-                    SortBtn.Visibility = Visibility.Collapsed;
-                    FavoriteBtn.Visibility = Visibility.Collapsed;
-                    DetailBtn.Visibility = Visibility.Collapsed;
-                    break;
-                case 1:
-                    SortBtn.Visibility = Visibility.Visible;
-                    RefreshBtn.Visibility = Visibility.Collapsed;
-                    FavoriteBtn.Visibility = Visibility.Collapsed;
-                    DetailBtn.Visibility = Visibility.Collapsed;
-                    break;
-                case 2:
-                    FavoriteBtn.Visibility = Visibility.Visible;
-                    DetailBtn.Visibility = Visibility.Visible;
-                    SortBtn.Visibility = Visibility.Collapsed;
-                    RefreshBtn.Visibility = Visibility.Collapsed;
-                    break;
             }
         }
 
@@ -100,9 +75,9 @@ namespace nexMuni.Views
             Frame.Navigate(typeof(SettingsPage));
         }
 
-        private void SortFavorites(object sender, RoutedEventArgs e)
+        private async void SortFavorites(object sender, RoutedEventArgs e)
         {
-            LocationHelper.SortFavorites();
+           await mainVm.SortFavorites();
         }
 
         private async void FavoriteSearch(object sender, RoutedEventArgs e)
@@ -188,9 +163,11 @@ namespace nexMuni.Views
             this.Frame.Navigate(typeof(StopDetail), searchVm.SelectedStop);
         }
 
-        private void UpdateLocationIcon()
+        private async void LocationUpdated()
         {
+            SortBtn.IsEnabled = true;
             MapControl.SetLocation(LocationIcon, LocationHelper.Location.Coordinate.Point);
+            await mainVm.FavoritesDistances();     
         }
 
         private async Task ShowRoutePath()
@@ -217,6 +194,31 @@ namespace nexMuni.Views
             MapControl.SetLocation(StopIcon, stopLocation);
             StopIcon.Visibility = Windows.UI.Xaml.Visibility.Visible;
             await SearchMap.TrySetViewAsync(stopLocation, 13.0);
+        }
+
+        private void PivotItemChanged(object sender, SelectionChangedEventArgs e)
+        {
+            switch (((Pivot)sender).SelectedIndex)
+            {
+                case 0:
+                    RefreshBtn.Visibility = Visibility.Visible;
+                    SortBtn.Visibility = Visibility.Collapsed;
+                    FavoriteBtn.Visibility = Visibility.Collapsed;
+                    DetailBtn.Visibility = Visibility.Collapsed;
+                    break;
+                case 1:
+                    SortBtn.Visibility = Visibility.Visible;
+                    RefreshBtn.Visibility = Visibility.Collapsed;
+                    FavoriteBtn.Visibility = Visibility.Collapsed;
+                    DetailBtn.Visibility = Visibility.Collapsed;
+                    break;
+                case 2:
+                    FavoriteBtn.Visibility = Visibility.Visible;
+                    DetailBtn.Visibility = Visibility.Visible;
+                    SortBtn.Visibility = Visibility.Collapsed;
+                    RefreshBtn.Visibility = Visibility.Collapsed;
+                    break;
+            }
         }
     }
 }

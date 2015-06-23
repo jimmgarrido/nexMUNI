@@ -354,7 +354,7 @@
                         <BitmapIcon UriSource="Assets/refresh.png"/>
                     </AppBarButton.Icon>
                 </AppBarButton>
-                <AppBarButton x:Name="SortBtn" Icon="sort" Label="sort" Click="SortFavorites" Visibility="Collapsed" Foreground="White"/>
+                <AppBarButton x:Name="SortBtn" Icon="sort" Label="sort" Click="SortFavorites" Visibility="Collapsed" IsEnabled="False" Foreground="White"/>
                 <AppBarButton x:Name="DetailBtn" Icon="List" Label="more" Click="DetailButtonPressed" Visibility="Collapsed" IsEnabled="False" Foreground="White"/>
                 <AppBarButton x:Name="FavoriteBtn" Icon="Favorite" Label="favorite" Visibility="Collapsed" IsEnabled="False" Foreground="White"/>
             </CommandBar.PrimaryCommands>
