@@ -74,6 +74,8 @@ namespace nexMuni.Views
                 busLocations = await routeMapVm.GetBusLocations();
                 foreach(Bus bus in busLocations)
                 {
+                    Image busMarker;
+
                     var icon = new MapIcon
                     {
                         Location = new Geopoint(new BasicGeoposition { Latitude = bus.latitude, Longitude = bus.longitude }),
@@ -81,16 +83,36 @@ namespace nexMuni.Views
                         ZIndex = 1000
                     };
 
-                    var image = new Image
+                    if(bus.direction.Equals("inbound"))
                     {
-                        Source = new BitmapImage(new Uri("ms-appx:///Assets/Arrow.png")),
-                        Height = 25,
-                        Width = 25
-                    };
+                        busMarker = new Image
+                        {
+                            Source = new BitmapImage(new Uri("ms-appx:///Assets/Inbound.png")),
+                            Height = 20,
+                            Width = 20,
 
-                    MapControl.SetLocation(image, new Geopoint(new BasicGeoposition { Latitude = bus.latitude, Longitude = bus.longitude }));
-                    MapControl.SetNormalizedAnchorPoint(image, new Windows.Foundation.Point(0.7, 0.3));
-                    RouteMap.Children.Add(image);
+                            RenderTransform = new RotateTransform { Angle = bus.busHeading },
+                            RenderTransformOrigin = new Windows.Foundation.Point(0.5, 0.5)
+                        };
+                    }
+                    else
+                    {
+                        busMarker = new Image
+                        {
+                            Source = new BitmapImage(new Uri("ms-appx:///Assets/Outbound.png")),
+                            Height = 20,
+                            Width = 20,
+
+                            RenderTransform = new RotateTransform { Angle = bus.busHeading },
+                            RenderTransformOrigin = new Windows.Foundation.Point(0.5, 0.5)
+                        };
+                    }
+
+
+                    MapControl.SetNormalizedAnchorPoint(busMarker, new Windows.Foundation.Point(0.5, 0.5));
+                    MapControl.SetLocation(busMarker, new Geopoint(new BasicGeoposition { Latitude = bus.latitude, Longitude = bus.longitude }));
+
+                    RouteMap.Children.Add(busMarker);
                 }
             }
         }

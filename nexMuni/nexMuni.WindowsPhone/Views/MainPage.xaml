@@ -457,7 +457,7 @@
                                      VerticalAlignment="Center" MapServiceToken="jjA5Pn6AN4an5lgqKNN_Rg" Height="350" 
                                      Width="450" ZoomLevel="11.40">
                     <maps:MapControl.Children>
-                        <Image x:Name="LocationIcon" Source="/Assets/Location.png" Height="25" Width="25"/>
+                        <Image x:Name="LocationIcon" Source="/Assets/Location.png" Height="20" Width="20"/>
                         <Image x:Name="StopIcon" Source="/Assets/Stop.png" Height="30" Width="30" Visibility="Collapsed"/>
                     </maps:MapControl.Children>
                 </maps:MapControl>

@@ -59,7 +59,11 @@ namespace nexMuni.Helpers
 
             foreach(XElement bus in elements)
             {
-                vehicles.Add(new Bus(bus.Attribute("id").Value, bus.Attribute("heading").Value, bus.Attribute("lat").Value, bus.Attribute("lon").Value));
+                if (bus.Attribute("dirTag") != null)
+                {
+                    vehicles.Add(new Bus(bus.Attribute("id").Value, bus.Attribute("heading").Value,
+                        bus.Attribute("lat").Value, bus.Attribute("lon").Value, bus.Attribute("dirTag").Value));
+                }
             }
 
             return vehicles;
