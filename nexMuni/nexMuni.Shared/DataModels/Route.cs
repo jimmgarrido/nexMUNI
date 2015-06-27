@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
 using SQLite;
+using Windows.Devices.Geolocation;
 
 namespace nexMuni.DataModels
 {
@@ -17,6 +18,8 @@ namespace nexMuni.DataModels
 
         private string predictions1 = String.Empty;
         private string predictions2 = String.Empty;
+
+        public Geopoint stopLocation;
 
         public string RouteName { get; private set; }
         public string RouteNumber { get; private set; }
@@ -33,6 +36,7 @@ namespace nexMuni.DataModels
         {
             RouteName = name;
             RouteNumber = num;
+            Title = string.Format("{0}-{1}", num, name);
             Directions = new List<RouteDirection>();
         }
 
@@ -42,6 +46,11 @@ namespace nexMuni.DataModels
             {
                 Directions[i].SetTimes(directions[i].Times);
             }
+        }
+
+        public void AddLocationInfo(double lat, double lon)
+        {
+            stopLocation = new Geopoint(new BasicGeoposition { Latitude = lat, Longitude = lon });
         }
     }
 }

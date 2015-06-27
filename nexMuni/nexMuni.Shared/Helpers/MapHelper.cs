@@ -18,17 +18,15 @@ namespace nexMuni.Helpers
 {
     class MapHelper
     {
-        private static HttpClient client = new HttpClient();
-        private static List<MapPolyline> path = new List<MapPolyline>();
-        private static List<BasicGeoposition> points = new List<BasicGeoposition>();
-
         public static async Task<List<MapPolyline>> ParseRoutePath(XDocument document)
         {
             IEnumerable<XElement> elements =
                 from e in document.Element("body").Element("route").Elements("path")
                 select e;
 
-            path.Clear();
+            var path = new List<MapPolyline>();
+            var points = new List<BasicGeoposition>();
+
             foreach (XElement el in elements)
             {
                 points.Clear();
@@ -51,9 +49,9 @@ namespace nexMuni.Helpers
 
         public static async Task<List<Bus>> ParseBusLocations(XDocument document)
         {
-            List<Bus> vehicles = new List<Bus>();
+            var vehicles = new List<Bus>();
 
-            IEnumerable<XElement> elements =
+            var elements =
                 from e in document.Element("body").Elements("vehicle")
                 select e;
 

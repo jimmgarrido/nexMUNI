@@ -21,7 +21,7 @@ namespace nexMuni.DataModels
             longitude = double.Parse(lon);
 
             if (dir.Contains("I")) direction = "inbound";
-            else direction = "outbound";
+            else if(dir.Contains("O")) direction = "outbound";
         }
     }
 }

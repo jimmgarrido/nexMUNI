@@ -8,6 +8,7 @@ using nexMuni.Common;
 using nexMuni.Helpers;
 using nexMuni.ViewModels;
 using nexMuni.DataModels;
+using Windows.Devices.Geolocation;
 
 namespace nexMuni.Views
 {
@@ -16,7 +17,7 @@ namespace nexMuni.Views
         private NavigationHelper navigationHelper;
         private bool alreadyLoaded;
 
-        public StopDetailViewModel detailVm;
+        private StopDetailViewModel detailVm;
 
         public StopDetail()
         {
@@ -92,7 +93,10 @@ namespace nexMuni.Views
 
         private void GoToRouteMap(object sender, ItemClickEventArgs e)
         {
-            Frame.Navigate(typeof(RouteMapPage), e.ClickedItem);
+            var route = (Route)e.ClickedItem;
+            route.stopLocation = new Geopoint(new BasicGeoposition { Latitude = detailVm.SelectedStop.Latitude, Longitude = detailVm.SelectedStop.Longitude });
+
+            Frame.Navigate(typeof(RouteMapPage), route);
         }
 
         #region NavigationHelper registration

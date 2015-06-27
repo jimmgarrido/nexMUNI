@@ -166,6 +166,7 @@ namespace nexMuni.Views
         private void LocationUpdated()
         {
             RefreshBtn.IsEnabled = true;
+            MapControl.SetNormalizedAnchorPoint(LocationIcon, new Windows.Foundation.Point(0.5, 0.5));
             MapControl.SetLocation(LocationIcon, LocationHelper.Location.Coordinate.Point);
             mainVm.FavoritesDistances();
             SortBtn.IsEnabled = true;
@@ -191,7 +192,8 @@ namespace nexMuni.Views
 
         private async Task ShowStopLocation()
         {
-            var stopLocation =  new Geopoint(new BasicGeoposition() { Latitude = searchVm.SelectedStop.Latitude, Longitude = searchVm.SelectedStop.Longitude });   
+            var stopLocation =  new Geopoint(new BasicGeoposition() { Latitude = searchVm.SelectedStop.Latitude, Longitude = searchVm.SelectedStop.Longitude });
+            MapControl.SetNormalizedAnchorPoint(StopIcon, new Windows.Foundation.Point(0.5, 1.0));
             MapControl.SetLocation(StopIcon, stopLocation);
             StopIcon.Visibility = Windows.UI.Xaml.Visibility.Visible;
             await SearchMap.TrySetViewAsync(stopLocation, 13.0);

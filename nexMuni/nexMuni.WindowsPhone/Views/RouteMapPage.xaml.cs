@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Devices.Geolocation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Maps;
@@ -18,22 +19,8 @@ namespace nexMuni.Views
 {
     public sealed partial class RouteMapPage : Page
     {
-        //private Route selectedRoute;
-        private List<MapPolyline> routePath;
-        private List<Bus> busLocations;
         private NavigationHelper navigationHelper;
         private bool alreadyLoaded;
-
-        //public Geopoint Center {
-        //    get 
-        //    {
-        //        return Center;
-        //    }
-        //    set
-        //    {
-        //        new BasicGeoposition() { Latitude = 37.7603, Longitude = -122.427 };
-        //    }
-        //}
 
         public RouteMapViewModel routeMapVm;
 
@@ -51,7 +38,6 @@ namespace nexMuni.Views
             get { return this.navigationHelper; }
         }
 
-
         private async void NavigationHelper_LoadState(object sender, LoadStateEventArgs e)
         {
             if (!alreadyLoaded)
@@ -59,60 +45,63 @@ namespace nexMuni.Views
                 routeMapVm = new RouteMapViewModel(e.NavigationParameter as Route);
                 DataContext = routeMapVm;
 
-                //routeTitle.Text = selectedRoute.RouteNumber + "-" + selectedRoute.RouteName;
-                RouteMap.Center = new Geopoint(new BasicGeoposition() { Latitude = 37.7603, Longitude = -122.427 });
+                RouteMap.Center= routeMapVm.SelectedRoute.stopLocation;
+                MapControl.SetNormalizedAnchorPoint(StopIcon, new Windows.Foundation.Point(0.5, 1.0));
+                MapControl.SetNormalizedAnchorPoint(LocationIcon, new Windows.Foundation.Point(0.5, 0.5));
+                MapControl.SetLocation(StopIcon, routeMapVm.SelectedRoute.stopLocation);
                 MapControl.SetLocation(LocationIcon, LocationHelper.Location.Coordinate.Point);
+                StopIcon.Visibility = Windows.UI.Xaml.Visibility.Visible;
                 LocationIcon.Visibility = Windows.UI.Xaml.Visibility.Visible;
 
-                routePath = await routeMapVm.GetRoutePath();
+
+                var routePath = await routeMapVm.GetRoutePath();
+                var busLocations = await routeMapVm.GetBusLocations();
+
+                var inboundBus = new BitmapImage(new Uri("ms-appx:///Assets/Inbound.png"));
+                var outboundBus = new BitmapImage(new Uri("ms-appx:///Assets/Outbound.png"));
+
+                MapControl.SetNormalizedAnchorPoint(inboundBus, new Windows.Foundation.Point(0.5, 0.5));
+                MapControl.SetNormalizedAnchorPoint(outboundBus, new Windows.Foundation.Point(0.5, 0.5));
 
                 foreach (MapPolyline line in routePath)
                 {
                     RouteMap.MapElements.Add(line);
                 }
 
-                busLocations = await routeMapVm.GetBusLocations();
                 foreach(Bus bus in busLocations)
                 {
-                    Image busMarker;
-
-                    var icon = new MapIcon
+                    if (bus.direction.Equals("inbound"))
                     {
-                        Location = new Geopoint(new BasicGeoposition { Latitude = bus.latitude, Longitude = bus.longitude }),
-                        Image = Windows.Storage.Streams.RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/Arrow.png")),
-                        ZIndex = 1000
-                    };
-
-                    if(bus.direction.Equals("inbound"))
-                    {
-                        busMarker = new Image
+                        var busMarker = new Image
                         {
-                            Source = new BitmapImage(new Uri("ms-appx:///Assets/Inbound.png")),
+                            Source = inboundBus,
                             Height = 20,
                             Width = 20,
 
                             RenderTransform = new RotateTransform { Angle = bus.busHeading },
                             RenderTransformOrigin = new Windows.Foundation.Point(0.5, 0.5)
                         };
+                        MapControl.SetNormalizedAnchorPoint(busMarker, new Windows.Foundation.Point(0.5, 0.5));
+                        MapControl.SetLocation(busMarker, new Geopoint(new BasicGeoposition { Latitude = bus.latitude, Longitude = bus.longitude }));
+                        RouteMap.Children.Add(busMarker);
+                        busMarker = null;
                     }
-                    else
+                    else if (bus.direction.Equals("outbound"))
                     {
-                        busMarker = new Image
+                        var busMarker = new Image
                         {
-                            Source = new BitmapImage(new Uri("ms-appx:///Assets/Outbound.png")),
+                            Source = outboundBus,
                             Height = 20,
                             Width = 20,
 
                             RenderTransform = new RotateTransform { Angle = bus.busHeading },
                             RenderTransformOrigin = new Windows.Foundation.Point(0.5, 0.5)
                         };
+                        MapControl.SetNormalizedAnchorPoint(busMarker, new Windows.Foundation.Point(0.5, 0.5));
+                        MapControl.SetLocation(busMarker, new Geopoint(new BasicGeoposition { Latitude = bus.latitude, Longitude = bus.longitude }));
+                        RouteMap.Children.Add(busMarker);
+                        busMarker = null;
                     }
-
-
-                    MapControl.SetNormalizedAnchorPoint(busMarker, new Windows.Foundation.Point(0.5, 0.5));
-                    MapControl.SetLocation(busMarker, new Geopoint(new BasicGeoposition { Latitude = bus.latitude, Longitude = bus.longitude }));
-
-                    RouteMap.Children.Add(busMarker);
                 }
             }
         }
