@@ -16,6 +16,7 @@ namespace nexMuni.ViewModels
     {
         private Stop _selectedStop;
         private string _noTimes;
+        private string _noAlerts;
 
         public ObservableCollection<Route> Routes { get; private set; }
         public ObservableCollection<Alert> Alerts { get; private set; }
@@ -39,6 +40,18 @@ namespace nexMuni.ViewModels
             {
                 _noTimes = value;
                 NotifyPropertyChanged("NoTimesText");
+            }
+        }
+        public string NoAlertsText
+        {
+            get
+            {
+                return _noAlerts;
+            }
+            set
+            {
+                _noAlerts = value;
+                NotifyPropertyChanged("NoAlertsText");
             }
         }
 
@@ -70,8 +83,10 @@ namespace nexMuni.ViewModels
             if (xmlDoc != null)
             {
                 List<Route> routeList = await PredictionHelper.ParsePredictionsAsync(xmlDoc);
+                List<Alert> alertList = await PredictionHelper.ParseAlerts(xmlDoc);
 
-                if (routeList.Count == 0) NoTimesText = "No busses at this time";
+                if (!routeList.Any()) 
+                    NoTimesText = "No busses at this time";
                 else
                 {
                     foreach (Route r in routeList)
@@ -82,10 +97,14 @@ namespace nexMuni.ViewModels
                 }
 
                 //Get alerts TODO:Move to seperate method
-                List<Alert> alertList = await PredictionHelper.ParseAlerts(xmlDoc);
-                foreach (Alert a in alertList)
+                if (!alertList.Any())
+                    NoAlertsText = "No alerts at this time. Enjoy your commute!";
+                else
                 {
-                    Alerts.Add(a);
+                    foreach (Alert a in alertList)
+                    {
+                        Alerts.Add(a);
+                    }
                 }
 
                 if (!refreshTimer.IsEnabled) refreshTimer.Start();

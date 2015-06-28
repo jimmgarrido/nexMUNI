@@ -48,11 +48,14 @@ namespace nexMuni.Views
                 RouteMap.Center= routeMapVm.SelectedRoute.stopLocation;
                 MapControl.SetNormalizedAnchorPoint(StopIcon, new Windows.Foundation.Point(0.5, 1.0));
                 MapControl.SetNormalizedAnchorPoint(LocationIcon, new Windows.Foundation.Point(0.5, 0.5));
-                MapControl.SetLocation(StopIcon, routeMapVm.SelectedRoute.stopLocation);
-                MapControl.SetLocation(LocationIcon, LocationHelper.Location.Coordinate.Point);
-                StopIcon.Visibility = Windows.UI.Xaml.Visibility.Visible;
-                LocationIcon.Visibility = Windows.UI.Xaml.Visibility.Visible;
 
+                MapControl.SetLocation(StopIcon, routeMapVm.SelectedRoute.stopLocation);
+                StopIcon.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                if (LocationHelper.Location != null)
+                {
+                    MapControl.SetLocation(LocationIcon, LocationHelper.Point);
+                    LocationIcon.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                }
 
                 var routePath = await routeMapVm.GetRoutePath();
                 var busLocations = await routeMapVm.GetBusLocations();

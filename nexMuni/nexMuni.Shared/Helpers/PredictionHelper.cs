@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using Windows.Web.Http;
 using nexMuni.DataModels;
+using System.Globalization;
 
 namespace nexMuni.Helpers
 {
@@ -69,11 +70,10 @@ namespace nexMuni.Helpers
 
         public static async Task<List<Alert>> ParseAlerts(XDocument document)
         {
-            List<Alert> alerts = new List<Alert>();
-            IEnumerable<XElement> rootElements;
+            if (document.Root == null) return new List<Alert>();
 
-            if (document.Root == null) return alerts;
-            else rootElements = document.Element("body").Elements("predictions");
+            var alerts = new List<Alert>();
+            var rootElements = document.Element("body").Elements("predictions").Where(e => !e.Attributes().Any(a => a.Name == "dirTitleBecauseNoPredictions"));
 
             foreach (XElement predictionElement in rootElements)
             {
@@ -86,7 +86,14 @@ namespace nexMuni.Helpers
                         var route = predictionElement.Attribute("routeTag").Value;
                         var message = messageElement.Attribute("text").Value;
 
-                        alerts.Add(new Alert(route, message));
+                        if (alerts.Any(x => x.Message == message))
+                        {
+                            alerts.Find(b => b.Message == message).AddRoute(route);
+                        }
+                        else
+                        {
+                            alerts.Add(new Alert(route, message));
+                        }
                     }
                 }
             }
