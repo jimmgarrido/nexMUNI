@@ -9,11 +9,11 @@
     <Import_RootNamespace>nexMuni</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="$(MSBuildThisFileDirectory)App.xaml">
+    <ApplicationDefinition Include="$(MSBuildThisFileDirectory)App.xaml.bak">
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="$(MSBuildThisFileDirectory)App.xaml.cs">
-      <DependentUpon>App.xaml</DependentUpon>
+      <DependentUpon>App.xaml.bak</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)DataModels\Alert.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModels\Bus.cs" />
