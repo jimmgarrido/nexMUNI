@@ -9,19 +9,12 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 using nexMuni.Views;
+using Microsoft.ApplicationInsights;
 
 namespace nexMuni
 {
-    /// <summary>
-    /// Provides application-specific behavior to supplement the default Application class.
-    /// </summary>
     public sealed partial class App : Application
     {
-#if WINDOWS_PHONE_APP
-        // http://go.microsoft.com/fwlink/?LinkId=290986&clcid=0x409
-        
-#endif
-
 #if WINDOWS_PHONE_APP
         private TransitionCollection transitions;
 #endif
@@ -32,6 +25,8 @@ namespace nexMuni
         /// </summary>
         public App()
         {
+            WindowsAppInitializer.InitializeAsync("1181ae3c-8eb6-4dd2-bb31-33e80f390dc7");
+            
             this.InitializeComponent();
             this.Suspending += this.OnSuspending;
         }
