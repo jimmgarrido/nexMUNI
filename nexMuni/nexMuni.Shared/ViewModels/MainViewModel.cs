@@ -16,6 +16,9 @@ namespace nexMuni.ViewModels
         private string _noStopsText;
         private string _noFavoritesText;
 
+        private Task initialize;
+        private int nearbyCount;
+
         public ObservableCollection<Stop> NearbyStops { get; private set; }
         public ObservableCollection<Stop> FavoriteStops { get; private set;}
         public string NoStopsText
@@ -43,12 +46,9 @@ namespace nexMuni.ViewModels
             }
         }
 
-        private ApplicationDataContainer _localSettings;
-        private Task _initialize;
-
         public MainViewModel()
         {
-            _initialize = LoadAsync();
+            initialize = LoadAsync();
             DatabaseHelper.FavoritesChanged += LoadFavorites;
         }
 
@@ -65,6 +65,7 @@ namespace nexMuni.ViewModels
         {
             //Make sure user has given permission to access location
             await LocationHelper.UpdateLocation();
+            nearbyCount = SettingsHelper.GetNearbySetting();
 
             if (LocationHelper.Location != null)
             {
@@ -84,24 +85,33 @@ namespace nexMuni.ViewModels
                     orderby s.DistanceAsDouble
                     select s;
 
-                //Add stops to listview with max of 15
+                //Add stops to listview with a max of user selection
                 if (NearbyStops.Any())
                 {
-                    for(int i=0; i<NearbyStops.Count; i++)
+                    while(NearbyStops.Any())
                     {
-                        NearbyStops.RemoveAt(i);
-                        NearbyStops.Insert(i, sortedList.ElementAt(i));
-                        //if (NearbyStops.Count >= 15) break;
-                        //NearbyStops.Add(new Stop(stop.StopName, stop.Routes, stop.StopTags, stop.Latitude, stop.Longitude, stop.Distance))
+                        NearbyStops.RemoveAt(NearbyStops.Count - 1);
+                    }
+                    //if(NearbyStops.Count > nearbyCount)
+                    //{
+                    //    for(int j=24; j>14; j--)
+                    //    {
+                    //        NearbyStops.RemoveAt(j);
+                    //    }
+                    //}
+
+                    for (int j=0; j < nearbyCount; j++)
+                    {
+                        //NearbyStops.RemoveAt(j);
+                        NearbyStops.Insert(j, sortedList.ElementAt(j));
                     }
                 }
                 else
                 {
                     foreach (Stop stop in sortedList)
                     {
-                        //NearbyStops.Add(new Stop(stop.StopName, stop.Routes, stop.StopTags, stop.Latitude, stop.Longitude, stop.Distance));
                         NearbyStops.Add(stop);
-                        if (NearbyStops.Count >= 15) break;
+                        if (NearbyStops.Count >= nearbyCount) break;
                     }
                 }
 

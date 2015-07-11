@@ -404,7 +404,7 @@
             </Grid.RowDefinitions>
 
             <TextBlock Text="Number of nearby stops" Padding="0,0,0,0" Style="{StaticResource LabelStyle}" />
-            <ComboBox  Margin="0,0,3,0" Width="73" FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Right" Grid.Row="0" Style="{StaticResource ComboBoxStyle}">
+            <ComboBox x:Name="CountBox" Margin="0,0,3,0" Width="73" FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Right" Grid.Row="0" Style="{StaticResource ComboBoxStyle}">
                 <ComboBoxItem Content="15" FontSize="18"/>
                 <ComboBoxItem Content="25" FontSize="18"/>
             </ComboBox>
