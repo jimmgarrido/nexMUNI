@@ -214,7 +214,7 @@
                                     <ColumnDefinition Width="290"/>
                                 </Grid.ColumnDefinitions>-->
                                     <!--<TextBlock Text="{Binding AffectedRoute}" Style="{StaticResource LabelStyle}" FontSize="30" Padding="16,2,0,0" VerticalAlignment="Top" TextAlignment="Right"  Grid.Column="0" TextWrapping="Wrap" LineStackingStrategy="BlockLineHeight" LineHeight="32" FontFamily="Global User Interface" />-->
-                                    <StackPanel Grid.Column="1" Margin="5,0,0,25">
+                                    <StackPanel Margin="5,0,0,25">
                                         <!--<TextBlock Text="{Binding RouteName}" Style="{StaticResource LabelStyle}" FontSize="26.5" Margin="10,0,0,0" Padding="0,0,0,0" VerticalAlignment="Top" TextWrapping="WrapWholeWords" LineStackingStrategy="BlockLineHeight" LineHeight="30" FontFamily="Global User Interface"/>-->
 
                                         <TextBlock Text="{Binding Message}" Style="{StaticResource DetailText}" Margin="12,1,0,0" FontWeight="Normal" TextWrapping="WrapWholeWords" LineStackingStrategy="BlockLineHeight" LineHeight="20" FontFamily="Global User Interface" />

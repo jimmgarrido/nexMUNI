@@ -119,6 +119,12 @@
     <Content Include="Assets\SmallLogo.scale-100.png" />
     <Content Include="Assets\SmallLogo.scale-140.png" />
     <Content Include="Assets\SmallLogo.scale-240.png" />
+    <Content Include="Assets\Solid150.scale-100.png" />
+    <Content Include="Assets\Solid150.scale-140.png" />
+    <Content Include="Assets\Solid150.scale-240.png" />
+    <Content Include="Assets\Solid71.scale-100.png" />
+    <Content Include="Assets\Solid71.scale-140.png" />
+    <Content Include="Assets\Solid71.scale-240.png" />
     <Content Include="Assets\SplashScreen.scale-100.png" />
     <Content Include="Assets\SplashScreen.scale-140.png" />
     <Content Include="Assets\SplashScreen.scale-240.png" />

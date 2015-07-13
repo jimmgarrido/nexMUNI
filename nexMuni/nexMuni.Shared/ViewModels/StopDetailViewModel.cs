@@ -98,7 +98,7 @@ namespace nexMuni.ViewModels
 
                 //Get alerts TODO:Move to seperate method
                 if (!alertList.Any())
-                    NoAlertsText = "No alerts at this time. Enjoy your commute!";
+                    NoAlertsText = "No alerts at this time";
                 else
                 {
                     foreach (Alert a in alertList)
