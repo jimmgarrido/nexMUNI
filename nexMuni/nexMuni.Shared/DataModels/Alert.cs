@@ -11,7 +11,7 @@ namespace nexMuni.DataModels
 
         public Alert(string route, string text)
         {
-            AffectedRoutes = "Routes: " + route;
+            AffectedRoutes = "Routes: " + route;           
             Message = text;
         }
 

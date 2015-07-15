@@ -9,6 +9,8 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using Windows.UI.Xaml;
+using Windows.UI.StartScreen;
+using nexMuni.Views;
 
 namespace nexMuni.ViewModels
 {
@@ -17,6 +19,7 @@ namespace nexMuni.ViewModels
         private Stop _selectedStop;
         private string _noTimes;
         private string _noAlerts;
+        private DispatcherTimer refreshTimer;
 
         public ObservableCollection<Route> Routes { get; private set; }
         public ObservableCollection<Alert> Alerts { get; private set; }
@@ -54,8 +57,7 @@ namespace nexMuni.ViewModels
                 NotifyPropertyChanged("NoAlertsText");
             }
         }
-
-        private DispatcherTimer refreshTimer;
+        public string tileId;
 
         private StopDetailViewModel() { }
 
@@ -67,6 +69,7 @@ namespace nexMuni.ViewModels
             refreshTimer = new DispatcherTimer();
             refreshTimer.Tick += TimerDue;
             refreshTimer.Interval = new System.TimeSpan(0, 0, 15);
+            tileId = stop.StopName;
         }
 
         public async Task LoadTimes()
@@ -82,8 +85,8 @@ namespace nexMuni.ViewModels
             var xmlDoc = await WebHelper.GetMulitPredictionsAsync(SelectedStop.StopTags);
             if (xmlDoc != null)
             {
-                List<Route> routeList = await PredictionHelper.ParsePredictionsAsync(xmlDoc);
-                List<Alert> alertList = await PredictionHelper.ParseAlerts(xmlDoc);
+                List<Route> routeList = await ParseHelper.ParsePredictionsAsync(xmlDoc);
+                List<Alert> alertList = await ParseHelper.ParseAlerts(xmlDoc);
 
                 if (!routeList.Any()) 
                     NoTimesText = "No busses at this time";
@@ -96,7 +99,6 @@ namespace nexMuni.ViewModels
                     }
                 }
 
-                //Get alerts TODO:Move to seperate method
                 if (!alertList.Any())
                     NoAlertsText = "No alerts at this time";
                 else
@@ -121,7 +123,7 @@ namespace nexMuni.ViewModels
             var xmlDoc = await WebHelper.GetMulitPredictionsAsync(SelectedStop.StopTags);
             if (xmlDoc != null)
             {
-                List<Route> routeList = await PredictionHelper.ParsePredictionsAsync(xmlDoc);
+                List<Route> routeList = await ParseHelper.ParsePredictionsAsync(xmlDoc);
 
                 if(routeList.Count == Routes.Count)
                 {
@@ -139,6 +141,16 @@ namespace nexMuni.ViewModels
                     }
                 }
             }
+        }
+
+        public async void PinTile(object sender, RoutedEventArgs e)
+        {
+            //string tileActivationArguments = MainPage.appbarTileId + " was pinned at=" + DateTime.Now.ToLocalTime().ToString();
+            Uri square150x150Logo = new Uri("ms-appx:///Assets/Solid150.png");
+
+            SecondaryTile tile = new SecondaryTile("1", "Display Name", "arg", square150x150Logo, TileSize.Square150x150);
+            tile.VisualElements.Square71x71Logo = new Uri("ms-appx:///Assets/Solid71.png");
+            bool isPinned = await tile.RequestCreateAsync();
         }
 
         public async Task AddFavoriteAsync()

@@ -9,6 +9,7 @@ using nexMuni.Helpers;
 using nexMuni.ViewModels;
 using nexMuni.DataModels;
 using Windows.Devices.Geolocation;
+using Windows.UI.StartScreen;
 
 namespace nexMuni.Views
 {
@@ -49,10 +50,25 @@ namespace nexMuni.Views
                     FavButton.Icon = new SymbolIcon(Symbol.Favorite);
                 }
 
+                if(!SecondaryTile.Exists(detailVm.tileId))
+                {
+                    PinButton.Click += detailVm.PinTile;
+                    PinButton.Label = "pin";
+                    PinButton.Icon = new SymbolIcon(Symbol.Pin);
+                }
+                else
+                {
+                    
+                    PinButton.Label = "unpin";
+                    PinButton.Icon = new SymbolIcon(Symbol.UnPin);
+                }
+
                 alreadyLoaded = true;
             }
 
             await detailVm.LoadTimes();
+
+            if (!detailVm.Alerts.Any()) DetailPivot.Items.RemoveAt(1);
         }
 
         private async void RefreshTimes(object sender, RoutedEventArgs e)

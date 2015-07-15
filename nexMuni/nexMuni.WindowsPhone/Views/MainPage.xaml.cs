@@ -1,16 +1,17 @@
 ﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
 using Windows.Devices.Geolocation;
+using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Maps;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
+using nexMuni.DataModels;
 using nexMuni.Helpers;
 using nexMuni.ViewModels;
-using nexMuni.DataModels;
-using Windows.Foundation;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Linq;
 
 namespace nexMuni.Views
 {
@@ -20,6 +21,7 @@ namespace nexMuni.Views
         public SearchViewModel searchVm;
 
         private bool alreadyLoaded;
+        private int vehicleCounter;
 
         public MainPage()
         {
@@ -29,28 +31,26 @@ namespace nexMuni.Views
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (!alreadyLoaded)
-            {
-                MainPivot.SelectionChanged += PivotItemChanged;
-                await DatabaseHelper.CheckDatabasesAsync();
+            if (alreadyLoaded) return;
+            MainPivot.SelectionChanged += PivotItemChanged;
+            await DatabaseHelper.CheckDatabasesAsync();
 
-                mainVm = new MainViewModel();
-                searchVm = new SearchViewModel();
-                searchVm.UpdateLocation += LocationUpdated;
+            mainVm = new MainViewModel();
+            searchVm = new SearchViewModel();
+            searchVm.UpdateLocation += LocationUpdated;
 
-                NearbyPivot.DataContext = mainVm;
-                FavoritesPivot.DataContext = mainVm;
-                SearchPivot.DataContext = searchVm;
+            NearbyPivot.DataContext = mainVm;
+            FavoritesPivot.DataContext = mainVm;
+            SearchPivot.DataContext = searchVm;
 
-                RoutesFlyout.ItemsPicked += RouteSelected;
-                DirBox.SelectionChanged += DirectionSelected;
-                StopsFlyout.ItemsPicked += StopSelected;
+            RoutesFlyout.ItemsPicked += RouteSelected;
+            DirBox.SelectionChanged += DirectionSelected;
+            StopsFlyout.ItemsPicked += StopSelected;
 
-                MapControl.SetNormalizedAnchorPoint(LocationIcon, new Point(0.5, 0.5));
-                MapControl.SetNormalizedAnchorPoint(StopIcon, new Point(0.5, 1.0));
+            MapControl.SetNormalizedAnchorPoint(LocationIcon, new Point(0.5, 0.5));
+            MapControl.SetNormalizedAnchorPoint(StopIcon, new Point(0.5, 1.0));
 
-                alreadyLoaded = true;
-            }
+            alreadyLoaded = true;
         }
 
         private async void UpdateButtonPressed(object sender, RoutedEventArgs e)
@@ -108,12 +108,19 @@ namespace nexMuni.Views
 
             DirLabel.Visibility = Visibility.Visible;
             DirBox.Visibility = Visibility.Visible;
-            StopIcon.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            StopIcon.Visibility = Visibility.Collapsed;
 
             FavoriteBtn.IsEnabled = false;
             DetailBtn.IsEnabled = false;
 
+            while (vehicleCounter > 0)
+            {
+                SearchMap.Children.RemoveAt(SearchMap.Children.Count - 1);
+                vehicleCounter--;
+            }
+
             await ShowRoutePath();
+            await ShowVehicleLocations();
         }
 
         private void DirectionSelected(object sender, SelectionChangedEventArgs e)
@@ -123,9 +130,9 @@ namespace nexMuni.Views
                 StopsFlyout.SelectedIndex = -1;
                 searchVm.LoadStops(((ComboBox)sender).SelectedItem.ToString());
 
-                StopLabel.Visibility = Windows.UI.Xaml.Visibility.Visible;
-                StopButton.Visibility = Windows.UI.Xaml.Visibility.Visible;
-                StopIcon.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                StopLabel.Visibility = Visibility.Visible;
+                StopButton.Visibility = Visibility.Visible;
+                StopIcon.Visibility = Visibility.Collapsed;
             }
 
             FavoriteBtn.IsEnabled = false;
@@ -134,28 +141,26 @@ namespace nexMuni.Views
 
         private async void StopSelected(ListPickerFlyout sender, ItemsPickedEventArgs args)
         {
-            if (sender.SelectedIndex != -1)
+            if (sender.SelectedIndex == -1) return;
+            await searchVm.StopSelectedAsync((Stop)sender.SelectedItem);
+            SearchTimes.Visibility = Visibility.Visible;
+
+            if (searchVm.IsFavorite())
             {
-                await searchVm.StopSelectedAsync((Stop)sender.SelectedItem);
-                SearchTimes.Visibility = Visibility.Visible;
+                FavoriteBtn.Click += UnfavoriteSearch;
+                FavoriteBtn.Label = "unfavorite";
+                FavoriteBtn.Icon = new SymbolIcon(Symbol.Remove);
+            }
+            else
+            {
+                FavoriteBtn.Click += FavoriteSearch;
+                FavoriteBtn.Label = "favorite";
+                FavoriteBtn.Icon = new SymbolIcon(Symbol.Favorite);
+            }
+            FavoriteBtn.IsEnabled = true;
+            DetailBtn.IsEnabled = true;
 
-                if (searchVm.IsFavorite())
-                {
-                    FavoriteBtn.Click += UnfavoriteSearch;
-                    FavoriteBtn.Label = "unfavorite";
-                    FavoriteBtn.Icon = new SymbolIcon(Symbol.Remove);
-                }
-                else
-                {
-                    FavoriteBtn.Click += FavoriteSearch;
-                    FavoriteBtn.Label = "favorite";
-                    FavoriteBtn.Icon = new SymbolIcon(Symbol.Favorite);
-                }
-                FavoriteBtn.IsEnabled = true;
-                DetailBtn.IsEnabled = true;
-
-                await ShowStopLocation();
-            } 
+            await ShowStopLocation();
         }
 
         private void DetailButtonPressed(object sender, RoutedEventArgs e)
@@ -166,7 +171,7 @@ namespace nexMuni.Views
         private void LocationUpdated()
         {
             RefreshBtn.IsEnabled = true;
-            MapControl.SetNormalizedAnchorPoint(LocationIcon, new Windows.Foundation.Point(0.5, 0.5));
+            MapControl.SetNormalizedAnchorPoint(LocationIcon, new Point(0.5, 0.5));
             MapControl.SetLocation(LocationIcon, LocationHelper.Location.Coordinate.Point);
             mainVm.FavoritesDistances();
             SortBtn.IsEnabled = true;
@@ -175,7 +180,7 @@ namespace nexMuni.Views
         private async Task ShowRoutePath()
         {
             var xmlDoc = await WebHelper.GetRoutePathAsync(searchVm.SelectedRoute);
-            List<MapPolyline> routePath = await MapHelper.ParseRoutePath(xmlDoc);
+            var routePath = await MapHelper.ParseRoutePath(xmlDoc);
     
             SearchMap.MapElements.Clear();
 
@@ -189,13 +194,59 @@ namespace nexMuni.Views
 
             await SearchMap.TrySetViewAsync(searchVm.MapCenter, 11.40);
         }
+        private async Task ShowVehicleLocations()
+        {
+            var xmlDoc = await WebHelper.GetBusLocationsAsync(searchVm.SelectedRoute);
+            var vehicleLocations = MapHelper.ParseBusLocations(xmlDoc);
+
+            var inboundBus = new BitmapImage(new Uri("ms-appx:///Assets/Inbound.png"));
+            var outboundBus = new BitmapImage(new Uri("ms-appx:///Assets/Outbound.png"));
+
+            MapControl.SetNormalizedAnchorPoint(inboundBus, new Point(0.5, 0.5));
+            MapControl.SetNormalizedAnchorPoint(outboundBus, new Point(0.5, 0.5));
+
+            foreach (Bus bus in vehicleLocations)
+            {
+                if (bus.direction.Equals("inbound"))
+                {
+                    var busMarker = new Image
+                    {
+                        Source = inboundBus,
+                        Height = 20,
+                        Width = 20,
+
+                        RenderTransform = new RotateTransform { Angle = bus.busHeading },
+                        RenderTransformOrigin = new Point(0.5, 0.5)
+                    };
+                    MapControl.SetNormalizedAnchorPoint(busMarker, new Point(0.5, 0.5));
+                    MapControl.SetLocation(busMarker, new Geopoint(new BasicGeoposition { Latitude = bus.latitude, Longitude = bus.longitude }));
+                    SearchMap.Children.Add(busMarker);
+                }
+                else if (bus.direction.Equals("outbound"))
+                {
+                    var busMarker = new Image
+                    {
+                        Source = outboundBus,
+                        Height = 20,
+                        Width = 20,
+
+                        RenderTransform = new RotateTransform { Angle = bus.busHeading },
+                        RenderTransformOrigin = new Point(0.5, 0.5)
+                    };
+                    MapControl.SetNormalizedAnchorPoint(busMarker, new Point(0.5, 0.5));
+                    MapControl.SetLocation(busMarker, new Geopoint(new BasicGeoposition { Latitude = bus.latitude, Longitude = bus.longitude }));
+                    SearchMap.Children.Add(busMarker);
+                }
+                vehicleCounter++;
+            }
+        }
 
         private async Task ShowStopLocation()
         {
             var stopLocation =  new Geopoint(new BasicGeoposition() { Latitude = searchVm.SelectedStop.Latitude, Longitude = searchVm.SelectedStop.Longitude });
-            MapControl.SetNormalizedAnchorPoint(StopIcon, new Windows.Foundation.Point(0.5, 1.0));
+            MapControl.SetNormalizedAnchorPoint(StopIcon, new Point(0.5, 1.0));
             MapControl.SetLocation(StopIcon, stopLocation);
-            StopIcon.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            StopIcon.Visibility = Visibility.Visible;
             await SearchMap.TrySetViewAsync(stopLocation, 13.0);
         }
 

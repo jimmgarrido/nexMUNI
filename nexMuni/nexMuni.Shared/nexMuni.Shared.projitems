@@ -21,12 +21,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)DataModels\Route.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModels\RouteDirection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModels\Stop.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Helpers\AlertHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\DatabaseHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\ErrorHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\LocationHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\MapHelper.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Helpers\PredictionHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\ParseHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\SettingsHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\WebHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\MainViewModel.cs" />

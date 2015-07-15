@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Windows.Data.Xml.Dom;
 using Windows.Storage;
 using Windows.UI.Notifications;
-using Windows.Data.Xml.Dom;
 
 namespace nexMuni.Helpers
 {
-    class SettingsHelper
+    public class SettingsHelper
     {
         public static int GetNearbySetting()
         {
@@ -30,8 +27,7 @@ namespace nexMuni.Helpers
                 settings.Values["TransparentTile"] = 1;
             }
 
-            if ((int) settings.Values["TransparentTile"] == 0) return false;
-            else return true;
+            return (int) settings.Values["TransparentTile"] != 0;
         }
 
         public static void SetNearbySetting(int index)
@@ -52,31 +48,36 @@ namespace nexMuni.Helpers
             var settings = ApplicationData.Current.RoamingSettings;
             if(isOn)
             {
-                Windows.UI.Notifications.TileUpdateManager.CreateTileUpdaterForApplication().Clear();
+                TileUpdateManager.CreateTileUpdaterForApplication().Clear();
                 settings.Values["TransparentTile"] = 1;
             }
             else
             {
-                XmlDocument mediumTileXml = TileUpdateManager.GetTemplateContent(TileTemplateType.TileSquare150x150Image);
-                XmlNodeList imageAttributes = mediumTileXml.GetElementsByTagName("image");
-                ((XmlElement)imageAttributes[0]).SetAttribute("src", "ms-appx:///Assets/Solid150.png");
-                ((XmlElement)imageAttributes[0]).SetAttribute("alt", "solid tile");
-                ((XmlElement)mediumTileXml.GetElementsByTagName("binding").Item(0)).SetAttribute("branding", "none");
-
-
-                XmlDocument smallTileXml = TileUpdateManager.GetTemplateContent(TileTemplateType.TileSquare71x71Image);
-                XmlNodeList smallImageAttributes = smallTileXml.GetElementsByTagName("image");
-                ((XmlElement)smallImageAttributes[0]).SetAttribute("src", "ms-appx:///Assets/Solid71.png");
-                ((XmlElement)smallImageAttributes[0]).SetAttribute("alt", "solid tile");
-
-                IXmlNode node = mediumTileXml.ImportNode(smallTileXml.GetElementsByTagName("binding").Item(0), true);
-                mediumTileXml.GetElementsByTagName("visual").Item(0).AppendChild(node);
-
-                TileNotification tileNotification = new TileNotification(mediumTileXml);
-               
-                TileUpdateManager.CreateTileUpdaterForApplication().Update(tileNotification);
+                UpdateTile();
                 settings.Values["TransparentTile"] = 0;
             }
+        }
+
+        private static void UpdateTile()
+        {
+            XmlDocument mediumTileXml = TileUpdateManager.GetTemplateContent(TileTemplateType.TileSquare150x150Image);
+            XmlNodeList imageAttributes = mediumTileXml.GetElementsByTagName("image");
+            ((XmlElement)imageAttributes[0]).SetAttribute("src", "ms-appx:///Assets/Solid150.png");
+            ((XmlElement)imageAttributes[0]).SetAttribute("alt", "solid tile");
+            ((XmlElement)mediumTileXml.GetElementsByTagName("binding").Item(0)).SetAttribute("branding", "none");
+
+
+            XmlDocument smallTileXml = TileUpdateManager.GetTemplateContent(TileTemplateType.TileSquare71x71Image);
+            XmlNodeList smallImageAttributes = smallTileXml.GetElementsByTagName("image");
+            ((XmlElement)smallImageAttributes[0]).SetAttribute("src", "ms-appx:///Assets/Solid71.png");
+            ((XmlElement)smallImageAttributes[0]).SetAttribute("alt", "solid tile");
+
+            IXmlNode node = mediumTileXml.ImportNode(smallTileXml.GetElementsByTagName("binding").Item(0), true);
+            mediumTileXml.GetElementsByTagName("visual").Item(0).AppendChild(node);
+
+            TileNotification tileNotification = new TileNotification(mediumTileXml);
+
+            TileUpdateManager.CreateTileUpdaterForApplication().Update(tileNotification);
         }
     }
 }

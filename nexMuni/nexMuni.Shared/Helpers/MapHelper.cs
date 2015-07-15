@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using Windows.Devices.Geolocation;
-using Windows.Foundation;
 using Windows.UI;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Maps;
-using Windows.UI.Xaml.Media.Imaging;
-using Windows.Web.Http;
-using Windows.Web.Http.Headers;
-using nexMuni.Views;
-using System.Threading.Tasks;
 using nexMuni.DataModels;
 
 namespace nexMuni.Helpers
@@ -47,24 +40,15 @@ namespace nexMuni.Helpers
             return path;
         }
 
-        public static async Task<List<Bus>> ParseBusLocations(XDocument document)
+        public static List<Bus> ParseBusLocations(XDocument document)
         {
-            var vehicles = new List<Bus>();
-
             var elements =
                 from e in document.Element("body").Elements("vehicle")
                 select e;
 
-            foreach(XElement bus in elements)
-            {
-                if (bus.Attribute("dirTag") != null)
-                {
-                    vehicles.Add(new Bus(bus.Attribute("id").Value, bus.Attribute("heading").Value,
-                        bus.Attribute("lat").Value, bus.Attribute("lon").Value, bus.Attribute("dirTag").Value));
-                }
-            }
-
-            return vehicles;
+            return (from bus in elements where bus.Attribute("dirTag") != null 
+                    select new Bus(bus.Attribute("id").Value, bus.Attribute("heading").Value,
+                        bus.Attribute("lat").Value, bus.Attribute("lon").Value, bus.Attribute("dirTag").Value)).ToList();
         }
     }
 }

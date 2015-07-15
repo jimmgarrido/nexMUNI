@@ -1,23 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Windows.Devices.Geolocation;
-using Windows.Foundation;
-using Windows.UI;
 using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Maps;
-using Windows.UI.Xaml.Media.Imaging;
 using Windows.Web.Http;
-using nexMuni.Helpers;
-using nexMuni.ViewModels;
-using nexMuni.Views;
 using nexMuni.DataModels;
-using System.ComponentModel;
+using nexMuni.Helpers;
 
 namespace nexMuni.ViewModels
 {
@@ -131,7 +123,7 @@ namespace nexMuni.ViewModels
             SelectedStop = null;
             SelectedRoute = route;
 
-            string dirURL = "http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=sf-muni&r=";
+            var dirUrl = "http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=sf-muni&r=";
 
             if (route.Equals("Powell/Mason Cable Car")) route = "59";
             else if (route.Equals("Powell/Hyde Cable Car")) route = "60";
@@ -143,21 +135,17 @@ namespace nexMuni.ViewModels
             
 
             //selectedRoute = _route;
-            dirURL = dirURL + route;
+            dirUrl = dirUrl + route;
 
             var response = new HttpResponseMessage();
             var client = new HttpClient();
-            XDocument xmlDoc = new XDocument();
-            string reader;
 
             //Make sure to pull from network not cache everytime predictions are refreshed 
             client.DefaultRequestHeaders.IfModifiedSince = DateTime.Now;
             try
             {
-                response = await client.GetAsync(new Uri(dirURL));
-
-                reader = await response.Content.ReadAsStringAsync();
-
+                response = await client.GetAsync(new Uri(dirUrl));
+                var reader = await response.Content.ReadAsStringAsync();
                 GetDirections(XDocument.Parse(reader));
             }
             catch (Exception)
@@ -226,7 +214,7 @@ namespace nexMuni.ViewModels
             if (xmlDoc != null)
             {
                 //Get bus predictions for stop
-                SearchTimes = await PredictionHelper.ParseSearchTimesAsync(xmlDoc);
+                SearchTimes = await ParseHelper.ParseSearchTimesAsync(xmlDoc);
 
                 Stop tempStop = await GetStopAsync();
                 if (tempStop != null) SelectedStop = tempStop;
@@ -265,7 +253,6 @@ namespace nexMuni.ViewModels
 
         private void GetDirections(XDocument doc)
         {
-            IEnumerable<XElement> tagElements;
             IEnumerable<XElement> rootElement =
                 from e in doc.Descendants("route")
                 select e;
@@ -294,6 +281,7 @@ namespace nexMuni.ViewModels
                 //Add direction title
                 DirectionsList.Add(el.Attribute("title").Value);
 
+                IEnumerable<XElement> tagElements;
                 if (el.Attribute("name").Value == "Inbound")
                 {
                     //Get all stop elements under direction element
@@ -323,18 +311,13 @@ namespace nexMuni.ViewModels
                     }
                 }
             }
-
-           // MapRouteView(doc);
         }
 
         private void SyncFavoriteIds()
         {
-            if (SelectedStop != null)
-            {
-                FavoriteData tempStop = DatabaseHelper.FavoritesList.ToList().Find(s => s.Name == SelectedStop.StopName);
-                SelectedStop.favId = tempStop.Id;
-            }
-
+            if (SelectedStop == null) return;
+            FavoriteData tempStop = DatabaseHelper.FavoritesList.ToList().Find(s => s.Name == SelectedStop.StopName);
+            SelectedStop.favId = tempStop.Id;
         }
 
         #region INotify Methods

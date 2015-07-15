@@ -1,14 +1,8 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Threading.Tasks;
 using Windows.Devices.Geolocation;
 using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media.Imaging;
-using nexMuni.ViewModels;
-using nexMuni.Views;
 using nexMuni.DataModels;
 
 namespace nexMuni.Helpers
@@ -44,7 +38,7 @@ namespace nexMuni.Helpers
             }
             else
             {
-                Location = await geolocator.GetGeopositionAsync(maximumAge: TimeSpan.FromSeconds(10), timeout: TimeSpan.FromSeconds(30));
+                Location = await geolocator.GetGeopositionAsync(TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(30));
                 latitude = Point.Position.Latitude;
                 longitude = Point.Position.Longitude;
                 if (LocationChanged != null) LocationChanged();
@@ -76,8 +70,8 @@ namespace nexMuni.Helpers
             double rLonBound = rLon + Math.Atan2(Math.Sin(rBearing) * Math.Sin(rDist) * Math.Cos(rLat),
                                                  Math.Cos(rDist) - (Math.Sin(rLat) * Math.Sin(rLatBound)));
 
-            double[] LatLon = new double[] { Rad2Deg(rLatBound), Rad2Deg(rLonBound) };
-            return LatLon;
+            double[] latLon = { Rad2Deg(rLatBound), Rad2Deg(rLonBound) };
+            return latLon;
         }
 
         private static double Deg2Rad(double degrees)
@@ -98,22 +92,6 @@ namespace nexMuni.Helpers
             double rHalfDeltaLon = Deg2Rad((lonB - longitude) / 2.0);
 
             return (2 * 3963.19) * Math.Asin(Math.Sqrt(Math.Pow(Math.Sin(rHalfDeltaLat), 2) + Math.Cos(rLatA) * Math.Cos(rLatB) * Math.Pow(Math.Sin(rHalfDeltaLon), 2)));
-        }
-
-        internal static void SortFavorites()
-        {
-            //if (Location != null)
-            //{
-            //    FavoritesDistance();
-
-            //    var tempCollection = new ObservableCollection<Stop>(MainViewModel.FavoritesStops.OrderBy(z => z.DoubleDist));
-
-            //    MainViewModel.FavoritesStops.Clear();
-            //    foreach (StopData s in tempCollection)
-            //    {
-            //        MainViewModel.FavoritesStops.Add(new StopData(s.Name, s.Routes, s.Tags, s.DoubleDist, s.Lat, s.Lon, s.FavID));
-            //    }
-            //}
         }
 
         public static void FavoritesDistances(ObservableCollection<Stop> favorites)

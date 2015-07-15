@@ -150,11 +150,12 @@
     <Page.BottomAppBar>
         <CommandBar Background="#FF9B1414" Foreground="White">
             <AppBarButton x:Name="RefreshBtn"  IsCompact="true" Label="refresh" Click="RefreshTimes">
-			<AppBarButton.Icon>
+			    <AppBarButton.Icon>
         			<BitmapIcon UriSource="Assets/refresh.png"/>
         		</AppBarButton.Icon>
 			</AppBarButton>
             <AppBarButton x:Name="FavButton"/>
+            <AppBarButton x:Name="PinButton" Visibility="Collapsed"/>
         </CommandBar>
     </Page.BottomAppBar>
 
@@ -175,8 +176,8 @@
                     Style="{ThemeResource HeaderTextBlockStyle}" CharacterSpacing="{ThemeResource PivotHeaderItemCharacterSpacing}" />
         
         <!--Content-->
-        <Pivot Style="{StaticResource PivotStyle}" Margin="0,-25,0,0" Grid.Row="1">
-            <PivotItem Header="times">
+        <Pivot x:Name="DetailPivot" Style="{StaticResource PivotStyle}" Margin="0,-25,0,0" Grid.Row="1">
+            <PivotItem x:Name="TimesPivotItem" Header="times">
                 <Grid>
                     <TextBlock x:Name="NoTimesBlock" Text="{Binding NoTimesText}" FontSize="21" Margin="13,180,0,0" TextAlignment="Center"/>
                     <ListView x:Name="RouteInfoList" IsItemClickEnabled="True" ItemsSource="{Binding Routes}"
@@ -193,7 +194,7 @@
                     </ListView>
                 </Grid>
             </PivotItem>
-            <PivotItem Header="alerts">
+            <PivotItem x:Name="AlertsPivotItem" Header="alerts">
                 <Grid>
                     <TextBlock x:Name="NoAlertsBlock" Text="{Binding NoAlertsText}" FontSize="21" Margin="13,180,0,0" TextAlignment="Center"/>
                     <ListView x:Name="AlertsList" IsItemClickEnabled="True" ItemsSource="{Binding Alerts}"
@@ -208,20 +209,12 @@
                         </ListView.ItemContainerTransitions>
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <!--<Grid Margin="0,0,0,25">-->
-                                    <!--<Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="10"/>
-                                    <ColumnDefinition Width="290"/>
-                                </Grid.ColumnDefinitions>-->
-                                    <!--<TextBlock Text="{Binding AffectedRoute}" Style="{StaticResource LabelStyle}" FontSize="30" Padding="16,2,0,0" VerticalAlignment="Top" TextAlignment="Right"  Grid.Column="0" TextWrapping="Wrap" LineStackingStrategy="BlockLineHeight" LineHeight="32" FontFamily="Global User Interface" />-->
-                                    <StackPanel Margin="5,0,0,25">
-                                        <!--<TextBlock Text="{Binding RouteName}" Style="{StaticResource LabelStyle}" FontSize="26.5" Margin="10,0,0,0" Padding="0,0,0,0" VerticalAlignment="Top" TextWrapping="WrapWholeWords" LineStackingStrategy="BlockLineHeight" LineHeight="30" FontFamily="Global User Interface"/>-->
-
-                                        <TextBlock Text="{Binding Message}" Style="{StaticResource DetailText}" Margin="12,1,0,0" FontWeight="Normal" TextWrapping="WrapWholeWords" LineStackingStrategy="BlockLineHeight" LineHeight="20" FontFamily="Global User Interface" />
-                                        <TextBlock Text="{Binding AffectedRoutes}" Style="{StaticResource DetailText}" Margin="12,1,0,0" FontWeight="Bold" TextWrapping="WrapWholeWords" LineStackingStrategy="BlockLineHeight" LineHeight="20" FontFamily="Global User Interface" />
-                                        <!--<TextBlock Text="{Binding Directions[0].Times}" Style="{StaticResource DetailText}" FontWeight="Bold" Margin="12,-5,0,0" FontFamily="Global User Interface" />-->
-                                    </StackPanel>
-                                <!--</Grid>-->
+                                <StackPanel Margin="5,0,0,25" Width="300">
+                                    <TextBlock Text="{Binding Message}" Style="{StaticResource DetailText}" Margin="12,1,0,0" FontWeight="Normal" 
+                                               TextWrapping="WrapWholeWords" LineStackingStrategy="BlockLineHeight" LineHeight="20" FontFamily="Global User Interface" />
+                                    <TextBlock Text="{Binding AffectedRoutes}" Style="{StaticResource DetailText}" Margin="12,1,0,0" FontWeight="Bold"
+                                               TextWrapping="WrapWholeWords" LineStackingStrategy="BlockLineHeight" LineHeight="20" FontFamily="Global User Interface" />
+                                </StackPanel>
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
