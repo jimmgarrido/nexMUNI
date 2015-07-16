@@ -395,9 +395,11 @@
 
         <PivotItem x:Name="FavoritesPivot" Header="favorites" Margin="10,13,10,0">
             <Grid>
-                <TextBlock x:Name="NoFavsNotice" Text="{Binding NoFavoritesText}" Foreground="#b31b1b" TextAlignment="Center" FontFamily="Segoe UI Symbol" FontSize="21" Margin="0,220,0,0" Width="250" TextWrapping="WrapWholeWords"/>
+                <TextBlock x:Name="NoFavsNotice" Text="{Binding NoFavoritesText}" Foreground="#b31b1b" TextAlignment="Center" 
+                           FontFamily="Segoe UI Symbol" FontSize="21" Margin="0,220,0,0" Width="250" TextWrapping="WrapWholeWords"/>
                 <ListView x:Name="FavoritesListView" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Top" 
-                              ItemsSource="{Binding FavoriteStops}" SelectionMode="None" IsItemClickEnabled="True" ItemClick="StopClicked" Padding="0,10,0,0">
+                            ItemsSource="{Binding FavoriteStops}" SelectionMode="None" IsItemClickEnabled="True" 
+                            ItemClick="StopClicked" Padding="0,10,0,0">
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <Grid Background="#b31b1b" Margin="0,0,0,11	" Height="100" Width="500">

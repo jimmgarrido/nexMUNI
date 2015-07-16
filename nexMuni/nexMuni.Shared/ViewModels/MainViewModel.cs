@@ -18,6 +18,7 @@ namespace nexMuni.ViewModels
 
         private Task initialize;
         private int nearbyCount;
+        private bool sorted = false;
 
         public ObservableCollection<Stop> NearbyStops { get; private set; }
         public ObservableCollection<Stop> FavoriteStops { get; private set;}
@@ -139,20 +140,21 @@ namespace nexMuni.ViewModels
                 FavoriteStops.Insert(i,stop);
                 i++;
             }
+            sorted = true;
         }
 
         private void LoadFavorites()
         {
             List<FavoriteData> favorites = DatabaseHelper.FavoritesList;
+            FavoriteStops.Clear();
 
             if (favorites.Count == 0)
             {
-                NoFavoritesText = "Add favorites by pressing &#xE00A; on a stop";
+                NoFavoritesText = "Add favorites by pressing \uE00A on a stop";
             }
             else
             {
                 NoFavoritesText = "";
-                FavoriteStops.Clear();
                 foreach (FavoriteData fav in favorites)
                 {
                     Stop favStop = new Stop(fav.Name, "", fav.Routes, fav.Tags, fav.Lat, fav.Lon);
@@ -162,7 +164,9 @@ namespace nexMuni.ViewModels
             }
             
             //Check if any stops in NearbyStops are also favorites so users have the ability to remove them
-            SyncFavoriteIds();          
+            SyncFavoriteIds();
+            FavoritesDistances();
+            if (sorted) SortFavorites();
         }
 
         private void SyncFavoriteIds()
@@ -176,7 +180,6 @@ namespace nexMuni.ViewModels
                 }
             }
         }
-
 
         #region INotify Methods
         private void NotifyPropertyChanged(string property)
