@@ -33,16 +33,20 @@ namespace nexMuni.Views
             this.navigationHelper.SaveState += this.NavigationHelper_SaveState;
 
             CountBox.SelectionChanged += ChangeNearbyCount;
+            PivotBox.SelectionChanged += ChangePivotSetting;
             TileSwitch.Toggled += TileSwitchToggled;
 
-            if (SettingsHelper.GetNearbySetting() == 25)
-            {
-                CountBox.SelectedIndex = 1;
-            }
-            else
-            {
-                CountBox.SelectedIndex = 0;
-            }
+            //if (SettingsHelper.GetNearbySetting() == 25)
+            //{
+            //    CountBox.SelectedIndex = 1;
+            //}
+            //else
+            //{
+            //    CountBox.SelectedIndex = 0;
+            //}
+
+            CountBox.SelectedIndex = SettingsHelper.GetNearbySetting();
+            PivotBox.SelectedIndex = SettingsHelper.GetLaunchPivotSetting();
 
             if(SettingsHelper.GetTileSetting())
             {
@@ -62,6 +66,11 @@ namespace nexMuni.Views
         private void ChangeNearbyCount(object sender, SelectionChangedEventArgs e)
         {
             SettingsHelper.SetNearbySetting(((ComboBox) sender).SelectedIndex);
+        }
+
+        private void ChangePivotSetting(object sender, SelectionChangedEventArgs e)
+        {
+            SettingsHelper.SetLaunchPivotSetting(((ComboBox) sender).SelectedIndex);
         }
 
         private void NavigationHelper_LoadState(object sender, LoadStateEventArgs e)

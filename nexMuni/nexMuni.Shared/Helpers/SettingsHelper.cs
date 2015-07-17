@@ -9,19 +9,30 @@ namespace nexMuni.Helpers
         public static int GetNearbySetting()
         {
             var settings = ApplicationData.Current.RoamingSettings;
-
             if (settings.Values["NearbyCount"] == null)
             {
                 settings.Values["NearbyCount"] = 15;
             }
 
-            return (int) settings.Values["NearbyCount"];
+            if ((int)settings.Values["NearbyCount"] == 25) return 1;
+            else return 0;
+        }
+
+        public static int GetLaunchPivotSetting()
+        {
+            var settings = ApplicationData.Current.RoamingSettings;
+            if (settings.Values["LaunchPivot"] == null)
+            {
+                settings.Values["LaunchPivot"] = "nearby";
+            }
+            var test = settings.Values["LaunchPivot"];
+            if ((string)settings.Values["LaunchPivot"] == "favorites") return 1;
+            else return 0; 
         }
 
         public static bool GetTileSetting()
         {
             var settings = ApplicationData.Current.RoamingSettings;
-
             if (settings.Values["TransparentTile"] == null)
             {
                 settings.Values["TransparentTile"] = 1;
@@ -40,6 +51,19 @@ namespace nexMuni.Helpers
             else
             {
                 settings.Values["NearbyCount"] = 15;
+            }
+        }
+
+        public static void SetLaunchPivotSetting(int index)
+        {
+            var settings = ApplicationData.Current.RoamingSettings;
+            if (index == 1)
+            {
+                settings.Values["LaunchPivot"] = "favorites";
+            }
+            else
+            {
+                settings.Values["LaunchPivot"] = "nearby";
             }
         }
 

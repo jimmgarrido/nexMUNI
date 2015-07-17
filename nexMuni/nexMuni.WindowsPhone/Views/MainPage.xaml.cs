@@ -33,6 +33,7 @@ namespace nexMuni.Views
         {
             if (alreadyLoaded) return;
             MainPivot.SelectionChanged += PivotItemChanged;
+            MainPivot.SelectedIndex = SettingsHelper.GetLaunchPivotSetting();
             await DatabaseHelper.CheckDatabasesAsync();
 
             mainVm = new MainViewModel();

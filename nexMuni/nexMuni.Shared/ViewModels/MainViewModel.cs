@@ -66,7 +66,9 @@ namespace nexMuni.ViewModels
         {
             //Make sure user has given permission to access location
             await LocationHelper.UpdateLocation();
-            nearbyCount = SettingsHelper.GetNearbySetting();
+
+            if (SettingsHelper.GetNearbySetting() == 1) nearbyCount = 25;
+            else nearbyCount = 15;
 
             if (LocationHelper.Location != null)
             {
@@ -133,7 +135,7 @@ namespace nexMuni.ViewModels
         {
             var sortedFavorites = new List<Stop>(FavoriteStops.OrderBy(s => s.DistanceAsDouble));
             int i= 0;
-            //MainViewModel.FavoritesStops.Clear();
+
             foreach (Stop stop in sortedFavorites)
             {
                 FavoriteStops.RemoveAt(i);

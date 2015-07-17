@@ -74,16 +74,6 @@ namespace nexMuni.Helpers
             return latLon;
         }
 
-        private static double Deg2Rad(double degrees)
-        {
-            return (Math.PI / 180) * degrees;
-        }
-
-        private static double Rad2Deg(double radians)
-        {
-            return (180 / Math.PI) * radians;
-        }
-
         public static double GetDistance(double latB, double lonB)
         {
             double rLatA = Deg2Rad(latitude);
@@ -96,10 +86,21 @@ namespace nexMuni.Helpers
 
         public static void FavoritesDistances(ObservableCollection<Stop> favorites)
         {
+            if (Location == null) return;
             foreach (Stop stop in favorites)
             {
                 stop.DistanceAsDouble = GetDistance(stop.Latitude, stop.Longitude);
             }
+        }
+
+        private static double Deg2Rad(double degrees)
+        {
+            return (Math.PI / 180) * degrees;
+        }
+
+        private static double Rad2Deg(double radians)
+        {
+            return (180 / Math.PI) * radians;
         }
     }
 }
