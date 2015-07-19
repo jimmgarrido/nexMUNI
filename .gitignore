@@ -110,3 +110,6 @@ Backup*/
 UpgradeLog*.XML
 *.diagsession
 *.htm
+
+#User Added
+profiler/

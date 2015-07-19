@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -6,16 +7,18 @@ using Windows.UI.Xaml.Navigation;
 using nexMuni.Common;
 using nexMuni.Helpers;
 using nexMuni.ViewModels;
-using nexMuni.Views;
+using nexMuni.DataModels;
+using Windows.Devices.Geolocation;
+using Windows.UI.StartScreen;
 
 namespace nexMuni.Views
 {
     public sealed partial class StopDetail : Page
     {
         private NavigationHelper navigationHelper;
-        private ObservableDictionary defaultViewModel = new ObservableDictionary();
+        private bool alreadyLoaded;
 
-        private StopDetailModel detailModel;
+        private StopDetailViewModel detailVm;
 
         public StopDetail()
         {
@@ -26,97 +29,94 @@ namespace nexMuni.Views
             this.navigationHelper.SaveState += this.NavigationHelper_SaveState;
         }
 
-        public NavigationHelper NavigationHelper
-        {
-            get { return this.navigationHelper; }
-        }
-
-        public ObservableDictionary DefaultViewModel
-        {
-            get { return this.defaultViewModel; }
-        }
-
         private async void NavigationHelper_LoadState(object sender, LoadStateEventArgs e)
         {
-            detailModel = new StopDetailModel(e.NavigationParameter as StopData);
-
-            StopHeader.Text = detailModel.SelectedStop.Name;
-
-            RouteInfoList.ItemsSource = detailModel.Routes;
-
-            //Check if the stop is in user's favorites list
-            if (MainPageModel.FavoritesStops.Any(x => x.Name == detailModel.SelectedStop.Name))
+            if (!alreadyLoaded)
             {
-                foreach (StopData s in MainPageModel.FavoritesStops)
+                detailVm = new StopDetailViewModel(e.NavigationParameter as Stop);
+                DataContext = detailVm;
+
+                //Check if the stop is in user's favorites list
+                if(detailVm.IsFavorite())
                 {
-                    if (s.Name == detailModel.SelectedStop.Name) detailModel.SelectedStop.FavID = s.FavID;
+                    FavButton.Click += UnfavoriteBtnPressed;
+                    FavButton.Label = "unfavorite";
+                    FavButton.Icon = new SymbolIcon(Symbol.Remove);
                 }
-                favBtn.Click += RemoveStop;
-                favBtn.Label = "unfavorite";
-                favBtn.Icon = new SymbolIcon(Symbol.Remove);
+                else
+                {
+                    FavButton.Click += FavoriteBtnPressed;
+                    FavButton.Label = "favorite";
+                    FavButton.Icon = new SymbolIcon(Symbol.Favorite);
+                }
+
+                if(!SecondaryTile.Exists(detailVm.tileId))
+                {
+                    PinButton.Click += detailVm.PinTile;
+                    PinButton.Label = "pin";
+                    PinButton.Icon = new SymbolIcon(Symbol.Pin);
+                }
+                else
+                {
+                    
+                    PinButton.Label = "unpin";
+                    PinButton.Icon = new SymbolIcon(Symbol.UnPin);
+                }
+
+                alreadyLoaded = true;
             }
-            else favBtn.Click += FavoriteStop;
 
-            await detailModel.LoadTimes();
+            await detailVm.LoadTimes();
 
-            noTimesBlock.Visibility = detailModel.Routes.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
-        }
-
-        private void NavigationHelper_SaveState(object sender, SaveStateEventArgs e)
-        {
+            if (!detailVm.Alerts.Any()) DetailPivot.Items.RemoveAt(1);
         }
 
         private async void RefreshTimes(object sender, RoutedEventArgs e)
         {
 #if WINDOWS_PHONE_APP
-            var systemTray = StatusBar.GetForCurrentView();
-            systemTray.ProgressIndicator.Text = "Refreshing Times";
-            systemTray.ProgressIndicator.ProgressValue = null;
+            var statusBar = StatusBar.GetForCurrentView();
+            await statusBar.ProgressIndicator.ShowAsync();
+            statusBar.ProgressIndicator.Text = "Refreshing Times";
+            statusBar.ProgressIndicator.ProgressValue = null;
 #endif
             RefreshBtn.IsEnabled = false;
-            await detailModel.RefreshTimes();
+            await detailVm.RefreshTimes();
             RefreshBtn.IsEnabled = true;
-            noTimesBlock.Visibility = detailModel.Routes.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
 
 #if WINDOWS_PHONE_APP
-            systemTray.ProgressIndicator.ProgressValue = 0;
-            systemTray.ProgressIndicator.Text = "nexMuni";
+            statusBar.ProgressIndicator.ProgressValue = 0;
+            await statusBar.ProgressIndicator.HideAsync();
 #endif
         }
 
-        private async void FavoriteStop(object sender, RoutedEventArgs e)
+        private async void FavoriteBtnPressed(object sender, RoutedEventArgs e)
         {
-            await DatabaseHelper.AddFavorite(detailModel.SelectedStop);
-            favBtn.Click -= FavoriteStop;
-            favBtn.Click += RemoveStop;
-            favBtn.Icon = new SymbolIcon(Symbol.Remove);
-            favBtn.Label = "unfavorite";
+            await detailVm.AddFavoriteAsync();
+            FavButton.Click -= FavoriteBtnPressed;
+            FavButton.Click += UnfavoriteBtnPressed;
+            FavButton.Icon = new SymbolIcon(Symbol.Remove);
+            FavButton.Label = "unfavorite";
         }
 
-        private async void RemoveStop(object sender, RoutedEventArgs e)
+        private async void UnfavoriteBtnPressed(object sender, RoutedEventArgs e)
         {
-            await DatabaseHelper.RemoveFavorite(detailModel.SelectedStop);
-            favBtn.Click -= RemoveStop;
-            favBtn.Click += FavoriteStop;
-            favBtn.Icon = new SymbolIcon(Symbol.Favorite);
-            favBtn.Label = "favorite";
+            await detailVm.RemoveFavoriteAsync();
+            FavButton.Click -= UnfavoriteBtnPressed;
+            FavButton.Click += FavoriteBtnPressed;
+            FavButton.Icon = new SymbolIcon(Symbol.Favorite);
+            FavButton.Label = "favorite";
+        }
+
+        private void GoToRouteMap(object sender, ItemClickEventArgs e)
+        {
+            var route = (Route)e.ClickedItem;
+            route.stopLocation = new Geopoint(new BasicGeoposition { Latitude = detailVm.SelectedStop.Latitude, Longitude = detailVm.SelectedStop.Longitude });
+
+            Frame.Navigate(typeof(RouteMapPage), route);
         }
 
         #region NavigationHelper registration
 
-        /// <summary>
-        /// The methods provided in this section are simply used to allow
-        /// NavigationHelper to respond to the page's navigation methods.
-        /// <para>
-        /// Page specific logic should be placed in event handlers for the  
-        /// <see cref="NavigationHelper.LoadState"/>
-        /// and <see cref="NavigationHelper.SaveState"/>.
-        /// The navigation parameter is available in the LoadState method 
-        /// in addition to page state preserved during an earlier session.
-        /// </para>
-        /// </summary>
-        /// <param name="e">Provides data for navigation methods and event
-        /// handlers that cannot cancel the navigation request.</param>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             this.navigationHelper.OnNavigatedTo(e);
@@ -125,13 +125,17 @@ namespace nexMuni.Views
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             this.navigationHelper.OnNavigatedFrom(e);
+            detailVm.StopTimer();
         }
+
+        public NavigationHelper NavigationHelper
+        {
+            get { return this.navigationHelper; }
+        }
+
+        private void NavigationHelper_SaveState(object sender, SaveStateEventArgs e) { }
 
         #endregion
 
-        private void ShowRouteMap(object sender, ItemClickEventArgs e)
-        {
-            this.Frame.Navigate(typeof(RouteMap), e.ClickedItem);
-        }
     }
 }

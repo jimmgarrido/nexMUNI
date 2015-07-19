@@ -1,95 +1,54 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using Windows.Devices.Geolocation;
-using Windows.Foundation;
 using Windows.UI;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Maps;
-using Windows.UI.Xaml.Media.Imaging;
-using Windows.Web.Http;
-using Windows.Web.Http.Headers;
-using nexMuni.Helpers;
-using nexMuni.Views;
+using nexMuni.DataModels;
 
 namespace nexMuni.Helpers
 {
     class MapHelper
     {
-        public static async void LoadDoc(string route)
+        public static async Task<List<MapPolyline>> ParseRoutePath(XDocument document)
         {
-            string URL = "http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=sf-muni&r=";
-            URL = URL + route;
-            HttpResponseMessage saved = null;
-
-            var response = new HttpResponseMessage();
-            var client = new HttpClient();
-            string reader;
-
-            if (saved != null) response = saved;
-
-            //Make sure to pull from network not cache everytime predictions are refreshed 
-            response.Headers.CacheControl.Add(new HttpNameValueHeaderValue("max-age", "1"));
-            client.DefaultRequestHeaders.CacheControl.Add(new HttpNameValueHeaderValue("max-age", "1"));
-            if (response.Content != null) client.DefaultRequestHeaders.IfModifiedSince = response.Content.Headers.Expires;
-            response = await client.GetAsync(new Uri(URL));
-            response.Content.Headers.Expires = DateTime.Now;
-
-            saved = response;
-
-            reader = await response.Content.ReadAsStringAsync();
-            GetPoints(XDocument.Parse(reader));
-        }
-
-        public static void GetPoints(XDocument doc)
-        {
-            List<BasicGeoposition> positions = new List<BasicGeoposition>();
-            IEnumerable<XElement> subElements;
-            List<MapPolyline> route = new List<MapPolyline>();
-
-            IEnumerable<XElement> rootElement =
-                from e in doc.Descendants("route")
-                select e;
             IEnumerable<XElement> elements =
-                from d in rootElement.ElementAt(0).Elements("path")
-                select d;
-            int x = 0;
-            
+                from e in document.Element("body").Element("route").Elements("path")
+                select e;
+
+            var path = new List<MapPolyline>();
+            var points = new List<BasicGeoposition>();
+
             foreach (XElement el in elements)
             {
-                subElements =
-                    from p in el.Elements("point")
+                points.Clear();
+
+                var subElements = from p in el.Elements("point")
                     select p;
 
-                if (positions.Count > 0) positions.Clear();
-                foreach (XElement e in subElements)
+                points.AddRange(subElements.Select(e => new BasicGeoposition() {Latitude = double.Parse(e.Attribute("lat").Value), Longitude = double.Parse(e.Attribute("lon").Value)}));
+                path.Add(new MapPolyline
                 {
-                    positions.Add(new BasicGeoposition() { Latitude = Double.Parse(e.Attribute("lat").Value), Longitude = Double.Parse(e.Attribute("lon").Value) });
-                }
-                route.Add(new MapPolyline());
-                route[x].StrokeColor = Color.FromArgb(255, 179, 27, 27);
-                route[x].StrokeThickness = 2.00;
-                route[x].ZIndex = 99;
-                route[x].Path = new Geopath(positions);
-                route[x].Visible = true;
-                RouteMap.routeMap.MapElements.Add(route[x]);
-                x++;
+                    Path = new Geopath(points),
+                    StrokeColor = Color.FromArgb(255, 179, 27, 27),
+                    StrokeThickness = 2.00,
+                    ZIndex = 99
+                });
             }
 
-            if (LocationHelper.phoneLocation != null)
-            {
-                Image icon = new Image
-                {
-                    Source = new BitmapImage(new Uri("ms-appx:///Assets/Location.png")),
-                    Width = 25,
-                    Height = 25
-                };
+            return path;
+        }
 
-                RouteMap.routeMap.Children.Add(icon);
-                MapControl.SetNormalizedAnchorPoint(icon, new Point(0.5, 0.5));
-                MapControl.SetLocation(icon, LocationHelper.phoneLocation.Coordinate.Point);
-            }
+        public static List<Bus> ParseBusLocations(XDocument document)
+        {
+            var elements =
+                from e in document.Element("body").Elements("vehicle")
+                select e;
+
+            return (from bus in elements where bus.Attribute("dirTag") != null 
+                    select new Bus(bus.Attribute("id").Value, bus.Attribute("heading").Value,
+                        bus.Attribute("lat").Value, bus.Attribute("lon").Value, bus.Attribute("dirTag").Value)).ToList();
         }
     }
 }

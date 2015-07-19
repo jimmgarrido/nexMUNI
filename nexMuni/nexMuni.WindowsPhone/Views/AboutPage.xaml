@@ -22,8 +22,8 @@
         </Grid.RowDefinitions>
 
         <!-- Title Panel -->
-        <StackPanel Grid.Row="0" Margin="19,0,0,0">
-            <TextBlock Text="about" Margin="0,-6.5,0,26.5" FontSize="52" Style="{ThemeResource HeaderTextBlockStyle}" Foreground="White"/>
+        <StackPanel Grid.Row="0" Margin="19,10,0,15">
+            <TextBlock Text="about" FontSize="36" Style="{ThemeResource HeaderTextBlockStyle}" Foreground="White"/>
         </StackPanel>
 
         <!--TODO: Content should be placed within the following grid-->

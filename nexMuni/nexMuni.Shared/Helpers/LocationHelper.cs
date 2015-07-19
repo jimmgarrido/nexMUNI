@@ -1,58 +1,62 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Threading.Tasks;
 using Windows.Devices.Geolocation;
 using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media.Imaging;
-using nexMuni.ViewModels;
-using nexMuni.Views;
+using nexMuni.DataModels;
 
 namespace nexMuni.Helpers
 {
     class LocationHelper
     {
-        private static double PhoneLat { get; set; }
-        private static double PhoneLong { get; set; }
-        public static Geoposition phoneLocation;
+        public static Geoposition Location { get; private set; }
+        public static Geopoint Point
+        {
+            get
+            {
+                return Location.Coordinate.Point;
+            }
+        }
+        public static ChangedEventHandler LocationChanged;
+
+        private static double latitude;
+        private static double longitude;
+        private static Geolocator geolocator;
 
         public static async Task UpdateLocation()
         {
 #if WINDOWS_PHONE_APP
-            var systemTray = StatusBar.GetForCurrentView();
-            systemTray.ProgressIndicator.Text = "Getting Location";
-            systemTray.ProgressIndicator.ProgressValue = null;
+            var statusBar = StatusBar.GetForCurrentView();
+            await statusBar.ProgressIndicator.ShowAsync();
+            statusBar.ProgressIndicator.Text = "Getting Location";
+            statusBar.ProgressIndicator.ProgressValue = null;
 #endif
-
-            Geolocator geolocator = new Geolocator { DesiredAccuracyInMeters = 50 };
-
+            if(geolocator == null) geolocator = new Geolocator { DesiredAccuracyInMeters = 50 };
             if (geolocator.LocationStatus == PositionStatus.Disabled)
             {
-                MainPage.noNearbyText.Text = "Location services disabled";
+                //MainPage.noNearbyText.Text = "Location services disabled";
             }
             else
             {
-                phoneLocation = await geolocator.GetGeopositionAsync(maximumAge: TimeSpan.FromSeconds(5), timeout: TimeSpan.FromSeconds(30));
+                Location = await geolocator.GetGeopositionAsync(TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(30));
+                latitude = Point.Position.Latitude;
+                longitude = Point.Position.Longitude;
+                if (LocationChanged != null) LocationChanged();
             }
 
 #if WINDOWS_PHONE_APP
-            systemTray.ProgressIndicator.ProgressValue = 0;
-            systemTray.ProgressIndicator.Text = "nexMUNI";
+            statusBar.ProgressIndicator.ProgressValue = 0;
+            await statusBar.ProgressIndicator.HideAsync();
 #endif
         }
 
-        public static double[][] MakeBounds(Geopoint location, double dist)
+        public static double[][] MakeBounds(double dist)
         {
-            PhoneLat = location.Position.Latitude;
-            PhoneLong = location.Position.Longitude;
-
             //Create search radius bounds
-           return new double[][] { Destination(PhoneLat, PhoneLong, 0.0, dist),
-                                                Destination(PhoneLat, PhoneLong, 90.0, dist),
-                                                Destination(PhoneLat, PhoneLong, 180.0, dist),
-                                                Destination(PhoneLat, PhoneLong, 270.0, dist)};
+           return new double[][] { Destination(latitude, longitude, 0.0, dist),
+                                                Destination(latitude, longitude, 90.0, dist),
+                                                Destination(latitude, longitude, 180.0, dist),
+                                                Destination(latitude, longitude, 270.0, dist)};
         }
 
         private static double[] Destination(double lat, double lon, double bearing, double d)
@@ -66,8 +70,27 @@ namespace nexMuni.Helpers
             double rLonBound = rLon + Math.Atan2(Math.Sin(rBearing) * Math.Sin(rDist) * Math.Cos(rLat),
                                                  Math.Cos(rDist) - (Math.Sin(rLat) * Math.Sin(rLatBound)));
 
-            double[] LatLon = new double[] { Rad2Deg(rLatBound), Rad2Deg(rLonBound) };
-            return LatLon;
+            double[] latLon = { Rad2Deg(rLatBound), Rad2Deg(rLonBound) };
+            return latLon;
+        }
+
+        public static double GetDistance(double latB, double lonB)
+        {
+            double rLatA = Deg2Rad(latitude);
+            double rLatB = Deg2Rad(latB);
+            double rHalfDeltaLat = Deg2Rad((latB - latitude) / 2.0);
+            double rHalfDeltaLon = Deg2Rad((lonB - longitude) / 2.0);
+
+            return (2 * 3963.19) * Math.Asin(Math.Sqrt(Math.Pow(Math.Sin(rHalfDeltaLat), 2) + Math.Cos(rLatA) * Math.Cos(rLatB) * Math.Pow(Math.Sin(rHalfDeltaLon), 2)));
+        }
+
+        public static void FavoritesDistances(ObservableCollection<Stop> favorites)
+        {
+            if (Location == null) return;
+            foreach (Stop stop in favorites)
+            {
+                stop.DistanceAsDouble = GetDistance(stop.Latitude, stop.Longitude);
+            }
         }
 
         private static double Deg2Rad(double degrees)
@@ -78,48 +101,6 @@ namespace nexMuni.Helpers
         private static double Rad2Deg(double radians)
         {
             return (180 / Math.PI) * radians;
-        }
-
-        public static double Distance(double latB, double lonB)
-        {
-            double rLatA = Deg2Rad(PhoneLat);
-            double rLatB = Deg2Rad(latB);
-            double rHalfDeltaLat = Deg2Rad((latB - PhoneLat) / 2.0);
-            double rHalfDeltaLon = Deg2Rad((lonB - PhoneLong) / 2.0);
-
-            return (2 * 3963.19) * Math.Asin(Math.Sqrt(Math.Pow(Math.Sin(rHalfDeltaLat), 2) + Math.Cos(rLatA) * Math.Cos(rLatB) * Math.Pow(Math.Sin(rHalfDeltaLon), 2)));
-
-        }
-
-        internal static void SortFavorites()
-        {
-            if (phoneLocation != null)
-            {
-                FavoritesDistance();
-
-                var tempCollection = new ObservableCollection<StopData>(MainPageModel.FavoritesStops.OrderBy(z => z.DoubleDist));
-
-                MainPageModel.FavoritesStops.Clear();
-                foreach (StopData s in tempCollection)
-                {
-                    MainPageModel.FavoritesStops.Add(new StopData(s.Name, s.Routes, s.Tags, s.DoubleDist, s.Lat, s.Lon, s.FavID));
-                }
-            }
-        }
-
-        public static void FavoritesDistance()
-        {
-            foreach (StopData stop in MainPageModel.FavoritesStops)
-            {
-                stop.DoubleDist = Distance(stop.Lat, stop.Lon);
-            }
-        }
-
-        private static DependencyObject LocationPoint()
-        {
-            Image png = new Image { Source = new BitmapImage() };
-
-            return png;
         }
     }
 }

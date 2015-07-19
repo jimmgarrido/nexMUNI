@@ -1,8 +1,15 @@
-﻿using Windows.Devices.Geolocation;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Windows.Devices.Geolocation;
+using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Maps;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
+using nexMuni.DataModels;
 using nexMuni.Helpers;
 using nexMuni.ViewModels;
 
@@ -10,90 +17,47 @@ namespace nexMuni.Views
 {
     public sealed partial class MainPage : Page
     {
-        public static TextBlock noNearbyText { get; set; }
-        public static TextBlock noFavsText { get; set; }
-        public static TextBlock timesText { get; set; }
-        public static TextBlock dirText { get; set; }
-        public static TextBlock stopText { get; set; }
+        public MainViewModel mainVm;
+        public SearchViewModel searchVm;
 
-        public static ComboBox dirComboBox { get; set; }
-        public static MapControl searchMap { get; set; }
-        public static Pivot mainPivot { get; set; }
-        
-        public static ListPickerFlyout routePicker { get; set; }
-        public static ListPickerFlyout stopPicker { get; set; }
-
-        public static Button routeBtn { get; set; }
-        public static Button stopBtn { get; set; }
-        public static Button favSearchBtn { get; set; }
-        public static Button removeSearchBtn { get; set; }
+        private bool alreadyLoaded;
+        private int vehicleCounter;
 
         public MainPage()
         {
             this.InitializeComponent();
-
             this.NavigationCacheMode = NavigationCacheMode.Required;
         }
 
-        protected async override void OnNavigatedTo(NavigationEventArgs e)
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
-            MainPivot.SelectionChanged += pivotControl_SelectionChanged;
-            if (!MainPageModel.IsDataLoaded)
-            {
-                noNearbyText = NoStopsNotice;
-                noFavsText = NoFavsNotice;
-                timesText = SearchTimes;
-                dirText = DirLabel;
-                stopText = StopLabel;
+            if (alreadyLoaded) return;
+            MainPivot.SelectionChanged += PivotItemChanged;
+            MainPivot.SelectedIndex = SettingsHelper.GetLaunchPivotSetting();
+            await DatabaseHelper.CheckDatabasesAsync();
 
-                mainPivot = MainPivot;
-                searchMap = SearchMapControl;
-                searchMap.Center = new Geopoint(new BasicGeoposition() { Latitude = 37.7599, Longitude = -122.437 });
+            mainVm = new MainViewModel();
+            searchVm = new SearchViewModel();
+            searchVm.UpdateLocation += LocationUpdated;
 
-                routeBtn = RouteButton;
-                stopBtn = StopButton;
-                favSearchBtn = AddFavSearch;
-                removeSearchBtn = RemoveFavSearch;
+            NearbyPivot.DataContext = mainVm;
+            FavoritesPivot.DataContext = mainVm;
+            SearchPivot.DataContext = searchVm;
 
-                routePicker = RoutesFlyout;
-                stopPicker = StopsFlyout;
-                dirComboBox = DirBox;
+            RoutesFlyout.ItemsPicked += RouteSelected;
+            DirBox.SelectionChanged += DirectionSelected;
+            StopsFlyout.ItemsPicked += StopSelected;
 
-                await DatabaseHelper.CheckDatabases();
-                MainPageModel.LoadData();
-                SearchModel.LoadData();
+            MapControl.SetNormalizedAnchorPoint(LocationIcon, new Point(0.5, 0.5));
+            MapControl.SetNormalizedAnchorPoint(StopIcon, new Point(0.5, 1.0));
 
-                nearbyListView.ItemsSource = MainPageModel.NearbyStops;
-                favoritesListView.ItemsSource = MainPageModel.FavoritesStops;
-            }
-        }
-
-        void pivotControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            switch (((Pivot)sender).SelectedIndex)
-            {
-                case 0:
-                    RefreshBtn.Visibility = Visibility.Visible;
-                    appBar.ClosedDisplayMode = AppBarClosedDisplayMode.Compact;
-                    sortBtn.Visibility = Visibility.Collapsed;
-                    break;
-                case 1:
-                    appBar.ClosedDisplayMode = AppBarClosedDisplayMode.Compact;
-                    sortBtn.Visibility = Visibility.Visible;
-                    RefreshBtn.Visibility = Visibility.Collapsed;
-                    break;
-                case 2:
-                    appBar.ClosedDisplayMode = AppBarClosedDisplayMode.Minimal;
-                    sortBtn.Visibility = Visibility.Collapsed;
-                    RefreshBtn.Visibility = Visibility.Collapsed;
-                    break;
-            }
+            alreadyLoaded = true;
         }
 
         private async void UpdateButtonPressed(object sender, RoutedEventArgs e)
         {
             RefreshBtn.IsEnabled = false;
-            await MainPageModel.UpdateNearbyStops();
+            await mainVm.UpdateNearbyStops();
             RefreshBtn.IsEnabled = true;
         }
 
@@ -104,26 +68,214 @@ namespace nexMuni.Views
 
         private void GoToAbout(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(AboutPage));
+            Frame.Navigate(typeof(AboutPage));
+        }
+
+        private void GoToSettings(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(SettingsPage));
         }
 
         private void SortFavorites(object sender, RoutedEventArgs e)
         {
-            LocationHelper.SortFavorites();
+           mainVm.SortFavorites();
         }
 
         private async void FavoriteSearch(object sender, RoutedEventArgs e)
         {
-            await DatabaseHelper.FavoriteFromSearch(SearchModel.selectedStop);
-            favSearchBtn.Visibility = Visibility.Collapsed;
-            removeSearchBtn.Visibility = Visibility.Visible;
+            await searchVm.FavoriteSearchAsync();
+            FavoriteBtn.Click -= FavoriteSearch;
+            FavoriteBtn.Click += UnfavoriteSearch;
+            FavoriteBtn.Icon = new SymbolIcon(Symbol.Remove);
+            FavoriteBtn.Label = "unfavorite";
         }
 
-        private async void RemoveSearch(object sender, RoutedEventArgs e)
+        private async void UnfavoriteSearch(object sender, RoutedEventArgs e)
         {
-            await DatabaseHelper.RemoveSearch(SearchModel.selectedStop);
-            removeSearchBtn.Visibility = Visibility.Collapsed;
-            favSearchBtn.Visibility = Visibility.Visible;
+            await searchVm.UnfavoriteSearchAsync();
+            FavoriteBtn.Click -= UnfavoriteSearch;
+            FavoriteBtn.Click += FavoriteSearch;
+            FavoriteBtn.Icon = new SymbolIcon(Symbol.Favorite);
+            FavoriteBtn.Label = "favorite";
+        }
+
+        private async void RouteSelected(ListPickerFlyout sender, ItemsPickedEventArgs args)
+        {
+            RoutesFlyout.SelectedIndex = sender.SelectedIndex;
+            await searchVm.LoadDirectionsAsync(sender.SelectedItem.ToString());
+
+            DirBox.SelectedIndex = 0;
+            //StopsFlyout.SelectedIndex = -1;
+
+            DirLabel.Visibility = Visibility.Visible;
+            DirBox.Visibility = Visibility.Visible;
+            StopIcon.Visibility = Visibility.Collapsed;
+
+            FavoriteBtn.IsEnabled = false;
+            DetailBtn.IsEnabled = false;
+
+            while (vehicleCounter > 0)
+            {
+                SearchMap.Children.RemoveAt(SearchMap.Children.Count - 1);
+                vehicleCounter--;
+            }
+
+            await ShowRoutePath();
+            await ShowVehicleLocations();
+        }
+
+        private void DirectionSelected(object sender, SelectionChangedEventArgs e)
+        {
+            if (((ComboBox)sender).SelectedIndex != -1)
+            {
+                StopsFlyout.SelectedIndex = -1;
+                searchVm.LoadStops(((ComboBox)sender).SelectedItem.ToString());
+
+                StopLabel.Visibility = Visibility.Visible;
+                StopButton.Visibility = Visibility.Visible;
+                StopIcon.Visibility = Visibility.Collapsed;
+            }
+
+            FavoriteBtn.IsEnabled = false;
+            DetailBtn.IsEnabled = false;
+        }
+
+        private async void StopSelected(ListPickerFlyout sender, ItemsPickedEventArgs args)
+        {
+            if (sender.SelectedIndex == -1) return;
+            await searchVm.StopSelectedAsync((Stop)sender.SelectedItem);
+            SearchTimes.Visibility = Visibility.Visible;
+
+            if (searchVm.IsFavorite())
+            {
+                if (FavoriteBtn.Label == "favorite") FavoriteBtn.Click -= FavoriteSearch;
+                FavoriteBtn.Click += UnfavoriteSearch;
+                FavoriteBtn.Label = "unfavorite";
+                FavoriteBtn.Icon = new SymbolIcon(Symbol.Remove);
+            }
+            else
+            {
+                if (FavoriteBtn.Label == "unfavorite") FavoriteBtn.Click -= UnfavoriteSearch;
+                FavoriteBtn.Click += FavoriteSearch;
+                FavoriteBtn.Label = "favorite";
+                FavoriteBtn.Icon = new SymbolIcon(Symbol.Favorite);
+            }
+            FavoriteBtn.IsEnabled = true;
+            DetailBtn.IsEnabled = true;
+
+            await ShowStopLocation();
+        }
+
+        private void DetailButtonPressed(object sender, RoutedEventArgs e)
+        {
+            this.Frame.Navigate(typeof(StopDetail), searchVm.SelectedStop);
+        }
+
+        private void LocationUpdated()
+        {
+            RefreshBtn.IsEnabled = true;
+            MapControl.SetNormalizedAnchorPoint(LocationIcon, new Point(0.5, 0.5));
+            MapControl.SetLocation(LocationIcon, LocationHelper.Location.Coordinate.Point);
+            mainVm.FavoritesDistances();
+            SortBtn.IsEnabled = true;
+        }
+
+        private async Task ShowRoutePath()
+        {
+            var xmlDoc = await WebHelper.GetRoutePathAsync(searchVm.SelectedRoute);
+            var routePath = await MapHelper.ParseRoutePath(xmlDoc);
+    
+            SearchMap.MapElements.Clear();
+
+            if (routePath.Any())
+            {
+                foreach (MapPolyline line in routePath)
+                {
+                    SearchMap.MapElements.Add(line);
+                }
+            }
+
+            await SearchMap.TrySetViewAsync(searchVm.MapCenter, 11.40);
+        }
+        private async Task ShowVehicleLocations()
+        {
+            var xmlDoc = await WebHelper.GetBusLocationsAsync(searchVm.SelectedRoute);
+            var vehicleLocations = MapHelper.ParseBusLocations(xmlDoc);
+
+            var inboundBus = new BitmapImage(new Uri("ms-appx:///Assets/Inbound.png"));
+            var outboundBus = new BitmapImage(new Uri("ms-appx:///Assets/Outbound.png"));
+
+            MapControl.SetNormalizedAnchorPoint(inboundBus, new Point(0.5, 0.5));
+            MapControl.SetNormalizedAnchorPoint(outboundBus, new Point(0.5, 0.5));
+
+            foreach (Bus bus in vehicleLocations)
+            {
+                if (bus.direction.Equals("inbound"))
+                {
+                    var busMarker = new Image
+                    {
+                        Source = inboundBus,
+                        Height = 20,
+                        Width = 20,
+
+                        RenderTransform = new RotateTransform { Angle = bus.busHeading },
+                        RenderTransformOrigin = new Point(0.5, 0.5)
+                    };
+                    MapControl.SetNormalizedAnchorPoint(busMarker, new Point(0.5, 0.5));
+                    MapControl.SetLocation(busMarker, new Geopoint(new BasicGeoposition { Latitude = bus.latitude, Longitude = bus.longitude }));
+                    SearchMap.Children.Add(busMarker);
+                }
+                else if (bus.direction.Equals("outbound"))
+                {
+                    var busMarker = new Image
+                    {
+                        Source = outboundBus,
+                        Height = 20,
+                        Width = 20,
+
+                        RenderTransform = new RotateTransform { Angle = bus.busHeading },
+                        RenderTransformOrigin = new Point(0.5, 0.5)
+                    };
+                    MapControl.SetNormalizedAnchorPoint(busMarker, new Point(0.5, 0.5));
+                    MapControl.SetLocation(busMarker, new Geopoint(new BasicGeoposition { Latitude = bus.latitude, Longitude = bus.longitude }));
+                    SearchMap.Children.Add(busMarker);
+                }
+                vehicleCounter++;
+            }
+        }
+
+        private async Task ShowStopLocation()
+        {
+            var stopLocation =  new Geopoint(new BasicGeoposition() { Latitude = searchVm.SelectedStop.Latitude, Longitude = searchVm.SelectedStop.Longitude });
+            MapControl.SetNormalizedAnchorPoint(StopIcon, new Point(0.5, 1.0));
+            MapControl.SetLocation(StopIcon, stopLocation);
+            StopIcon.Visibility = Visibility.Visible;
+            await SearchMap.TrySetViewAsync(stopLocation, 13.0);
+        }
+
+        private void PivotItemChanged(object sender, SelectionChangedEventArgs e)
+        {
+            switch (((Pivot)sender).SelectedIndex)
+            {
+                case 0:
+                    RefreshBtn.Visibility = Visibility.Visible;
+                    SortBtn.Visibility = Visibility.Collapsed;
+                    FavoriteBtn.Visibility = Visibility.Collapsed;
+                    DetailBtn.Visibility = Visibility.Collapsed;
+                    break;
+                case 1:
+                    SortBtn.Visibility = Visibility.Visible;
+                    RefreshBtn.Visibility = Visibility.Collapsed;
+                    FavoriteBtn.Visibility = Visibility.Collapsed;
+                    DetailBtn.Visibility = Visibility.Collapsed;
+                    break;
+                case 2:
+                    FavoriteBtn.Visibility = Visibility.Visible;
+                    DetailBtn.Visibility = Visibility.Visible;
+                    SortBtn.Visibility = Visibility.Collapsed;
+                    RefreshBtn.Visibility = Visibility.Collapsed;
+                    break;
+            }
         }
     }
 }

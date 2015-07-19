@@ -5,94 +5,77 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Class="nexMuni.Views.StopDetail"
-    Background="#FFB31B1B"
+    Background="#b31b1b"
     Foreground="White">
 
     <Page.Resources>
         <Style x:Key="LabelStyle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="27"/>
             <Setter Property="HorizontalAlignment" Value="Left"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
 
         <Style x:Key="DetailText" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontSize" Value="17"/>
             <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="TextWrapping" Value="WrapWholeWords"/>
+            <Setter Property="LineHeight" Value="30"/>
+            <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
         </Style>
         
         <!-- DataTemplates for times -->
         <DataTemplate x:Key="OneDirection">
             <Grid Margin="0,0,0,25">
-                <StackPanel>
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="35"/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid Background="White" Grid.Column="0" Margin="15,0,0,0">
-                            <TextBlock Text="{Binding RouteNumber}" Style="{StaticResource LabelStyle}" Foreground="#FFB31B1B" Padding="8,0,8,0" FontWeight="Bold"/>
-                        </Grid>
-                        <TextBlock Text="{Binding RouteName}" Style="{StaticResource LabelStyle}" Margin="5,0,0,0" Padding="10,0" Grid.Column="1"/>
-                    </Grid>
-                    <TextBlock Text="{Binding Directions[0].Title}" Style="{StaticResource DetailText}" Margin="15,8,0,0" FontWeight="Bold" />
-                    <TextBlock Text="{Binding Directions[0].Times,Mode=OneWay}" Style="{StaticResource DetailText}" Margin="15,0,0,0" />
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="75"/>
+                    <ColumnDefinition Width="300"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding RouteNumber}" Style="{StaticResource LabelStyle}" FontSize="30" Padding="16,2,0,0" VerticalAlignment="Top" TextAlignment="Right"  Grid.Column="0" TextWrapping="Wrap" LineStackingStrategy="BlockLineHeight" LineHeight="32" FontFamily="Global User Interface" />
+                <StackPanel Grid.Column="1" Margin="0,0,0,0">
+                    <TextBlock Text="{Binding RouteName}" Style="{StaticResource LabelStyle}" FontSize="26.5" Margin="10,0,0,0" Padding="0,0,0,0" VerticalAlignment="Top" TextWrapping="WrapWholeWords" LineStackingStrategy="BlockLineHeight" LineHeight="30" FontFamily="Global User Interface"/>
+
+                    <TextBlock Text="{Binding Directions[0].Title}" Style="{StaticResource DetailText}" Margin="12,1,0,0" FontWeight="Normal" TextWrapping="WrapWholeWords" LineStackingStrategy="BlockLineHeight" LineHeight="20" FontFamily="Global User Interface" />
+                    <TextBlock Text="{Binding Directions[0].Times}" Style="{StaticResource DetailText}" FontWeight="Bold" Margin="12,-5,0,0" FontFamily="Global User Interface" />
                 </StackPanel>
             </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="TwoDirection">
             <Grid Margin="0,0,0,25">
-                <StackPanel>
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="35"/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid Background="White" Grid.Column="0" Margin="15,0,0,0">
-                            <TextBlock Text="{Binding RouteNumber}" Style="{StaticResource LabelStyle}" Foreground="#FFB31B1B" Padding="8,0,8,0" FontWeight="Bold"/>
-                        </Grid>
-                        <TextBlock Text="{Binding RouteName}" Style="{StaticResource LabelStyle}" Margin="5,0,0,0" Padding="10,0" Grid.Column="1"/>
-                    </Grid>
-                    
-                    <TextBlock Text="{Binding Directions[0].Title}" Style="{StaticResource DetailText}" Margin="15,8,0,0" FontWeight="Bold" />
-                    <TextBlock Text="{Binding Directions[0].Times,Mode=OneWay}" Style="{StaticResource DetailText}" Margin="15,0,0,0" />
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="75"/>
+                    <ColumnDefinition Width="300"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding RouteNumber}" Style="{StaticResource LabelStyle}" FontSize="30" Padding="16,2,0,0" VerticalAlignment="Top" TextAlignment="Right"  Grid.Column="0" TextWrapping="Wrap" LineStackingStrategy="BlockLineHeight" LineHeight="32" FontFamily="Global User Interface" />
+                <StackPanel Grid.Column="1" Margin="0,0,0,0">
+                    <TextBlock Text="{Binding RouteName}" Style="{StaticResource LabelStyle}" FontSize="26.5" Margin="10,0,0,0" Padding="0,0,0,0" VerticalAlignment="Top" TextWrapping="WrapWholeWords" LineStackingStrategy="BlockLineHeight" LineHeight="30" FontFamily="Global User Interface"/>
 
-                    <TextBlock Text="{Binding Directions[1].Title}" Style="{StaticResource DetailText}" Margin="15,8,0,0" FontWeight="Bold" />
-                    <TextBlock Text="{Binding Directions[1].Times, Mode=OneWay}" Style="{StaticResource DetailText}" Margin="15,0,0,0" />
+                    <TextBlock Text="{Binding Directions[0].Title}" Style="{StaticResource DetailText}" Margin="12,1,0,0" FontWeight="Normal" TextWrapping="WrapWholeWords" LineStackingStrategy="BlockLineHeight" LineHeight="20" FontFamily="Global User Interface"/>
+                    <TextBlock Text="{Binding Directions[0].Times}" Style="{StaticResource DetailText}" FontWeight="Bold" Margin="12,-5,0,0" FontFamily="Global User Interface" />
+
+                    <TextBlock Text="{Binding Directions[1].Title}" Style="{StaticResource DetailText}" Margin="12,1,0,0" FontWeight="Normal" TextWrapping="WrapWholeWords" LineStackingStrategy="BlockLineHeight" LineHeight="20" />
+                    <TextBlock Text="{Binding Directions[1].Times}" Style="{StaticResource DetailText}" FontWeight="Bold" Margin="12,-5,0,0" FontFamily="Global User Interface" />
                 </StackPanel>
             </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="ThreeDirection">
             <Grid Margin="0,0,0,25">
-                <StackPanel>
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="35"/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid Background="White" Grid.Column="0" Margin="15,0,0,0">
-                            <TextBlock Text="{Binding RouteNumber}" Style="{StaticResource LabelStyle}" Foreground="#FFB31B1B" Padding="8,0,8,0" FontWeight="Bold"/>
-                        </Grid>
-                        <TextBlock Text="{Binding RouteName}" Style="{StaticResource LabelStyle}" Margin="5,0,0,0" Padding="10,0" Grid.Column="1"/>
-                    </Grid>
-                    <TextBlock Text="{Binding Directions[0].Title}" Style="{StaticResource DetailText}" Margin="15,8,0,0" FontWeight="Bold" />
-                    <TextBlock Text="{Binding Directions[0].Times,Mode=OneWay}" Style="{StaticResource DetailText}" Margin="15,0,0,0" />
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="75"/>
+                    <ColumnDefinition Width="300"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding RouteNumber}" Style="{StaticResource LabelStyle}" FontSize="30" Padding="16,2,0,0" VerticalAlignment="Top" TextAlignment="Right"  Grid.Column="0" TextWrapping="Wrap" LineStackingStrategy="BlockLineHeight" LineHeight="32" FontFamily="Global User Interface" />
+                <StackPanel Grid.Column="1" Margin="0,0,0,0">
+                    <TextBlock Text="{Binding RouteName}" Style="{StaticResource LabelStyle}" FontSize="26.5" Margin="10,0,0,0" Padding="0,0,0,0" VerticalAlignment="Top" TextWrapping="WrapWholeWords" LineStackingStrategy="BlockLineHeight" LineHeight="30" FontFamily="Global User Interface"/>
 
-                    <TextBlock Text="{Binding Directions[1].Title}" Style="{StaticResource DetailText}" Margin="15,8,0,0" FontWeight="Bold" />
-                    <TextBlock Text="{Binding Directions[1].Times, Mode=OneWay}" Style="{StaticResource DetailText}" Margin="15,0,0,0" />
+                    <TextBlock Text="{Binding Directions[0].Title}" Style="{StaticResource DetailText}" Margin="12,1,0,0" FontWeight="Normal" TextWrapping="WrapWholeWords" LineStackingStrategy="BlockLineHeight" LineHeight="20" FontFamily="Global User Interface" />
+                    <TextBlock Text="{Binding Directions[0].Times}" Style="{StaticResource DetailText}" FontWeight="Bold" Margin="12,-5,0,0" FontFamily="Global User Interface" />
 
-                    <TextBlock Text="{Binding Directions[2].Title}" Style="{StaticResource DetailText}" Margin="15,8,0,0" FontWeight="Bold" />
-                    <TextBlock Text="{Binding Directions[2].Times, Mode=OneWay}" Style="{StaticResource DetailText}" Margin="15,0,0,0" />
+                    <TextBlock Text="{Binding Directions[1].Title}" Style="{StaticResource DetailText}" Margin="12,1,0,0" FontWeight="Normal" TextWrapping="WrapWholeWords" LineStackingStrategy="BlockLineHeight" LineHeight="20" />
+                    <TextBlock Text="{Binding Directions[1].Times}" Style="{StaticResource DetailText}" FontWeight="Bold" Margin="12,-5,0,0" FontFamily="Global User Interface" />
+
+                    <TextBlock Text="{Binding Directions[2].Title}" Style="{StaticResource DetailText}" Margin="12,1,0,0" FontWeight="Normal" TextWrapping="WrapWholeWords" LineStackingStrategy="BlockLineHeight" LineHeight="20" />
+                    <TextBlock Text="{Binding Directions[2].Times}" Style="{StaticResource DetailText}" FontWeight="Bold" Margin="12,-5,0,0" FontFamily="Global User Interface" />
                 </StackPanel>
             </Grid>
         </DataTemplate>
@@ -101,51 +84,142 @@
                                      oneDirection="{StaticResource OneDirection}"
                                      twoDirection="{StaticResource TwoDirection}"
                                      threeDirection="{StaticResource ThreeDirection}"/>
+        <Thickness x:Key="PivotPortraitThemePadding">19,38,0,0</Thickness>
+        <Thickness x:Key="PivotLandscapeThemePadding">19,25,0,0</Thickness>
+        <Style x:Key="PivotStyle" TargetType="Pivot">
+        	<Setter Property="Margin" Value="0"/>
+        	<Setter Property="Padding" Value="0"/>
+        	<Setter Property="Foreground" Value="{ThemeResource PhoneForegroundBrush}"/>
+        	<Setter Property="Background" Value="Transparent"/>
+        	<Setter Property="ItemsPanel">
+        		<Setter.Value>
+        			<ItemsPanelTemplate>
+        				<Grid/>
+        			</ItemsPanelTemplate>
+        		</Setter.Value>
+        	</Setter>
+        	<Setter Property="Template">
+        		<Setter.Value>
+        			<ControlTemplate TargetType="Pivot">
+        				<Grid x:Name="RootElement" Background="{TemplateBinding Background}" HorizontalAlignment="{TemplateBinding HorizontalAlignment}" VerticalAlignment="{TemplateBinding VerticalAlignment}">
+        					<Grid.RowDefinitions>
+        						<RowDefinition Height="auto"/>
+        						<RowDefinition Height="*"/>
+        					</Grid.RowDefinitions>
+        					<VisualStateManager.VisualStateGroups>
+        						<VisualStateGroup x:Name="Orientation">
+        							<VisualState x:Name="Portrait">
+        								<Storyboard>
+        									<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Margin" Storyboard.TargetName="TitleContentControl">
+        										<DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource PivotPortraitThemePadding}"/>
+        									</ObjectAnimationUsingKeyFrames>
+        								</Storyboard>
+        							</VisualState>
+        							<VisualState x:Name="Landscape">
+        								<Storyboard>
+        									<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Margin" Storyboard.TargetName="TitleContentControl">
+        										<DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource PivotLandscapeThemePadding}"/>
+        									</ObjectAnimationUsingKeyFrames>
+        								</Storyboard>
+        							</VisualState>
+        						</VisualStateGroup>
+        					</VisualStateManager.VisualStateGroups>
+        					<ContentControl x:Name="TitleContentControl" ContentTemplate="{TemplateBinding TitleTemplate}" Style="{StaticResource PivotTitleContentControlStyle}"/>
+        					<ScrollViewer x:Name="ScrollViewer" HorizontalSnapPointsAlignment="Center" HorizontalSnapPointsType="MandatorySingle" HorizontalScrollBarVisibility="Hidden" Margin="{TemplateBinding Padding}" Grid.Row="1" Template="{StaticResource ScrollViewerScrollBarlessTemplate}" VerticalSnapPointsType="None" VerticalScrollBarVisibility="Disabled" VerticalScrollMode="Disabled" VerticalContentAlignment="Stretch" ZoomMode="Disabled">
+        						<PivotPanel x:Name="Panel" VerticalAlignment="Stretch">
+        							<PivotHeaderPanel x:Name="Header">
+        								<PivotHeaderPanel.RenderTransform>
+        									<CompositeTransform x:Name="HeaderTranslateTransform" TranslateX="0"/>
+        								</PivotHeaderPanel.RenderTransform>
+        							</PivotHeaderPanel>
+        							<ItemsPresenter x:Name="PivotItemPresenter">
+        								<ItemsPresenter.RenderTransform>
+        									<TranslateTransform x:Name="ItemsPresenterTranslateTransform" X="0"/>
+        								</ItemsPresenter.RenderTransform>
+        							</ItemsPresenter>
+        						</PivotPanel>
+        					</ScrollViewer>
+        				</Grid>
+        			</ControlTemplate>
+        		</Setter.Value>
+        	</Setter>
+        </Style>
 
     </Page.Resources>
 
     <Page.BottomAppBar>
         <CommandBar Background="#FF9B1414" Foreground="White">
             <AppBarButton x:Name="RefreshBtn"  IsCompact="true" Label="refresh" Click="RefreshTimes">
-			<AppBarButton.Icon>
+			    <AppBarButton.Icon>
         			<BitmapIcon UriSource="Assets/refresh.png"/>
         		</AppBarButton.Icon>
 			</AppBarButton>
-            <AppBarButton x:Name="favBtn" Icon="Favorite" IsCompact="True" Label="favorite" />
+            <AppBarButton x:Name="FavButton"/>
+            <AppBarButton x:Name="PinButton" Visibility="Collapsed"/>
         </CommandBar>
     </Page.BottomAppBar>
 
-    <Grid x:Name="LayoutRoot" Background="#FFB31B1B">
+    <Grid x:Name="LayoutRoot">
+        <Grid.ChildrenTransitions>
+            <TransitionCollection>
+                <EntranceThemeTransition/>
+            </TransitionCollection>
+        </Grid.ChildrenTransitions>
 
-		<Grid.ChildrenTransitions>
-			<TransitionCollection>
-				<EntranceThemeTransition/>
-			</TransitionCollection>
-		</Grid.ChildrenTransitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="*"/>
-		</Grid.RowDefinitions>
-
-		<!-- Title Panel -->
-        <TextBlock x:Name="StopHeader" Margin="18,0,0,15" FontSize="36" Grid.Row="0"
+        <!--Title Panel-->
+        <TextBlock x:Name="StopHeader" Margin="18,0,0,15" FontSize="34" Grid.Row="0" Text="{Binding SelectedStop.StopName}"
                     Style="{ThemeResource HeaderTextBlockStyle}" CharacterSpacing="{ThemeResource PivotHeaderItemCharacterSpacing}" />
-
-        <Grid Grid.Row="1" x:Name="ContentRoot" >
-            <TextBlock x:Name="noTimesBlock" Text="No busses at this time" FontSize="21" Margin="13,225,0,0" Visibility="Collapsed" TextAlignment="Center"/>
-            <ListView x:Name="RouteInfoList" IsItemClickEnabled="True" 
-                      Margin="0,0,0,0" IsTapEnabled="False" IsHoldingEnabled="False" 
-                      ItemClick="ShowRouteMap" ItemTemplateSelector="{StaticResource TemplateSelector}">
-                <ListView.ItemContainerTransitions>
-                    <TransitionCollection>
-                        <EntranceThemeTransition />
-                        <AddDeleteThemeTransition />
-                        <RepositionThemeTransition/>
-                        <ReorderThemeTransition/>
-                    </TransitionCollection>
-                </ListView.ItemContainerTransitions>
-            </ListView>
-        </Grid>
-	</Grid>
+        
+        <!--Content-->
+        <Pivot x:Name="DetailPivot" Style="{StaticResource PivotStyle}" Margin="0,-25,0,0" Grid.Row="1">
+            <PivotItem x:Name="TimesPivotItem" Header="times">
+                <Grid>
+                    <TextBlock x:Name="NoTimesBlock" Text="{Binding NoTimesText}" FontSize="21" Margin="13,180,0,0" TextAlignment="Center"/>
+                    <ListView x:Name="RouteInfoList" IsItemClickEnabled="True" ItemsSource="{Binding Routes}"
+                      Margin="-18,-15,0,0" IsTapEnabled="False" IsHoldingEnabled="False" 
+                      ItemClick="GoToRouteMap" ItemTemplateSelector="{StaticResource TemplateSelector}">
+                        <ListView.ItemContainerTransitions>
+                            <TransitionCollection>
+                                <EntranceThemeTransition />
+                                <AddDeleteThemeTransition />
+                                <RepositionThemeTransition/>
+                                <ReorderThemeTransition/>
+                            </TransitionCollection>
+                        </ListView.ItemContainerTransitions>
+                    </ListView>
+                </Grid>
+            </PivotItem>
+            <PivotItem x:Name="AlertsPivotItem" Header="alerts">
+                <Grid>
+                    <TextBlock x:Name="NoAlertsBlock" Text="{Binding NoAlertsText}" FontSize="21" Margin="13,180,0,0" TextAlignment="Center"/>
+                    <ListView x:Name="AlertsList" IsItemClickEnabled="True" ItemsSource="{Binding Alerts}"
+                      Margin="-18,-15,0,0" IsTapEnabled="False" IsHoldingEnabled="False">
+                        <ListView.ItemContainerTransitions>
+                            <TransitionCollection>
+                                <EntranceThemeTransition />
+                                <AddDeleteThemeTransition />
+                                <RepositionThemeTransition/>
+                                <ReorderThemeTransition/>
+                            </TransitionCollection>
+                        </ListView.ItemContainerTransitions>
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Margin="5,0,0,25" Width="300">
+                                    <TextBlock Text="{Binding Message}" Style="{StaticResource DetailText}" Margin="12,1,0,0" FontWeight="Normal" 
+                                               TextWrapping="WrapWholeWords" LineStackingStrategy="BlockLineHeight" LineHeight="20" FontFamily="Global User Interface" />
+                                    <TextBlock Text="{Binding AffectedRoutes}" Style="{StaticResource DetailText}" Margin="12,1,0,0" FontWeight="Bold"
+                                               TextWrapping="WrapWholeWords" LineStackingStrategy="BlockLineHeight" LineHeight="20" FontFamily="Global User Interface" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
+            </PivotItem>
+        </Pivot>
+    </Grid>
 </Page>

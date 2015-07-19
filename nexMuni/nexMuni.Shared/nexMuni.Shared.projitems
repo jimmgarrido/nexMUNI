@@ -15,31 +15,35 @@
     <Compile Include="$(MSBuildThisFileDirectory)App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)DataModels\BusStopData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataModels\Alert.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataModels\Bus.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModels\FavoriteData.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)DataModels\PositionWrapper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModels\Route.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)DataModels\RouteData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModels\RouteDirection.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)DataModels\StopData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataModels\Stop.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\DatabaseHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\ErrorHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\LocationHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\MapHelper.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Helpers\PredictionHelper.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Helpers\WebRequests.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\MainPageModel.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\SearchModel.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\StopDetailModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\ParseHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\SettingsHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\WebHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\MainViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\RouteMapViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\SearchViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\StopDetailViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\TimesTemplateSelector.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="$(MSBuildThisFileDirectory)Assets\AddStar.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Inbound.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Marker.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Location.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Marker2.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Outbound.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\RemoveStar.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\refresh.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Stop.png" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="$(MSBuildThisFileDirectory)db\muni.sqlite" />
