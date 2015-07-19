@@ -317,6 +317,7 @@ namespace nexMuni.ViewModels
         {
             if (SelectedStop == null) return;
             FavoriteData tempStop = DatabaseHelper.FavoritesList.ToList().Find(s => s.Name == SelectedStop.StopName);
+            if (tempStop == null) return;
             SelectedStop.favId = tempStop.Id;
         }
 

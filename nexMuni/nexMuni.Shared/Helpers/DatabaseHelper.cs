@@ -163,7 +163,7 @@ namespace nexMuni.Helpers
             try
             {
                 StorageFile muniDb = await ApplicationData.Current.LocalFolder.GetFileAsync("muni.sqlite");
-                if (muniDb.DateCreated.Date < new DateTime(2015, 4, 28))
+                if (muniDb.DateCreated.Date < new DateTime(2015, 7, 18))
                     dbExists = false;
                 else
                     dbExists = true;
