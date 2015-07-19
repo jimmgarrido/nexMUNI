@@ -184,9 +184,9 @@
     <Language Code="vi-vn" InMinimumRequirementSet="true" />
   </SupportedLocales>
   <ProductReservedInfo>
-    <MainPackageIdentityName>10642JimmyGarrido.nexMuniBeta</MainPackageIdentityName>
+    <MainPackageIdentityName>10642JimmyGarrido.nexMuni</MainPackageIdentityName>
     <ReservedNames>
-      <ReservedName>nexMuni Beta</ReservedName>
+      <ReservedName>nexMuni</ReservedName>
     </ReservedNames>
   </ProductReservedInfo>
   <AccountPackageIdentityNames>
@@ -199,7 +199,7 @@
     <PackageInfo>
       <OsMinVersion>6.3.0.0</OsMinVersion>
       <PackageArchitecture>Arm</PackageArchitecture>
-      <PackageMaxArchitectureVersion>2014.725.846.5397</PackageMaxArchitectureVersion>
+      <PackageMaxArchitectureVersion>1.1.1.1</PackageMaxArchitectureVersion>
     </PackageInfo>
     <PackageInfo>
       <OsMinVersion>6.3.0.0</OsMinVersion>
