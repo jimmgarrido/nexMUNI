@@ -105,7 +105,7 @@ namespace nexMuni.Views
             await searchVm.LoadDirectionsAsync(sender.SelectedItem.ToString());
 
             DirBox.SelectedIndex = 0;
-            StopsFlyout.SelectedIndex = -1;
+            //StopsFlyout.SelectedIndex = -1;
 
             DirLabel.Visibility = Visibility.Visible;
             DirBox.Visibility = Visibility.Visible;
@@ -148,12 +148,14 @@ namespace nexMuni.Views
 
             if (searchVm.IsFavorite())
             {
+                if (FavoriteBtn.Label == "favorite") FavoriteBtn.Click -= FavoriteSearch;
                 FavoriteBtn.Click += UnfavoriteSearch;
                 FavoriteBtn.Label = "unfavorite";
                 FavoriteBtn.Icon = new SymbolIcon(Symbol.Remove);
             }
             else
             {
+                if (FavoriteBtn.Label == "unfavorite") FavoriteBtn.Click -= UnfavoriteSearch;
                 FavoriteBtn.Click += FavoriteSearch;
                 FavoriteBtn.Label = "favorite";
                 FavoriteBtn.Icon = new SymbolIcon(Symbol.Favorite);
