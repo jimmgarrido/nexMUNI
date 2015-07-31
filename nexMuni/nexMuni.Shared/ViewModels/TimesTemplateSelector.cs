@@ -12,6 +12,7 @@ namespace nexMuni.ViewModels
         public DataTemplate oneDirection { get; set; }
         public DataTemplate twoDirection { get; set; }
         public DataTemplate threeDirection { get; set; }
+        public DataTemplate fourDirection { get; set; }
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
         {
@@ -20,6 +21,7 @@ namespace nexMuni.ViewModels
             if (routeItem.Directions.Count == 1) return oneDirection;
             else if (routeItem.Directions.Count == 2) return twoDirection;
             else if (routeItem.Directions.Count == 3) return threeDirection;
+            else if (routeItem.Directions.Count == 4) return fourDirection;
             else return base.SelectTemplateCore(item, container);
         }
     }

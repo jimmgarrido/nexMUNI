@@ -123,19 +123,19 @@ namespace nexMuni.ViewModels
             var xmlDoc = await WebHelper.GetMulitPredictionsAsync(SelectedStop.StopTags);
             if (xmlDoc != null)
             {
-                List<Route> routeList = await ParseHelper.ParsePredictionsAsync(xmlDoc);
+                List<Route> updatedRouteList = await ParseHelper.ParsePredictionsAsync(xmlDoc);
 
-                if(routeList.Count == Routes.Count)
+                if(updatedRouteList.Count == Routes.Count)
                 {
-                    for(int i=0; i< routeList.Count; i++)
+                    for(int i=0; i< updatedRouteList.Count; i++)
                     {
-                        Routes[i].UpdateTimes(routeList[i].Directions);
+                        Routes[i].UpdateTimes(updatedRouteList[i].Directions.ToList());
                     }
                 }
                 else
                 {
                     Routes.Clear();
-                    foreach(Route r in routeList)
+                    foreach(Route r in updatedRouteList)
                     {
                         Routes.Add(r);
                     }
