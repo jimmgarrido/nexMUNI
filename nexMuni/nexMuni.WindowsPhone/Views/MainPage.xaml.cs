@@ -12,6 +12,7 @@ using Windows.UI.Xaml.Navigation;
 using nexMuni.DataModels;
 using nexMuni.Helpers;
 using nexMuni.ViewModels;
+using Microsoft.ApplicationInsights;
 
 namespace nexMuni.Views
 {
@@ -246,11 +247,19 @@ namespace nexMuni.Views
 
         private async Task ShowStopLocation()
         {
+            var telemetry = new TelemetryClient();
             var stopLocation =  new Geopoint(new BasicGeoposition() { Latitude = searchVm.SelectedStop.Latitude, Longitude = searchVm.SelectedStop.Longitude });
             MapControl.SetNormalizedAnchorPoint(StopIcon, new Point(0.5, 1.0));
             MapControl.SetLocation(StopIcon, stopLocation);
             StopIcon.Visibility = Visibility.Visible;
-            await SearchMap.TrySetViewAsync(stopLocation, 13.0);
+
+            try {
+                await SearchMap.TrySetViewAsync(stopLocation, 13.0);
+            }
+            catch(Exception ex)
+            {
+                telemetry.TrackException(ex);
+            }
         }
 
         private void PivotItemChanged(object sender, SelectionChangedEventArgs e)
