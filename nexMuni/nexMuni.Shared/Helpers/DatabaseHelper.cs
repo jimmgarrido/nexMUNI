@@ -13,12 +13,28 @@ namespace nexMuni.Helpers
 {
     public delegate void ChangedEventHandler();
 
-    class DatabaseHelper
+    public class DatabaseHelper
     {
-        public static List<FavoriteData> FavoritesList { get; private set; }
-        public static ChangedEventHandler FavoritesChanged;
+        private static List<FavoriteData> _favoritesList;
 
         private static string favoriteDbPath;
+        public static List<FavoriteData> FavoritesList
+        {
+            get
+            {
+                return _favoritesList;
+            }
+            set
+            {
+                _favoritesList = value;
+                if (FavoritesChanged != null)
+                {
+                    FavoritesChanged();
+                }
+            }
+        }
+        public static ChangedEventHandler FavoritesChanged;
+
 
         public static async Task CheckDatabasesAsync()
         {
@@ -150,10 +166,6 @@ namespace nexMuni.Helpers
         {
             var _favoritesAsyncConnection = new SQLiteAsyncConnection(favoriteDbPath);
             FavoritesList = await _favoritesAsyncConnection.QueryAsync<FavoriteData>("SELECT * FROM FavoriteData");
-            if (FavoritesChanged != null)
-            {
-                FavoritesChanged();
-            }
         }
 
         private static async Task CheckStopsDatabaseAsync()

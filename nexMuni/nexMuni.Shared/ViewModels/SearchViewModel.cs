@@ -19,12 +19,14 @@ namespace nexMuni.ViewModels
     {
         private string _searchTimes;
         private string _selectedRoute;
+        private List<string> _directionsList;
+        private List<Stop> _stopsList;
         private Stop _selectedStop;
         private Geopoint _mapCenter;
-        
+
         public string SearchTimes
         {
-            get 
+            get
             {
                 return _searchTimes;
             }
@@ -58,11 +60,32 @@ namespace nexMuni.ViewModels
                 NotifyPropertyChanged("SelectedStop");
             }
         }
-        public ChangedEventHandler UpdateLocation;
 
         public List<string> RoutesList { get; set; }
-        public ObservableCollection<string> DirectionsList { get; set; }
-        public ObservableCollection<Stop> StopsList { get; set; }
+        public List<string> DirectionsList
+        {
+            get
+            {
+                return _directionsList;
+            }
+            set
+            {
+                _directionsList = value;
+                NotifyPropertyChanged("DirectionsList");
+            }
+        }
+        public List<Stop> StopsList
+        {
+            get
+            {
+                return _stopsList;
+            }
+            set
+            {
+                _stopsList = value;
+                NotifyPropertyChanged("StopsList");
+            }
+        }
         public Geopoint MapCenter
         {
             get
@@ -76,7 +99,7 @@ namespace nexMuni.ViewModels
             }
         }
 
-        private Task initialization;
+        private Task initialize;
         private Stop foundStop;
         private List<Stop> allStopsList;
         private List<string> outboundStops = new List<string>();
@@ -84,44 +107,33 @@ namespace nexMuni.ViewModels
 
         public SearchViewModel()
         {
-            initialization = LoadDataAsync();
             DatabaseHelper.FavoritesChanged += SyncFavoriteIds;
-            LocationHelper.LocationChanged += () =>
-            {
-                if (UpdateLocation != null) UpdateLocation();
-            };
-        }
-
-        private async Task LoadDataAsync()
-        {
-            RoutesList = await DatabaseHelper.QueryForRoutes();
-            MapCenter =  new Geopoint(new BasicGeoposition() { Latitude = 37.7480, Longitude = -122.437 });
-            DirectionsList = new ObservableCollection<string>();
-            StopsList = new ObservableCollection<Stop>();
+            MapCenter = new Geopoint(new BasicGeoposition() { Latitude = 37.7480, Longitude = -122.437 });
 
             allStopsList = new List<Stop>();
             outboundStops = new List<string>();
             inboundStops = new List<string>();
+            //initialize = LoadDataAsync();
+        }
+
+        public async Task LoadRoutesAsync()
+        {
+            RoutesList = await DatabaseHelper.QueryForRoutes();
         }
 
         public async Task LoadDirectionsAsync(string route)
         {
-#if WINDOWS_PHONE_APP
-            var systemTray = StatusBar.GetForCurrentView();
-            systemTray.ProgressIndicator.ProgressValue = null;
-#endif 
+            //if (DirectionsList.Count != 0)
+            //{
+            //    DirectionsList.Clear();
+            //}
+            //if (StopsList.Count != 0)
+            //{
+            //    StopsList.Clear();
+            //}
 
-            if (DirectionsList.Count != 0)
-            {
-                DirectionsList.Clear();
-            }
-            if (StopsList.Count != 0)
-            {
-                StopsList.Clear();
-            }
-
-            SelectedStop = null;
             SelectedRoute = route;
+            SelectedStop = null;
 
             var dirUrl = "http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=sf-muni&r=";
 
@@ -146,50 +158,49 @@ namespace nexMuni.ViewModels
             {
                 response = await client.GetAsync(new Uri(dirUrl));
                 var reader = await response.Content.ReadAsStringAsync();
-                GetDirections(XDocument.Parse(reader));
+                //GetDirections(XDocument.Parse(reader));
+                DirectionsList = await Task.Run(() => GetDirections(reader));
             }
             catch (Exception)
             {
                 ErrorHandler.NetworkError("Error getting route information. Please try again.");
             }
-
-#if WINDOWS_PHONE_APP
-            systemTray.ProgressIndicator.ProgressValue = 0;
-#endif
         }
 
-        public void LoadStops(string direction)
+        public async Task LoadStops(string direction)
         {
-            if (StopsList.Count != 0) StopsList.Clear();
+            var foundStops = new List<Stop>();
+            //if (StopsList.Count != 0) StopsList.Clear();
             SelectedStop = null;
             SearchTimes = "";
 
-            if (direction.Contains("Inbound"))
+            await Task.Run(() =>
             {
-                foreach (string s in inboundStops)
+                if (direction.Contains("Inbound"))
                 {
-                    foundStop = allStopsList.Find(z => z.StopTags == s);
-                    StopsList.Add(foundStop);
+                    foreach (string s in inboundStops)
+                    {
+                        foundStops.Add(allStopsList.Find(z => z.StopTags == s));
+                        //foundStop = allStopsList.Find(z => z.StopTags == s);
+                        //StopsList.Add(foundStop);
+                    }
                 }
-            }
-            else if (direction.Contains("Outbound"))
-            {
-                foreach (string s in outboundStops)
+                else if (direction.Contains("Outbound"))
                 {
-                    foundStop = allStopsList.Find(z => z.StopTags == s);
-                    StopsList.Add(foundStop);
+                    foreach (string s in outboundStops)
+                    {
+                        foundStops.Add(allStopsList.Find(z => z.StopTags == s));
+                        //foundStop = allStopsList.Find(z => z.StopTags == s);
+                        //StopsList.Add(foundStop);
+                    }
                 }
-            }
+            });
+
+            StopsList = foundStops;
         }
 
         public async Task StopSelectedAsync(Stop stop)
         {
-#if WINDOWS_PHONE_APP
-            var systemTray = StatusBar.GetForCurrentView();
-            systemTray.ProgressIndicator.Text = "Getting Arrival Times";
-            systemTray.ProgressIndicator.ProgressValue = null;
-#endif
-
             SelectedStop = stop;
             string title = SelectedStop.StopName;
 
@@ -214,16 +225,11 @@ namespace nexMuni.ViewModels
             if (xmlDoc != null)
             {
                 //Get bus predictions for stop
-                SearchTimes = await ParseHelper.ParseSearchTimesAsync(xmlDoc);
+                SearchTimes = await Task.Run(() => ParseHelper.ParseSearchTimesAsync(xmlDoc));
 
                 Stop tempStop = await GetStopAsync();
                 if (tempStop != null) SelectedStop = tempStop;
             }
-
-#if WINDOWS_PHONE_APP
-            systemTray.ProgressIndicator.ProgressValue = 0;
-            systemTray.ProgressIndicator.Text = "nexMUNI";
-#endif
         }
 
         public async Task FavoriteSearchAsync()
@@ -251,8 +257,10 @@ namespace nexMuni.ViewModels
             else return null;
         }
 
-        private void GetDirections(XDocument doc)
+        private List<string> GetDirections(string text)
         {
+            var doc = XDocument.Parse(text);
+
             IEnumerable<XElement> rootElement =
                 from e in doc.Descendants("route")
                 select e;
@@ -276,10 +284,12 @@ namespace nexMuni.ViewModels
                 from d in rootElement.ElementAt(0).Elements("direction")
                 select d;
 
+            var directions = new List<string>();
+
             foreach (XElement el in elements)
             {
                 //Add direction title
-                DirectionsList.Add(el.Attribute("title").Value);
+                directions.Add(el.Attribute("title").Value);
 
                 IEnumerable<XElement> tagElements;
                 if (el.Attribute("name").Value == "Inbound")
@@ -311,6 +321,7 @@ namespace nexMuni.ViewModels
                     }
                 }
             }
+            return directions;
         }
 
         private void SyncFavoriteIds()

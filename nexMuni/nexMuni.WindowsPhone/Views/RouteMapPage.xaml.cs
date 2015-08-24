@@ -62,10 +62,7 @@ namespace nexMuni.Views
             }
 
             var routePath = await routeMapVm.GetRoutePath();
-            foreach (MapPolyline line in routePath)
-            {
-                RouteMap.MapElements.Add(line);
-            }
+
 
             await AddVehicleLocations();
             if (!refreshTimer.IsEnabled) refreshTimer.Start();

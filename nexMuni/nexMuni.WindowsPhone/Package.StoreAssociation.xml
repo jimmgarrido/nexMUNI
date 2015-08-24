@@ -184,16 +184,32 @@
     <Language Code="vi-vn" InMinimumRequirementSet="true" />
   </SupportedLocales>
   <ProductReservedInfo>
-    <MainPackageIdentityName>10642JimmyGarrido.nexMuni</MainPackageIdentityName>
+    <MainPackageIdentityName>10642JimmyGarrido.nexMuniBeta</MainPackageIdentityName>
     <ReservedNames>
-      <ReservedName>nexMuni</ReservedName>
+      <ReservedName>nexMuni Beta</ReservedName>
     </ReservedNames>
   </ProductReservedInfo>
   <AccountPackageIdentityNames>
     <MainPackageIdentityName>10642JimmyGarrido.BookEnd</MainPackageIdentityName>
     <MainPackageIdentityName>10642JimmyGarrido.nexBART</MainPackageIdentityName>
     <MainPackageIdentityName>10642JimmyGarrido.nexBARTBeta</MainPackageIdentityName>
-    <MainPackageIdentityName>10642JimmyGarrido.nexMuniBeta</MainPackageIdentityName>
+    <MainPackageIdentityName>10642JimmyGarrido.nexMuni</MainPackageIdentityName>
   </AccountPackageIdentityNames>
-  <PackageInfoList LandingUrl="https://dev.windows.com/dashboard/Application?appId=9WZDNCRDQPQH" />
+  <PackageInfoList LandingUrl="https://dev.windows.com/dashboard/Application?appId=9WZDNCRDQPQG">
+    <PackageInfo>
+      <OsMinVersion>6.3.1.0</OsMinVersion>
+      <PackageArchitecture>Arm</PackageArchitecture>
+      <PackageMaxArchitectureVersion>2015.716.425.1924</PackageMaxArchitectureVersion>
+    </PackageInfo>
+    <PackageInfo>
+      <OsMinVersion>6.3.1.0</OsMinVersion>
+      <PackageArchitecture>Neutral</PackageArchitecture>
+      <PackageMaxArchitectureVersion>2015.716.425.1924</PackageMaxArchitectureVersion>
+    </PackageInfo>
+    <PackageInfo>
+      <OsMinVersion>6.3.1.0</OsMinVersion>
+      <PackageArchitecture>Neutral</PackageArchitecture>
+      <PackageMaxArchitectureVersion>2015.716.425.1924</PackageMaxArchitectureVersion>
+    </PackageInfo>
+  </PackageInfoList>
 </StoreAssociation>

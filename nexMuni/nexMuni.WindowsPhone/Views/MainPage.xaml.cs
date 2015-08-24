@@ -13,68 +13,66 @@ using nexMuni.DataModels;
 using nexMuni.Helpers;
 using nexMuni.ViewModels;
 using Microsoft.ApplicationInsights;
+using System.Collections.Generic;
+using Windows.UI;
+using Windows.UI.ViewManagement;
 
 namespace nexMuni.Views
 {
     public sealed partial class MainPage : Page
     {
-        public MainViewModel mainVm;
-        public SearchViewModel searchVm;
+        MainViewModel mainVm;
+        SearchViewModel searchVm;
 
-        private bool alreadyLoaded;
-        private int vehicleCounter;
+        bool alreadyLoaded;
+        int vehicleCounter;
 
         public MainPage()
         {
             this.InitializeComponent();
             this.NavigationCacheMode = NavigationCacheMode.Required;
+
+            MainPivot.SelectionChanged += PivotItemChanged;
+            LocationHelper.LocationChanged += UpdateLocationOnMap;
+            RouteBox.SelectionChanged += RouteSelected;
+            DirBox.SelectionChanged += DirectionSelected;
+            StopBox.SelectionChanged += StopSelected;
+
+            MapControl.SetNormalizedAnchorPoint(LocationIcon, new Point(0.5, 0.5));
+            MapControl.SetNormalizedAnchorPoint(StopIcon, new Point(0.5, 1.0));
+
         }
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             if (alreadyLoaded) return;
-            MainPivot.SelectionChanged += PivotItemChanged;
+
             MainPivot.SelectedIndex = SettingsHelper.GetLaunchPivotSetting();
-            await DatabaseHelper.CheckDatabasesAsync();
 
             mainVm = new MainViewModel();
             searchVm = new SearchViewModel();
-            searchVm.UpdateLocation += LocationUpdated;
 
             NearbyPivot.DataContext = mainVm;
             FavoritesPivot.DataContext = mainVm;
             SearchPivot.DataContext = searchVm;
 
-            RoutesFlyout.ItemsPicked += RouteSelected;
-            DirBox.SelectionChanged += DirectionSelected;
-            StopsFlyout.ItemsPicked += StopSelected;
-
-            MapControl.SetNormalizedAnchorPoint(LocationIcon, new Point(0.5, 0.5));
-            MapControl.SetNormalizedAnchorPoint(StopIcon, new Point(0.5, 1.0));
+            await DatabaseHelper.CheckDatabasesAsync();
+            await searchVm.LoadRoutesAsync();
+            RouteBox.IsEnabled = true;
+            await mainVm.LoadAsync();
 
             alreadyLoaded = true;
         }
 
+
+        /**
+        ** Event Handlers
+        **/
         private async void UpdateButtonPressed(object sender, RoutedEventArgs e)
         {
             RefreshBtn.IsEnabled = false;
-            await mainVm.UpdateNearbyStops();
+            await mainVm.UpdateNearbyStopsAsync();
             RefreshBtn.IsEnabled = true;
-        }
-
-        private void StopClicked(object sender, ItemClickEventArgs e)
-        {
-            this.Frame.Navigate(typeof(StopDetail), e.ClickedItem);
-        }
-
-        private void GoToAbout(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(AboutPage));
-        }
-
-        private void GoToSettings(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(SettingsPage));
         }
 
         private void SortFavorites(object sender, RoutedEventArgs e)
@@ -100,17 +98,24 @@ namespace nexMuni.Views
             FavoriteBtn.Label = "favorite";
         }
 
-        private async void RouteSelected(ListPickerFlyout sender, ItemsPickedEventArgs args)
+        private async void RouteSelected(object sender, SelectionChangedEventArgs args)
         {
-            RoutesFlyout.SelectedIndex = sender.SelectedIndex;
-            await searchVm.LoadDirectionsAsync(sender.SelectedItem.ToString());
+            //RoutesFlyout.SelectedIndex = sender.SelectedIndex;
+            //RouteButton.Content = sender.SelectedItem.ToString();
 
-            DirBox.SelectedIndex = 0;
-            //StopsFlyout.SelectedIndex = -1;
+#if WINDOWS_PHONE_APP
+            StatusBar.GetForCurrentView().ProgressIndicator.ProgressValue = null;
+            StatusBar.GetForCurrentView().ProgressIndicator.Text = "";
+            await StatusBar.GetForCurrentView().ProgressIndicator.ShowAsync();
+#endif
+            DirBox.SelectedIndex = -1;
+            StopBox.SelectedIndex = -1;
+            await searchVm.LoadDirectionsAsync(((ComboBox)sender).SelectedItem.ToString());
 
             DirLabel.Visibility = Visibility.Visible;
             DirBox.Visibility = Visibility.Visible;
             StopIcon.Visibility = Visibility.Collapsed;
+            DirBox.SelectedIndex = 0;
 
             FavoriteBtn.IsEnabled = false;
             DetailBtn.IsEnabled = false;
@@ -121,19 +126,53 @@ namespace nexMuni.Views
                 vehicleCounter--;
             }
 
-            await ShowRoutePath();
+            var routePath = await mainVm.GetRoutePathAsync(searchVm.SelectedRoute);
+
+            SearchMap.MapElements.Clear();
+
+            if (routePath.Any())
+            {
+                //foreach (MapPolyline line in routePath)
+                //{
+                //    SearchMap.MapElements.Add(line);
+                //}
+                foreach (IEnumerable<BasicGeoposition> points in routePath)
+                {
+                    SearchMap.MapElements.Add(new MapPolyline
+                    {
+                        Path = new Geopath(points),
+                        StrokeColor = Color.FromArgb(255, 179, 27, 27),
+                        StrokeThickness = 2.00,
+                        ZIndex = 99
+                    });
+                }
+                //SearchMap.MapElements.Add(new MapPolyline
+                //{
+                //    Path = new Geopath(routePath),
+                //    StrokeColor = Color.FromArgb(255, 179, 27, 27),
+                //    StrokeThickness = 2.00,
+                //    ZIndex = 99
+                //});
+            }
+
+            await SearchMap.TrySetViewAsync(searchVm.MapCenter, 11.40);
             await ShowVehicleLocations();
+
+#if WINDOWS_PHONE_APP
+            StatusBar.GetForCurrentView().ProgressIndicator.ProgressValue = 0;
+            await StatusBar.GetForCurrentView().ProgressIndicator.HideAsync();
+#endif
         }
 
-        private void DirectionSelected(object sender, SelectionChangedEventArgs e)
+        private async void DirectionSelected(object sender, SelectionChangedEventArgs e)
         {
             if (((ComboBox)sender).SelectedIndex != -1)
             {
-                StopsFlyout.SelectedIndex = -1;
-                searchVm.LoadStops(((ComboBox)sender).SelectedItem.ToString());
+                StopBox.SelectedIndex = -1;
+                await searchVm.LoadStops(((ComboBox)sender).SelectedItem.ToString());
 
                 StopLabel.Visibility = Visibility.Visible;
-                StopButton.Visibility = Visibility.Visible;
+                StopBox.Visibility = Visibility.Visible;
                 StopIcon.Visibility = Visibility.Collapsed;
             }
 
@@ -141,10 +180,16 @@ namespace nexMuni.Views
             DetailBtn.IsEnabled = false;
         }
 
-        private async void StopSelected(ListPickerFlyout sender, ItemsPickedEventArgs args)
+        private async void StopSelected(object sender, SelectionChangedEventArgs args)
         {
-            if (sender.SelectedIndex == -1) return;
-            await searchVm.StopSelectedAsync((Stop)sender.SelectedItem);
+            if (((ComboBox)sender).SelectedIndex == -1) return;
+
+#if WINDOWS_PHONE_APP
+            StatusBar.GetForCurrentView().ProgressIndicator.ProgressValue = null;
+            StatusBar.GetForCurrentView().ProgressIndicator.Text = "Getting Arrival Times";
+            await StatusBar.GetForCurrentView().ProgressIndicator.ShowAsync();
+#endif
+            await searchVm.StopSelectedAsync(((ComboBox)sender).SelectedItem as Stop);
             SearchTimes.Visibility = Visibility.Visible;
 
             if (searchVm.IsFavorite())
@@ -165,14 +210,15 @@ namespace nexMuni.Views
             DetailBtn.IsEnabled = true;
 
             await ShowStopLocation();
+
+#if WINDOWS_PHONE_APP
+            StatusBar.GetForCurrentView().ProgressIndicator.ProgressValue = 0;
+            StatusBar.GetForCurrentView().ProgressIndicator.Text = "";
+            await StatusBar.GetForCurrentView().ProgressIndicator.HideAsync();
+#endif
         }
 
-        private void DetailButtonPressed(object sender, RoutedEventArgs e)
-        {
-            this.Frame.Navigate(typeof(StopDetail), searchVm.SelectedStop);
-        }
-
-        private void LocationUpdated()
+        private void UpdateLocationOnMap()
         {
             RefreshBtn.IsEnabled = true;
             MapControl.SetNormalizedAnchorPoint(LocationIcon, new Point(0.5, 0.5));
@@ -181,27 +227,10 @@ namespace nexMuni.Views
             SortBtn.IsEnabled = true;
         }
 
-        private async Task ShowRoutePath()
-        {
-            var xmlDoc = await WebHelper.GetRoutePathAsync(searchVm.SelectedRoute);
-            var routePath = await MapHelper.ParseRoutePath(xmlDoc);
-    
-            SearchMap.MapElements.Clear();
-
-            if (routePath.Any())
-            {
-                foreach (MapPolyline line in routePath)
-                {
-                    SearchMap.MapElements.Add(line);
-                }
-            }
-
-            await SearchMap.TrySetViewAsync(searchVm.MapCenter, 11.40);
-        }
         private async Task ShowVehicleLocations()
         {
             var xmlDoc = await WebHelper.GetBusLocationsAsync(searchVm.SelectedRoute);
-            var vehicleLocations = MapHelper.ParseBusLocations(xmlDoc);
+            var vehicleLocations = await Task.Run(() => MapHelper.ParseBusLocations(xmlDoc));
 
             var inboundBus = new BitmapImage(new Uri("ms-appx:///Assets/Inbound.png"));
             var outboundBus = new BitmapImage(new Uri("ms-appx:///Assets/Outbound.png"));
@@ -260,6 +289,26 @@ namespace nexMuni.Views
             {
                 telemetry.TrackException(ex);
             }
+        }
+
+        private void StopSelected(object sender, ItemClickEventArgs e)
+        {
+            this.Frame.Navigate(typeof(StopDetail), e.ClickedItem);
+        }
+
+        private void DetailButtonPressed(object sender, RoutedEventArgs e)
+        {
+            this.Frame.Navigate(typeof(StopDetail), searchVm.SelectedStop);
+        }
+
+        private void GoToAbout(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(AboutPage));
+        }
+
+        private void GoToSettings(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(SettingsPage));
         }
 
         private void PivotItemChanged(object sender, SelectionChangedEventArgs e)
