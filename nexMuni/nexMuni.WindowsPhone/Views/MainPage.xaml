@@ -453,8 +453,16 @@
                                      VerticalAlignment="Center" MapServiceToken="jjA5Pn6AN4an5lgqKNN_Rg" Height="350" 
                                      Width="450" ZoomLevel="11.40">
                     <maps:MapControl.Children>
-                        <Image x:Name="LocationIcon" Source="/Assets/Location.png" Height="20" Width="20"/>
-                        <Image x:Name="StopIcon" Source="/Assets/Stop.png" Height="30" Width="30" Visibility="Collapsed"/>
+                        <Image x:Name="LocationIcon" Height="20" Width="20">
+                            <Image.Source>
+                                <BitmapImage UriSource="/Assets/Location.png" DecodePixelHeight="20" DecodePixelWidth="20"/>
+                            </Image.Source>
+                        </Image>
+                        <Image x:Name="StopIcon" Height="30" Width="30" Visibility="Collapsed">
+                            <Image.Source>
+                                <BitmapImage UriSource="/Assets/Stop.png" DecodePixelHeight="30" DecodePixelWidth="30" />
+                            </Image.Source>
+                        </Image>
                     </maps:MapControl.Children>
                 </maps:MapControl>
             </Grid>

@@ -232,8 +232,13 @@ namespace nexMuni.Views
             var xmlDoc = await WebHelper.GetBusLocationsAsync(searchVm.SelectedRoute);
             var vehicleLocations = await Task.Run(() => MapHelper.ParseBusLocations(xmlDoc));
 
-            var inboundBus = new BitmapImage(new Uri("ms-appx:///Assets/Inbound.png"));
-            var outboundBus = new BitmapImage(new Uri("ms-appx:///Assets/Outbound.png"));
+            var inboundBus = new BitmapImage();
+            inboundBus.DecodePixelHeight = 20;
+            inboundBus.UriSource = new Uri("ms-appx:///Assets/Inbound.png");
+
+            var outboundBus = new BitmapImage();
+            outboundBus.DecodePixelHeight = 20;
+            outboundBus.UriSource = new Uri("ms-appx:///Assets/Outbound.png");
 
             MapControl.SetNormalizedAnchorPoint(inboundBus, new Point(0.5, 0.5));
             MapControl.SetNormalizedAnchorPoint(outboundBus, new Point(0.5, 0.5));
