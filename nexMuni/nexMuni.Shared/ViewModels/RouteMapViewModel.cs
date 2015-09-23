@@ -1,11 +1,9 @@
 ﻿using nexMuni.DataModels;
 using nexMuni.Helpers;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
 using System.Threading.Tasks;
-using System.Xml.Linq;
+using Windows.Devices.Geolocation;
 using Windows.UI.Xaml.Controls.Maps;
 
 namespace nexMuni.ViewModels
@@ -26,23 +24,22 @@ namespace nexMuni.ViewModels
                 NotifyPropertyChanged("SelectedRoute");
             }
         }
-        //public List<MapPolyline> routePath { get; set; }
 
         public RouteMapViewModel(Route route)
         {
             SelectedRoute = route;
         }
 
-        public async Task<List<MapPolyline>> GetRoutePath()
+        public async Task<List<IEnumerable<BasicGeoposition>>> GetRoutePath()
         {
             var xmlDoc = await WebHelper.GetRoutePathAsync(SelectedRoute.RouteNumber);
-            return await MapHelper.ParseRoutePath(xmlDoc);
+            return await Task.Run(() => MapHelper.ParseRoutePath(xmlDoc));
         }
 
         public async Task<List<Bus>> GetBusLocations()
         {
             var xmlDoc = await WebHelper.GetBusLocationsAsync(SelectedRoute.RouteNumber);
-            return await MapHelper.ParseBusLocations(xmlDoc);
+            return MapHelper.ParseBusLocations(xmlDoc);
         }
 
         #region INotify Methods

@@ -321,7 +321,7 @@
                             <ContentPresenter x:Name="HeaderContentPresenter" ContentTemplate="{TemplateBinding HeaderTemplate}" Content="{TemplateBinding Header}" FlowDirection="{TemplateBinding FlowDirection}" HorizontalAlignment="Left" Margin="0,0,0,-4.5" Style="{StaticResource HeaderContentPresenterStyle}" Visibility="Collapsed"/>
                             <Button x:Name="FlyoutButton" FontFamily="Segoe WP" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" FontWeight="Normal" FlowDirection="{TemplateBinding FlowDirection}" FontSize="{ThemeResource ContentControlFontSize}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" MinHeight="{ThemeResource ComboBoxItemMinHeightThemeSize}" Padding="6.5,0,0,0" Grid.Row="1">
                                 <ContentPresenter x:Name="ContentPresenter" Margin="0,0.8,0,0" MinHeight="32.5">
-                                    <TextBlock x:Name="PlaceholderTextBlock" FontFamily="Segoe WP" Margin="0" Style="{StaticResource ComboBoxPlaceholderTextBlockStyle}" Text="{TemplateBinding PlaceholderText}"/>
+                                    <TextBlock x:Name="PlaceholderTextBlock" FontFamily="Segoe WP" Margin="0" Style="{StaticResource ComboBoxPlaceholderTextBlockStyle}" />
                                 </ContentPresenter>
                             </Button>
                             <Border x:Name="ShortListOuterBorder" Margin="{ThemeResource PhoneTouchTargetOverhang}" Grid.Row="1" Visibility="Collapsed">
@@ -371,7 +371,7 @@
             <Grid>
                 <TextBlock x:Name="NoStopsNotice" Text="{Binding NoStopsText}" Foreground="#b31b1b" TextAlignment="Center" FontSize="21" Margin="0,220,0,0"/>
                 <ListView x:Name="NearbyListView" ItemsSource="{Binding NearbyStops}" HorizontalAlignment="Left" VerticalAlignment="Top" 
-							  SelectionMode="None" IsItemClickEnabled="True" ItemClick="StopClicked" Padding="0,10,0,0">
+							  SelectionMode="None" IsItemClickEnabled="True" ItemClick="StopSelected" Padding="0,10,0,0">
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <Grid Background="#b31b1b" Margin="0,0,0,11	" Height="100" Width="500">
@@ -395,9 +395,11 @@
 
         <PivotItem x:Name="FavoritesPivot" Header="favorites" Margin="10,13,10,0">
             <Grid>
-                <TextBlock x:Name="NoFavsNotice" Text="{Binding NoFavoritesText}" Foreground="#b31b1b" TextAlignment="Center" FontFamily="Segoe UI Symbol" FontSize="21" Margin="0,220,0,0" Width="250" TextWrapping="WrapWholeWords"/>
+                <TextBlock x:Name="NoFavsNotice" Text="{Binding NoFavoritesText}" Foreground="#b31b1b" TextAlignment="Center" 
+                           FontFamily="Segoe UI Symbol" FontSize="21" Margin="0,220,0,0" Width="250" TextWrapping="WrapWholeWords"/>
                 <ListView x:Name="FavoritesListView" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Top" 
-                              ItemsSource="{Binding FavoriteStops}" SelectionMode="None" IsItemClickEnabled="True" ItemClick="StopClicked" Padding="0,10,0,0">
+                            ItemsSource="{Binding FavoriteStops}" SelectionMode="None" IsItemClickEnabled="True" 
+                            ItemClick="StopSelected" Padding="0,10,0,0">
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <Grid Background="#b31b1b" Margin="0,0,0,11	" Height="100" Width="500">
@@ -417,38 +419,32 @@
             <Grid HorizontalAlignment="Center" Width="400" Margin="0,0,0,0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="260"/>
-                    <RowDefinition Height="300"/>
+                    <RowDefinition Height="350"/>
                 </Grid.RowDefinitions>
 
                 <StackPanel Background="#b31b1b" Margin="0,5,0,0">
-                    <TextBlock Text="Select Route" HorizontalAlignment="Center" Margin="-265,0,0,-7" FontSize="16" FontFamily="Global User Interface"/>
-                    <Button x:Name="RouteButton" HorizontalAlignment="Center" Width="350" Style="{StaticResource ButtonStyle}" IsEnabled="True" Content="{Binding SelectedRoute}">
-                        <Button.Flyout>
-                            <ListPickerFlyout x:Name="RoutesFlyout" Title="SELECT ROUTE" ItemsSource="{Binding RoutesList}" Placement="Right" >
-                                <ListPickerFlyout.ItemTemplate>
-                                    <DataTemplate>
-                                        <ContentControl Width="350" Content="{Binding}"/>
-                                    </DataTemplate>
-                                </ListPickerFlyout.ItemTemplate>
-                            </ListPickerFlyout>
-                        </Button.Flyout>
-                    </Button>
+                    <TextBlock Text="Select Route" HorizontalAlignment="Center" Margin="-265,0,0,-7" FontSize="16" />
+                    <ComboBox x:Name="RouteBox" Width="350" HorizontalAlignment="Center" Style="{StaticResource ComboBoxStyle}" 
+                              ItemsSource="{Binding RoutesList}" IsEnabled="False" >
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <ContentControl Width="350" Content="{Binding}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
 
                     <TextBlock x:Name="DirLabel" Text="Select Direction" HorizontalAlignment="Center" Margin="-245,0,0,-7" FontSize="16" FontFamily="Global User Interface" Visibility="Collapsed"/>
                     <ComboBox x:Name="DirBox" Width="350" HorizontalAlignment="Center" Style="{StaticResource ComboBoxStyle}" ItemsSource="{Binding DirectionsList}" Visibility="Collapsed"/>
 
                     <TextBlock x:Name="StopLabel" Text="Select Stop" HorizontalAlignment="Center" Margin="-275,0,0,-7" FontSize="16" FontFamily="Global User Interface" Visibility="Collapsed"/>
-                    <Button x:Name="StopButton" HorizontalAlignment="Center" Width="350" Style="{StaticResource ButtonStyle}" Content="{Binding SelectedStop.StopName}" Visibility="Collapsed" >
-                        <Button.Flyout>
-                            <ListPickerFlyout x:Name="StopsFlyout" Title="SELECT STOP" Placement="Right" ItemsSource="{Binding StopsList}">
-                                <ListPickerFlyout.ItemTemplate>
-                                    <DataTemplate>
-                                        <ContentControl Width="350" Content="{Binding Path = StopName}"/>
-                                    </DataTemplate>
-                                </ListPickerFlyout.ItemTemplate>
-                            </ListPickerFlyout>
-                        </Button.Flyout>
-                    </Button>
+                    <ComboBox x:Name="StopBox" HorizontalAlignment="Center" Width="350" Style="{StaticResource ComboBoxStyle}" 
+                              ItemsSource="{Binding StopsList}" Visibility="Collapsed" >
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <ContentControl Width="350" Content="{Binding Path = StopName}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
 
                     <TextBlock x:Name="SearchTimes" Text="{Binding SearchTimes}" HorizontalAlignment="Center" Margin="0,5,0,0" FontSize="24" FontWeight="Bold" Visibility="Collapsed" />
                 </StackPanel>
@@ -457,8 +453,16 @@
                                      VerticalAlignment="Center" MapServiceToken="jjA5Pn6AN4an5lgqKNN_Rg" Height="350" 
                                      Width="450" ZoomLevel="11.40">
                     <maps:MapControl.Children>
-                        <Image x:Name="LocationIcon" Source="/Assets/Location.png" Height="20" Width="20"/>
-                        <Image x:Name="StopIcon" Source="/Assets/Stop.png" Height="30" Width="30" Visibility="Collapsed"/>
+                        <Image x:Name="LocationIcon" Height="20" Width="20">
+                            <Image.Source>
+                                <BitmapImage UriSource="/Assets/Location.png" DecodePixelHeight="20" DecodePixelWidth="20"/>
+                            </Image.Source>
+                        </Image>
+                        <Image x:Name="StopIcon" Height="30" Width="30" Visibility="Collapsed">
+                            <Image.Source>
+                                <BitmapImage UriSource="/Assets/Stop.png" DecodePixelHeight="30" DecodePixelWidth="30" />
+                            </Image.Source>
+                        </Image>
                     </maps:MapControl.Children>
                 </maps:MapControl>
             </Grid>

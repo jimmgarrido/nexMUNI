@@ -6,13 +6,19 @@ namespace nexMuni.DataModels
 {
     public class Alert
     {
-        public string AffectedRoute { get; set; }
+        public string AffectedRoutes { get; set; }
         public string Message { get; set; }
 
         public Alert(string route, string text)
         {
-            AffectedRoute = route;
+            AffectedRoutes = "Routes: " + route;           
             Message = text;
+        }
+
+        public void AddRoute(string route)
+        {
+            if(!AffectedRoutes.Contains(route))
+                AffectedRoutes = AffectedRoutes + ", " + route;
         }
     }
 }

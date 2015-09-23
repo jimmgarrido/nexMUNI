@@ -1,34 +1,41 @@
-﻿using System;
+﻿#if WINDOWS_PHONE_APP
+using SQLite;
+#elif WINDOWS_UWP
+using SQLite.Net.Attributes;
+#endif
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
-using SQLite;
 using Windows.Devices.Geolocation;
+using System.Collections.ObjectModel;
 
 namespace nexMuni.DataModels
 {
-    public class Route
+    public class Route : INotifyPropertyChanged
     {
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
         public string Title { get; set; }
-
-        //public List<RouteDirection> Directions { get; set; } 
+        public string RouteName { get; private set; }
+        public string RouteNumber { get; private set; }
+        //public List<RouteDirection> Directions { get
+        //    {
+        //        return _directions;
+        //    }
+        //    set
+        //    {
+        //        _directions = value;
+        //        NotifyPropertyChanged("Directions");
+        //    }
+        //}
+        public ObservableCollection<RouteDirection> Directions { get; set; }
 
         private string predictions1 = String.Empty;
         private string predictions2 = String.Empty;
-
         public Geopoint stopLocation;
 
-        public string RouteName { get; private set; }
-        public string RouteNumber { get; private set; }
-        public List<RouteDirection> Directions { get; set; }
-        public string Dir1 { get; set; }
-        public string Dir2 { get; set; }
-
-        public string Times1 { get; set; }
-        public string Times2 { get; set; }
 
         public Route() { }
 
@@ -37,14 +44,28 @@ namespace nexMuni.DataModels
             RouteName = name;
             RouteNumber = num;
             Title = string.Format("{0}-{1}", num, name);
-            Directions = new List<RouteDirection>();
+            //Directions = new List<RouteDirection>();
+            Directions = new ObservableCollection<RouteDirection>();
         }
 
-        public void UpdateTimes(List<RouteDirection> directions)
+        public void UpdateTimes(List<RouteDirection> updatedDirections)
         {
-            for(int i=0; i<directions.Count; i++)
+            if(updatedDirections.Count > Directions.Count)
             {
-                Directions[i].SetTimes(directions[i].Times);
+                Directions.Clear();
+
+                for (int i = 0; i < updatedDirections.Count; i++)
+                {
+                    Directions.Add(updatedDirections[i]);
+                    Directions[i].SetTimes(updatedDirections[i].Times);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < updatedDirections.Count; i++)
+                {
+                    Directions[i].SetTimes(updatedDirections[i].Times);
+                }
             }
         }
 
@@ -52,5 +73,17 @@ namespace nexMuni.DataModels
         {
             stopLocation = new Geopoint(new BasicGeoposition { Latitude = lat, Longitude = lon });
         }
+
+        #region INotify Methods
+        private void NotifyPropertyChanged(string property)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(property));
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        #endregion
     }
 }

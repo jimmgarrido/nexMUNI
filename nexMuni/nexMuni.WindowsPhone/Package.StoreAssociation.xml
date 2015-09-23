@@ -195,11 +195,21 @@
     <MainPackageIdentityName>10642JimmyGarrido.nexBARTBeta</MainPackageIdentityName>
     <MainPackageIdentityName>10642JimmyGarrido.nexMuni</MainPackageIdentityName>
   </AccountPackageIdentityNames>
-  <PackageInfoList LandingUrl="https://dev.windowsphone.com/AppSubmission/AssociationLanding?windowsProductId=d81a8f85-82e7-490a-853e-92169766898d">
+  <PackageInfoList LandingUrl="https://dev.windows.com/dashboard/Application?appId=9WZDNCRDQPQG">
     <PackageInfo>
-      <OsMinVersion>6.3.0.0</OsMinVersion>
-      <PackageArchitecture>arm</PackageArchitecture>
-      <PackageMaxArchitectureVersion>1.8.9.0</PackageMaxArchitectureVersion>
+      <OsMinVersion>6.3.1.0</OsMinVersion>
+      <PackageArchitecture>Arm</PackageArchitecture>
+      <PackageMaxArchitectureVersion>2015.716.425.1924</PackageMaxArchitectureVersion>
+    </PackageInfo>
+    <PackageInfo>
+      <OsMinVersion>6.3.1.0</OsMinVersion>
+      <PackageArchitecture>Neutral</PackageArchitecture>
+      <PackageMaxArchitectureVersion>2015.716.425.1924</PackageMaxArchitectureVersion>
+    </PackageInfo>
+    <PackageInfo>
+      <OsMinVersion>6.3.1.0</OsMinVersion>
+      <PackageArchitecture>Neutral</PackageArchitecture>
+      <PackageMaxArchitectureVersion>2015.716.425.1924</PackageMaxArchitectureVersion>
     </PackageInfo>
   </PackageInfoList>
 </StoreAssociation>

@@ -4,28 +4,25 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using Windows.Web.Http;
 using nexMuni.DataModels;
 
 namespace nexMuni.Helpers
 {
-    public class PredictionHelper
+    public class ParseHelper
     {
-        private static List<Route> routes = new List<Route>();
-
         public static async Task<List<Route>> ParsePredictionsAsync(XDocument document)
         {
-            string routeTitle, routeNum;
+            var routes = new List<Route>();
+            string routeNum;
             IEnumerable<XElement> rootElements;
 
-            routes.Clear();
             //If there was an error getting the xml, return an empty list
             if (document.Root == null) return routes;
-            else rootElements = document.Element("body").Elements("predictions");
 
+            rootElements = document.Element("body").Elements("predictions");
             foreach(XElement predictionElement in rootElements)
             {
-                routeTitle = ParseTitle(predictionElement);
+                string routeTitle = ParseTitle(predictionElement);
                 routeNum = ParseRouteNum(predictionElement);
 
                 //Check to see if the route has already been added to the collection
@@ -62,18 +59,16 @@ namespace nexMuni.Helpers
         public static async Task<string> ParseSearchTimesAsync(XDocument document)
         {
             var element = document.Element("body").Element("predictions").Element("direction");
-
-            if (element != null) return ParseTimes(element);
-            else return "No times found";
+            return element != null ? ParseTimes(element) : "No times found";
         }
 
         public static async Task<List<Alert>> ParseAlerts(XDocument document)
         {
-            List<Alert> alerts = new List<Alert>();
-            IEnumerable<XElement> rootElements;
+            if (document.Root == null) return new List<Alert>();
 
-            if (document.Root == null) return alerts;
-            else rootElements = document.Element("body").Elements("predictions");
+            var alerts = new List<Alert>();
+            var rootElements = document.Element("body").Elements("predictions").Where(
+                e => e.Attributes().All(a => a.Name != "dirTitleBecauseNoPredictions"));
 
             foreach (XElement predictionElement in rootElements)
             {
@@ -84,9 +79,16 @@ namespace nexMuni.Helpers
                     if(!messageElement.Attribute("priority").Value.Equals("Low"))
                     {
                         var route = predictionElement.Attribute("routeTag").Value;
-                        var message = messageElement.Attribute("text").Value;
+                        var message = messageElement.Attribute("text").Value.Replace("\n", " ");
 
-                        alerts.Add(new Alert(route, message));
+                        if (alerts.Any(x => x.Message == message))
+                        {
+                            alerts.Find(b => b.Message == message).AddRoute(route);
+                        }
+                        else
+                        {
+                            alerts.Add(new Alert(route, message));
+                        }
                     }
                 }
             }
@@ -142,6 +144,5 @@ namespace nexMuni.Helpers
                 return element.Attribute("routeTag").Value;
             }
         }
-
     }
 }

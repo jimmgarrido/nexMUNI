@@ -9,6 +9,8 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using Windows.UI.Xaml;
+using Windows.UI.StartScreen;
+using nexMuni.Views;
 
 namespace nexMuni.ViewModels
 {
@@ -16,6 +18,8 @@ namespace nexMuni.ViewModels
     {
         private Stop _selectedStop;
         private string _noTimes;
+        private string _noAlerts;
+        private DispatcherTimer refreshTimer;
 
         public ObservableCollection<Route> Routes { get; private set; }
         public ObservableCollection<Alert> Alerts { get; private set; }
@@ -41,8 +45,19 @@ namespace nexMuni.ViewModels
                 NotifyPropertyChanged("NoTimesText");
             }
         }
-
-        private DispatcherTimer refreshTimer;
+        public string NoAlertsText
+        {
+            get
+            {
+                return _noAlerts;
+            }
+            set
+            {
+                _noAlerts = value;
+                NotifyPropertyChanged("NoAlertsText");
+            }
+        }
+        public string tileId;
 
         private StopDetailViewModel() { }
 
@@ -54,24 +69,20 @@ namespace nexMuni.ViewModels
             refreshTimer = new DispatcherTimer();
             refreshTimer.Tick += TimerDue;
             refreshTimer.Interval = new System.TimeSpan(0, 0, 15);
+            tileId = stop.StopName;
         }
 
-        public async Task LoadTimes()
+        public async Task<bool> LoadTimes()
         {
-
-#if WINDOWS_PHONE_APP
-            StatusBar statusBar = StatusBar.GetForCurrentView();
-            await statusBar.ProgressIndicator.ShowAsync();
-            statusBar.ProgressIndicator.Text = "Getting Arrival Times";
-            statusBar.ProgressIndicator.ProgressValue = null;
-#endif
-
             var xmlDoc = await WebHelper.GetMulitPredictionsAsync(SelectedStop.StopTags);
+
             if (xmlDoc != null)
             {
-                List<Route> routeList = await PredictionHelper.ParsePredictionsAsync(xmlDoc);
+                List<Route> routeList = await ParseHelper.ParsePredictionsAsync(xmlDoc);
+                List<Alert> alertList = await ParseHelper.ParseAlerts(xmlDoc);
 
-                if (routeList.Count == 0) NoTimesText = "No busses at this time";
+                if (!routeList.Any()) 
+                    NoTimesText = "No busses at this time";
                 else
                 {
                     foreach (Route r in routeList)
@@ -81,20 +92,22 @@ namespace nexMuni.ViewModels
                     }
                 }
 
-                //Get alerts TODO:Move to seperate method
-                List<Alert> alertList = await PredictionHelper.ParseAlerts(xmlDoc);
-                foreach (Alert a in alertList)
+                if (!alertList.Any())
+                    NoAlertsText = "No alerts at this time";
+                else
                 {
-                    Alerts.Add(a);
+                    foreach (Alert a in alertList)
+                    {
+                        Alerts.Add(a);
+                    }
                 }
-
                 if (!refreshTimer.IsEnabled) refreshTimer.Start();
+                return true;
             }
-
-#if WINDOWS_PHONE_APP
-            statusBar.ProgressIndicator.ProgressValue = 0;
-            await statusBar.ProgressIndicator.HideAsync();
-#endif
+            else
+            {
+                return false;
+            }
         }
 
         public async Task RefreshTimes()
@@ -102,24 +115,34 @@ namespace nexMuni.ViewModels
             var xmlDoc = await WebHelper.GetMulitPredictionsAsync(SelectedStop.StopTags);
             if (xmlDoc != null)
             {
-                List<Route> routeList = await PredictionHelper.ParsePredictionsAsync(xmlDoc);
+                List<Route> updatedRouteList = await ParseHelper.ParsePredictionsAsync(xmlDoc);
 
-                if(routeList.Count == Routes.Count)
+                if(updatedRouteList.Count == Routes.Count)
                 {
-                    for(int i=0; i< routeList.Count; i++)
+                    for(int i=0; i< updatedRouteList.Count; i++)
                     {
-                        Routes[i].UpdateTimes(routeList[i].Directions);
+                        Routes[i].UpdateTimes(updatedRouteList[i].Directions.ToList());
                     }
                 }
                 else
                 {
                     Routes.Clear();
-                    foreach(Route r in routeList)
+                    foreach(Route r in updatedRouteList)
                     {
                         Routes.Add(r);
                     }
                 }
             }
+        }
+
+        public async void PinTile(object sender, RoutedEventArgs e)
+        {
+            //string tileActivationArguments = MainPage.appbarTileId + " was pinned at=" + DateTime.Now.ToLocalTime().ToString();
+            Uri square150x150Logo = new Uri("ms-appx:///Assets/Solid150.png");
+
+            SecondaryTile tile = new SecondaryTile("1", "Display Name", "arg", square150x150Logo, TileSize.Square150x150);
+            tile.VisualElements.Square71x71Logo = new Uri("ms-appx:///Assets/Solid71.png");
+            bool isPinned = await tile.RequestCreateAsync();
         }
 
         public async Task AddFavoriteAsync()

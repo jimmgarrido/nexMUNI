@@ -14,7 +14,7 @@ namespace nexMuni.Helpers
         private static HttpClient client = new HttpClient();
         private static XDocument xmlDoc = new XDocument();
 
-        private static Dictionary<string, string> Urls = new Dictionary<string, string>()
+        private static readonly Dictionary<string, string> urls = new Dictionary<string, string>()
         {
             {"multiPredictions","http://webservices.nextbus.com/service/publicXMLFeed?command=predictionsForMultiStops&a=sf-muni"},
             {"routeConfig","http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=sf-muni&r="},
@@ -24,7 +24,7 @@ namespace nexMuni.Helpers
 
         public static async Task<XDocument> GetMulitPredictionsAsync(string tags)
         {
-            StringBuilder builder = new StringBuilder();
+            var builder = new StringBuilder();
             string[] splitTags = tags.Split(',');
 
             foreach (string tag in splitTags)
@@ -32,7 +32,7 @@ namespace nexMuni.Helpers
                 builder.Append("&stops=" + tag);
             }
 
-            var url = Urls["multiPredictions"] + builder.ToString();
+            string url = urls["multiPredictions"] + builder;
 
             //Make sure to pull from the network and not cache everytime predictions are refreshed 
             client.DefaultRequestHeaders.IfModifiedSince = DateTime.Now;
@@ -54,7 +54,7 @@ namespace nexMuni.Helpers
 
         public static async Task<XDocument> GetSearchPredictionsAsync(Stop stop, string route)
         {
-            var url = Urls["searchPrediction"] + stop.stopId + "&routeTag=" + route.Substring(0, route.IndexOf('-'));
+            var url = urls["searchPrediction"] + stop.stopId + "&routeTag=" + route.Substring(0, route.IndexOf('-'));
 
              //Make sure to pull from the network and not cache everytime predictions are refreshed 
             client.DefaultRequestHeaders.IfModifiedSince = DateTime.Now;
@@ -84,14 +84,14 @@ namespace nexMuni.Helpers
                 route = route.Substring(0, route.IndexOf('-'));
             }
 
-            var url = Urls["routeConfig"] + route;
+            var url = urls["routeConfig"] + route;
 
             try
             {
                 var response = await client.GetAsync(new Uri(url));
                 response.EnsureSuccessStatusCode();
                 string reader = await response.Content.ReadAsStringAsync();
-                xmlDoc = XDocument.Parse(reader);
+                xmlDoc = await Task.Run(() => XDocument.Parse(reader));
             }
             catch (Exception)
             {
@@ -108,14 +108,22 @@ namespace nexMuni.Helpers
             TimeSpan epoch = (DateTime.UtcNow - new DateTime(1970, 1, 1));
             var timestamp = (long)epoch.TotalMilliseconds - TimeSpan.FromMinutes(5).TotalMilliseconds;
 
-            var url = Urls["busLocations"] + route + "&t=" + timestamp;
+            if (route.Equals("Powell/Mason Cable Car")) route = "59";
+            else if (route.Equals("Powell/Hyde Cable Car")) route = "60";
+            else if (route.Equals("California Cable Car")) route = "61";
+            else if (route.Contains('-'))
+            {
+                route = route.Substring(0, route.IndexOf('-'));
+            }
+
+            var url = urls["busLocations"] + route + "&t=" + timestamp;
 
              try
             {
                 var response = await client.GetAsync(new Uri(url));
                 response.EnsureSuccessStatusCode();
                 string reader = await response.Content.ReadAsStringAsync();
-                xmlDoc = XDocument.Parse(reader);
+                xmlDoc = await Task.Run(() => XDocument.Parse(reader));
             }
             catch (Exception)
             {

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest" xmlns:m3="http://schemas.microsoft.com/appx/2014/manifest" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest">
-  <Identity Name="10642JimmyGarrido.nexMuniBeta" Publisher="CN=28976100-24E8-4BA4-858A-2545BD9EA0E9" Version="1.9.0.0" />
-  <mp:PhoneIdentity PhoneProductId="4c1280d7-c156-4998-9890-f4e037755ab0" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
+  <Identity Name="10642JimmyGarrido.nexMuniBeta" Publisher="CN=28976100-24E8-4BA4-858A-2545BD9EA0E9" Version="1.1.0.0" />
+  <mp:PhoneIdentity PhoneProductId="900a1c6f-8055-4d1d-8536-a2185dbd9c3c" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>nexMuni Beta</DisplayName>
     <PublisherDisplayName>nexDevelopment</PublisherDisplayName>
@@ -16,7 +16,7 @@
   </Resources>
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="nexMuni.WindowsPhone.App">
-      <m3:VisualElements DisplayName="nexMUNI Beta" Square150x150Logo="Assets\Logo.png" Square44x44Logo="Assets\SmallLogo.png" Description="nexMuni.WindowsPhone" ForegroundText="light" BackgroundColor="transparent" ToastCapable="true">
+      <m3:VisualElements DisplayName="nexMuni Beta" Square150x150Logo="Assets\Logo.png" Square44x44Logo="Assets\SmallLogo.png" Description="nexMuni.WindowsPhone" ForegroundText="light" BackgroundColor="transparent">
         <m3:DefaultTile Square71x71Logo="Assets\Square71x71Logo.png">
         </m3:DefaultTile>
         <m3:SplashScreen Image="Assets\SplashScreen.png" BackgroundColor="#b31b1b" />

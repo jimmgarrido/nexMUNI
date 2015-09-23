@@ -1,4 +1,8 @@
-﻿using SQLite;
+﻿#if WINDOWS_PHONE_APP
+using SQLite;
+#elif WINDOWS_UWP
+using SQLite.Net.Attributes;
+#endif
 using System;
 using System.Collections.Generic;
 using System.Text;

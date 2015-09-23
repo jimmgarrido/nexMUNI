@@ -8,6 +8,8 @@ using nexMuni.DataModels;
 using nexMuni.Helpers;
 using nexMuni.Views;
 using System.ComponentModel;
+using Windows.UI.Xaml.Controls.Maps;
+using Windows.Devices.Geolocation;
 
 namespace nexMuni.ViewModels
 {
@@ -15,6 +17,9 @@ namespace nexMuni.ViewModels
     {
         private string _noStopsText;
         private string _noFavoritesText;
+
+        private int nearbyCount;
+        private bool sorted = false;
 
         public ObservableCollection<Stop> NearbyStops { get; private set; }
         public ObservableCollection<Stop> FavoriteStops { get; private set;}
@@ -43,39 +48,38 @@ namespace nexMuni.ViewModels
             }
         }
 
-        private ApplicationDataContainer _localSettings;
-        private Task _initialize;
-
         public MainViewModel()
-        {
-            _initialize = LoadAsync();
-            DatabaseHelper.FavoritesChanged += LoadFavorites;
-        }
-
-        private async Task LoadAsync()
         {
             NearbyStops = new ObservableCollection<Stop>();
             FavoriteStops = new ObservableCollection<Stop>();
 
-            LoadFavorites();
-            await UpdateNearbyStops();
+            DatabaseHelper.FavoritesChanged += LoadFavoritesAsync;
         }
 
-        public async Task UpdateNearbyStops()
+        public async Task LoadAsync()
+        {
+            //LoadFavoritesAsync();
+            await UpdateNearbyStopsAsync();
+        }
+
+        public async Task UpdateNearbyStopsAsync()
         {
             //Make sure user has given permission to access location
             await LocationHelper.UpdateLocation();
 
+            if (SettingsHelper.GetNearbySetting() == 1) nearbyCount = 25;
+            else nearbyCount = 15;
+
             if (LocationHelper.Location != null)
             {
                 NoStopsText = "";
-                List<Stop> stops = await DatabaseHelper.QueryForNearby(0.5);
+                List<Stop> stops = await Task.Run(() => DatabaseHelper.QueryForNearby(0.5));
 
                 //Get distance to each stop
                 foreach (Stop stop in stops)
                 {
                     //stop.Distance = LocationHelper.GetDistance(stop.Latitude, stop.Longitude);
-                    stop.DistanceAsDouble = LocationHelper.GetDistance(stop.Latitude, stop.Longitude);
+                    stop.DistanceAsDouble = await Task.Run(() => LocationHelper.GetDistance(stop.Latitude, stop.Longitude));
                 }
 
                 //Sort list of stops by distance
@@ -84,24 +88,26 @@ namespace nexMuni.ViewModels
                     orderby s.DistanceAsDouble
                     select s;
 
-                //Add stops to listview with max of 15
+                //Add stops to listview with a max of user selection
                 if (NearbyStops.Any())
                 {
-                    for(int i=0; i<NearbyStops.Count; i++)
+                    while(NearbyStops.Any())
                     {
-                        NearbyStops.RemoveAt(i);
-                        NearbyStops.Insert(i, sortedList.ElementAt(i));
-                        //if (NearbyStops.Count >= 15) break;
-                        //NearbyStops.Add(new Stop(stop.StopName, stop.Routes, stop.StopTags, stop.Latitude, stop.Longitude, stop.Distance))
+                        NearbyStops.RemoveAt(NearbyStops.Count - 1);
+                    }
+
+                    for (int j=0; j < nearbyCount; j++)
+                    {
+                        //NearbyStops.RemoveAt(j);
+                        NearbyStops.Insert(j, sortedList.ElementAt(j));
                     }
                 }
                 else
                 {
                     foreach (Stop stop in sortedList)
                     {
-                        //NearbyStops.Add(new Stop(stop.StopName, stop.Routes, stop.StopTags, stop.Latitude, stop.Longitude, stop.Distance));
                         NearbyStops.Add(stop);
-                        if (NearbyStops.Count >= 15) break;
+                        if (NearbyStops.Count >= nearbyCount) break;
                     }
                 }
 
@@ -113,6 +119,12 @@ namespace nexMuni.ViewModels
             }
         }
 
+        public async Task<List<IEnumerable<BasicGeoposition>>> GetRoutePathAsync(string route)
+        {
+            var xmlDoc = await WebHelper.GetRoutePathAsync(route);
+            return await Task.Run(() => MapHelper.ParseRoutePath(xmlDoc));
+        }
+
         public void FavoritesDistances()
         {
             LocationHelper.FavoritesDistances(FavoriteStops);
@@ -122,27 +134,28 @@ namespace nexMuni.ViewModels
         {
             var sortedFavorites = new List<Stop>(FavoriteStops.OrderBy(s => s.DistanceAsDouble));
             int i= 0;
-            //MainViewModel.FavoritesStops.Clear();
+
             foreach (Stop stop in sortedFavorites)
             {
                 FavoriteStops.RemoveAt(i);
                 FavoriteStops.Insert(i,stop);
                 i++;
             }
+            sorted = true;
         }
 
-        private void LoadFavorites()
+        private async void LoadFavoritesAsync()
         {
             List<FavoriteData> favorites = DatabaseHelper.FavoritesList;
+            FavoriteStops.Clear();
 
             if (favorites.Count == 0)
             {
-                NoFavoritesText = "Add favorites by pressing &#xE00A; on a stop";
+                NoFavoritesText = "Add favorites by pressing \uE00A on a stop";
             }
             else
             {
                 NoFavoritesText = "";
-                FavoriteStops.Clear();
                 foreach (FavoriteData fav in favorites)
                 {
                     Stop favStop = new Stop(fav.Name, "", fav.Routes, fav.Tags, fav.Lat, fav.Lon);
@@ -152,7 +165,9 @@ namespace nexMuni.ViewModels
             }
             
             //Check if any stops in NearbyStops are also favorites so users have the ability to remove them
-            SyncFavoriteIds();          
+            SyncFavoriteIds();
+            await Task.Run(() => FavoritesDistances());
+            if (sorted) SortFavorites();
         }
 
         private void SyncFavoriteIds()
@@ -166,7 +181,6 @@ namespace nexMuni.ViewModels
                 }
             }
         }
-
 
         #region INotify Methods
         private void NotifyPropertyChanged(string property)
