@@ -19,6 +19,7 @@ namespace nexMuni.ViewModels
     {
         private string _searchTimes;
         private string _selectedRoute;
+        private List<string> _routesList;
         private List<string> _directionsList;
         private List<Stop> _stopsList;
         private Stop _selectedStop;
@@ -61,7 +62,18 @@ namespace nexMuni.ViewModels
             }
         }
 
-        public List<string> RoutesList { get; set; }
+        public List<string> RoutesList
+        {
+            get
+            {
+                return _routesList;
+            }
+            set
+            {
+                _routesList = value;
+                NotifyPropertyChanged("RoutesList");
+            }
+        }
         public List<string> DirectionsList
         {
             get

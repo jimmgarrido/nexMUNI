@@ -54,7 +54,7 @@ namespace nexMUNI.Win10
 #endif
 
             Frame rootFrame = Window.Current.Content as Frame;
-
+            
             // Do not repeat app initialization when the Window already has content,
             // just ensure that the window is active
             if (rootFrame == null)
@@ -82,6 +82,25 @@ namespace nexMUNI.Win10
             }
             // Ensure the current window is active
             Window.Current.Activate();
+
+            Windows.UI.Core.SystemNavigationManager.GetForCurrentView().BackRequested += App_BackRequested;
+            rootFrame.Navigated += RootFrame_Navigated;
+        }
+
+        private void RootFrame_Navigated(object sender, NavigationEventArgs e)
+        {
+            Frame rootFrame = Window.Current.Content as Frame;
+
+            if (rootFrame.CanGoBack)
+            {
+                Windows.UI.Core.SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
+                    Windows.UI.Core.AppViewBackButtonVisibility.Visible;
+            }
+            else
+            {
+                Windows.UI.Core.SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
+                    Windows.UI.Core.AppViewBackButtonVisibility.Collapsed;
+            }
         }
 
         /// <summary>
@@ -106,6 +125,17 @@ namespace nexMUNI.Win10
             var deferral = e.SuspendingOperation.GetDeferral();
             //TODO: Save application state and stop any background activity
             deferral.Complete();
+        }
+
+        private void App_BackRequested(object sender, Windows.UI.Core.BackRequestedEventArgs e)
+        {
+            Frame rootFrame = Window.Current.Content as Frame;
+
+            if (rootFrame.CanGoBack)
+            {
+                rootFrame.GoBack();
+                e.Handled = true;
+            }
         }
     }
 }
