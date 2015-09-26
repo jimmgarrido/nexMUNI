@@ -126,37 +126,11 @@ namespace nexMuni.Views
                 vehicleCounter--;
             }
 
-            var routePath = await mainVm.GetRoutePathAsync(searchVm.SelectedRoute);
-
             SearchMap.MapElements.Clear();
 
-            if (routePath.Any())
-            {
-                //foreach (MapPolyline line in routePath)
-                //{
-                //    SearchMap.MapElements.Add(line);
-                //}
-                foreach (IEnumerable<BasicGeoposition> points in routePath)
-                {
-                    SearchMap.MapElements.Add(new MapPolyline
-                    {
-                        Path = new Geopath(points),
-                        StrokeColor = Color.FromArgb(255, 179, 27, 27),
-                        StrokeThickness = 2.00,
-                        ZIndex = 99
-                    });
-                }
-                //SearchMap.MapElements.Add(new MapPolyline
-                //{
-                //    Path = new Geopath(routePath),
-                //    StrokeColor = Color.FromArgb(255, 179, 27, 27),
-                //    StrokeThickness = 2.00,
-                //    ZIndex = 99
-                //});
-            }
-
-            await SearchMap.TrySetViewAsync(searchVm.MapCenter, 11.40);
+            await AddRoutePath();
             await ShowVehicleLocations();
+            await SearchMap.TrySetViewAsync(searchVm.MapCenter, 11.40);
 
 #if WINDOWS_PHONE_APP
             StatusBar.GetForCurrentView().ProgressIndicator.ProgressValue = 0;
@@ -225,6 +199,25 @@ namespace nexMuni.Views
             MapControl.SetLocation(LocationIcon, LocationHelper.Location.Coordinate.Point);
             mainVm.FavoritesDistances();
             SortBtn.IsEnabled = true;
+        }
+
+        private async Task AddRoutePath()
+        {
+            var routePath = await mainVm.GetRoutePathAsync(searchVm.SelectedRoute);
+
+            if (routePath.Any())
+            {
+                foreach (var path in routePath)
+                {
+                    SearchMap.MapElements.Add(new MapPolyline
+                    {
+                        Path = new Geopath(path),
+                        StrokeColor = Color.FromArgb(255, 179, 27, 27),
+                        StrokeThickness = 2.00,
+                        ZIndex = 99
+                    });
+                }
+            }
         }
 
         private async Task ShowVehicleLocations()

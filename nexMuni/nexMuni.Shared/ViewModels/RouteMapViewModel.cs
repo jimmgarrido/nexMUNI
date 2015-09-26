@@ -30,7 +30,7 @@ namespace nexMuni.ViewModels
             SelectedRoute = route;
         }
 
-        public async Task<List<IEnumerable<BasicGeoposition>>> GetRoutePath()
+        public async Task<List<IEnumerable<BasicGeoposition>>> GetRoutePathAsync()
         {
             var xmlDoc = await WebHelper.GetRoutePathAsync(SelectedRoute.RouteNumber);
             return await Task.Run(() => MapHelper.ParseRoutePath(xmlDoc));

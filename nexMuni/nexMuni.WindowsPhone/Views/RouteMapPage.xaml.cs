@@ -13,6 +13,7 @@ using nexMuni.Helpers;
 using nexMuni.ViewModels;
 using System.Threading.Tasks;
 using System.Linq;
+using Windows.UI;
 
 namespace nexMuni.Views
 {
@@ -61,12 +62,27 @@ namespace nexMuni.Views
                 LocationIcon.Visibility = Visibility.Visible;
             }
 
-            var routePath = await routeMapVm.GetRoutePath();
-
-
+            await AddRoutePath();
             await AddVehicleLocations();
+
             if (!refreshTimer.IsEnabled) refreshTimer.Start();
             alreadyLoaded = true;
+        }
+
+        private async Task AddRoutePath()
+        {
+            var routePath = await routeMapVm.GetRoutePathAsync();
+
+            foreach (var path in routePath)
+            {
+                RouteMap.MapElements.Add(new MapPolyline
+                {
+                    Path = new Geopath(path),
+                    StrokeColor = Color.FromArgb(255, 179, 27, 27),
+                    StrokeThickness = 2.00,
+                    ZIndex = 99
+                });
+            }
         }
 
         private async Task AddVehicleLocations()
@@ -131,6 +147,7 @@ namespace nexMuni.Views
                 vehicleCounter++;
             }
         }
+
         private async void TimerDue(object sender, object e)
         {
             await AddVehicleLocations();
