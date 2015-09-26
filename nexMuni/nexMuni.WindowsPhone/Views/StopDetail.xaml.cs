@@ -66,9 +66,20 @@ namespace nexMuni.Views
                 alreadyLoaded = true;
             }
 
-            await detailVm.LoadTimes();
+            StatusBar statusBar = StatusBar.GetForCurrentView();
+            await statusBar.ProgressIndicator.ShowAsync();
+            statusBar.ProgressIndicator.Text = "Getting Arrival Times";
+            statusBar.ProgressIndicator.ProgressValue = null;
+
+            if (!await detailVm.LoadTimes())
+            {
+                Frame.GoBack();
+            }
 
             if (!detailVm.Alerts.Any()) DetailPivot.Items.RemoveAt(1);
+
+            statusBar.ProgressIndicator.ProgressValue = 0;
+            await statusBar.ProgressIndicator.HideAsync();
         }
 
         private async void RefreshTimes(object sender, RoutedEventArgs e)

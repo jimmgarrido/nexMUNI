@@ -25,8 +25,10 @@ namespace nexMuni
         /// </summary>
         public App()
         {
+#if !DEBUG
             WindowsAppInitializer.InitializeAsync("1181ae3c-8eb6-4dd2-bb31-33e80f390dc7");
-            
+#endif
+
             this.InitializeComponent();
             this.Suspending += this.OnSuspending;
         }

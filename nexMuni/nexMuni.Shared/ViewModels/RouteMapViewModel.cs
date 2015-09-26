@@ -3,6 +3,7 @@ using nexMuni.Helpers;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
+using Windows.Devices.Geolocation;
 using Windows.UI.Xaml.Controls.Maps;
 
 namespace nexMuni.ViewModels
@@ -29,10 +30,10 @@ namespace nexMuni.ViewModels
             SelectedRoute = route;
         }
 
-        public async Task<List<MapPolyline>> GetRoutePath()
+        public async Task<List<IEnumerable<BasicGeoposition>>> GetRoutePathAsync()
         {
             var xmlDoc = await WebHelper.GetRoutePathAsync(SelectedRoute.RouteNumber);
-            return await MapHelper.ParseRoutePath(xmlDoc);
+            return await Task.Run(() => MapHelper.ParseRoutePath(xmlDoc));
         }
 
         public async Task<List<Bus>> GetBusLocations()

@@ -72,17 +72,10 @@ namespace nexMuni.ViewModels
             tileId = stop.StopName;
         }
 
-        public async Task LoadTimes()
+        public async Task<bool> LoadTimes()
         {
-
-#if WINDOWS_PHONE_APP
-            StatusBar statusBar = StatusBar.GetForCurrentView();
-            await statusBar.ProgressIndicator.ShowAsync();
-            statusBar.ProgressIndicator.Text = "Getting Arrival Times";
-            statusBar.ProgressIndicator.ProgressValue = null;
-#endif
-
             var xmlDoc = await WebHelper.GetMulitPredictionsAsync(SelectedStop.StopTags);
+
             if (xmlDoc != null)
             {
                 List<Route> routeList = await ParseHelper.ParsePredictionsAsync(xmlDoc);
@@ -108,14 +101,13 @@ namespace nexMuni.ViewModels
                         Alerts.Add(a);
                     }
                 }
-
                 if (!refreshTimer.IsEnabled) refreshTimer.Start();
+                return true;
             }
-
-#if WINDOWS_PHONE_APP
-            statusBar.ProgressIndicator.ProgressValue = 0;
-            await statusBar.ProgressIndicator.HideAsync();
-#endif
+            else
+            {
+                return false;
+            }
         }
 
         public async Task RefreshTimes()
@@ -123,19 +115,19 @@ namespace nexMuni.ViewModels
             var xmlDoc = await WebHelper.GetMulitPredictionsAsync(SelectedStop.StopTags);
             if (xmlDoc != null)
             {
-                List<Route> routeList = await ParseHelper.ParsePredictionsAsync(xmlDoc);
+                List<Route> updatedRouteList = await ParseHelper.ParsePredictionsAsync(xmlDoc);
 
-                if(routeList.Count == Routes.Count)
+                if(updatedRouteList.Count == Routes.Count)
                 {
-                    for(int i=0; i< routeList.Count; i++)
+                    for(int i=0; i< updatedRouteList.Count; i++)
                     {
-                        Routes[i].UpdateTimes(routeList[i].Directions);
+                        Routes[i].UpdateTimes(updatedRouteList[i].Directions.ToList());
                     }
                 }
                 else
                 {
                     Routes.Clear();
-                    foreach(Route r in routeList)
+                    foreach(Route r in updatedRouteList)
                     {
                         Routes.Add(r);
                     }

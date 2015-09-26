@@ -91,7 +91,7 @@ namespace nexMuni.Helpers
                 var response = await client.GetAsync(new Uri(url));
                 response.EnsureSuccessStatusCode();
                 string reader = await response.Content.ReadAsStringAsync();
-                xmlDoc = XDocument.Parse(reader);
+                xmlDoc = await Task.Run(() => XDocument.Parse(reader));
             }
             catch (Exception)
             {
@@ -123,7 +123,7 @@ namespace nexMuni.Helpers
                 var response = await client.GetAsync(new Uri(url));
                 response.EnsureSuccessStatusCode();
                 string reader = await response.Content.ReadAsStringAsync();
-                xmlDoc = XDocument.Parse(reader);
+                xmlDoc = await Task.Run(() => XDocument.Parse(reader));
             }
             catch (Exception)
             {
