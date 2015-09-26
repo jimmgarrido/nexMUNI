@@ -100,9 +100,6 @@ namespace nexMuni.Views
 
         private async void RouteSelected(object sender, SelectionChangedEventArgs args)
         {
-            //RoutesFlyout.SelectedIndex = sender.SelectedIndex;
-            //RouteButton.Content = sender.SelectedItem.ToString();
-
 #if WINDOWS_PHONE_APP
             StatusBar.GetForCurrentView().ProgressIndicator.ProgressValue = null;
             StatusBar.GetForCurrentView().ProgressIndicator.Text = "";
