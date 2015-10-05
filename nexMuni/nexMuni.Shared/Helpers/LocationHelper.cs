@@ -25,13 +25,9 @@ namespace nexMuni.Helpers
 
         public static async Task UpdateLocation()
         {
-#if WINDOWS_PHONE_APP
-            var statusBar = StatusBar.GetForCurrentView();
-            await statusBar.ProgressIndicator.ShowAsync();
-            statusBar.ProgressIndicator.Text = "Getting Location";
-            statusBar.ProgressIndicator.ProgressValue = null;
-#endif
-            if(geolocator == null) geolocator = new Geolocator { DesiredAccuracyInMeters = 50 };
+            await UIHelper.ShowStatusBar("Getting Location");
+
+            if (geolocator == null) geolocator = new Geolocator { DesiredAccuracyInMeters = 50 };
             if (geolocator.LocationStatus == PositionStatus.Disabled)
             {
                 //MainPage.noNearbyText.Text = "Location services disabled";
@@ -44,10 +40,7 @@ namespace nexMuni.Helpers
                 if (LocationChanged != null) LocationChanged();
             }
 
-#if WINDOWS_PHONE_APP
-            statusBar.ProgressIndicator.ProgressValue = 0;
-            await statusBar.ProgressIndicator.HideAsync();
-#endif
+            await UIHelper.HideStatusBar();
         }
 
         public static double[][] MakeBounds(double dist)

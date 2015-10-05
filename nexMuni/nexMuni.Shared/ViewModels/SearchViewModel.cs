@@ -125,7 +125,7 @@ namespace nexMuni.ViewModels
             allStopsList = new List<Stop>();
             outboundStops = new List<string>();
             inboundStops = new List<string>();
-            //initialize = LoadDataAsync();
+
         }
 
         public async Task LoadRoutesAsync()
@@ -135,19 +135,8 @@ namespace nexMuni.ViewModels
 
         public async Task LoadDirectionsAsync(string route)
         {
-            //if (DirectionsList.Count != 0)
-            //{
-            //    DirectionsList.Clear();
-            //}
-            //if (StopsList.Count != 0)
-            //{
-            //    StopsList.Clear();
-            //}
-
             SelectedRoute = route;
             SelectedStop = null;
-
-            var dirUrl = "http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=sf-muni&r=";
 
             if (route.Equals("Powell/Mason Cable Car")) route = "59";
             else if (route.Equals("Powell/Hyde Cable Car")) route = "60";
@@ -156,33 +145,18 @@ namespace nexMuni.ViewModels
             {
                 route = route.Substring(0, route.IndexOf('-'));
             }
-            
 
-            //selectedRoute = _route;
-            dirUrl = dirUrl + route;
-
-            var response = new HttpResponseMessage();
-            var client = new HttpClient();
-
-            //Make sure to pull from network not cache everytime predictions are refreshed 
-            client.DefaultRequestHeaders.IfModifiedSince = DateTime.Now;
-            try
-            {
-                response = await client.GetAsync(new Uri(dirUrl));
-                var reader = await response.Content.ReadAsStringAsync();
-                //GetDirections(XDocument.Parse(reader));
-                DirectionsList = await Task.Run(() => GetDirections(reader));
-            }
-            catch (Exception)
-            {
-                ErrorHandler.NetworkError("Error getting route information. Please try again.");
-            }
+            var xmlDoc = await WebHelper.GetRouteDirections(route);
+            DirectionsList = await Task.Run(() => ParseHelper.ParseDirections(xmlDoc));
+            allStopsList = await Task.Run(() => ParseHelper.ParseStops(xmlDoc));
+            await Task.Run(() => ParseHelper.ParseStopTags(xmlDoc, inboundStops, outboundStops));
+            //await SortStops(xmlDoc);
         }
 
         public async Task LoadStops(string direction)
         {
             var foundStops = new List<Stop>();
-            //if (StopsList.Count != 0) StopsList.Clear();
+
             SelectedStop = null;
             SearchTimes = "";
 
@@ -190,20 +164,16 @@ namespace nexMuni.ViewModels
             {
                 if (direction.Contains("Inbound"))
                 {
-                    foreach (string s in inboundStops)
+                    foreach (string tag in inboundStops)
                     {
-                        foundStops.Add(allStopsList.Find(z => z.StopTags == s));
-                        //foundStop = allStopsList.Find(z => z.StopTags == s);
-                        //StopsList.Add(foundStop);
+                        foundStops.Add(allStopsList.Find(z => z.StopTags == tag));
                     }
                 }
                 else if (direction.Contains("Outbound"))
                 {
-                    foreach (string s in outboundStops)
+                    foreach (string tag in outboundStops)
                     {
-                        foundStops.Add(allStopsList.Find(z => z.StopTags == s));
-                        //foundStop = allStopsList.Find(z => z.StopTags == s);
-                        //StopsList.Add(foundStop);
+                        foundStops.Add(allStopsList.Find(z => z.StopTags == tag));
                     }
                 }
             });
@@ -265,76 +235,46 @@ namespace nexMuni.ViewModels
 
             if (stops.Any())
                 return stops.ElementAt(0);
-            //return new Stop(stops[0].StopName, stops[0].Routes, stops[0].StopTags, stops[0].Latitude, stops[0].Longitude, stops[0].Distance);
             else return null;
         }
 
-        private List<string> GetDirections(string text)
-        {
-            var doc = XDocument.Parse(text);
+        //private async Task SortStops(XDocument doc)
+        //{
+        //    var tagElements = await Task.Run(() => ParseHelper.ParseStopTags(doc));
+        //    foreach (string direction in DirectionsList)
+        //    {
+        //        IEnumerable<XElement> tagElements;
+        //        if (el.Attribute("name").Value == "Inbound")
+        //        {
+        //            //Get all stop elements under direction element
+        //            tagElements =
+        //                from x in el.Elements("stop")
+        //                select x;
 
-            IEnumerable<XElement> rootElement =
-                from e in doc.Descendants("route")
-                select e;
-            IEnumerable<XElement> elements =
-                from d in rootElement.ElementAt(0).Elements("stop")
-                select d;
+        //            if (inboundStops.Count != 0) inboundStops.Clear();
+        //            //Add tags for direction to a collection
+        //            foreach (XElement y in tagElements)
+        //            {
+        //                inboundStops.Add(y.Attribute("tag").Value);
+        //            }
+        //        }
+        //        else if (el.Attribute("name").Value == "Outbound")
+        //        {
+        //            //Get all stop elements under direction element
+        //            tagElements =
+        //                from x in el.Elements("stop")
+        //                select x;
 
-            //Add all route's stops to a collection
-            foreach (XElement el in elements)
-            {
-                allStopsList.Add(new Stop(el.Attribute("title").Value,
-                                              el.Attribute("stopId").Value,
-                                              "",
-                                              el.Attribute("tag").Value,
-                                              double.Parse(el.Attribute("lon").Value),
-                                              double.Parse(el.Attribute("lat").Value)));
-            }
-
-            //Move to direction element
-            elements =
-                from d in rootElement.ElementAt(0).Elements("direction")
-                select d;
-
-            var directions = new List<string>();
-
-            foreach (XElement el in elements)
-            {
-                //Add direction title
-                directions.Add(el.Attribute("title").Value);
-
-                IEnumerable<XElement> tagElements;
-                if (el.Attribute("name").Value == "Inbound")
-                {
-                    //Get all stop elements under direction element
-                    tagElements =
-                        from x in el.Elements("stop")
-                        select x;
-
-                    if (inboundStops.Count != 0) inboundStops.Clear();
-                    //Add tags for direction to a collection
-                    foreach (XElement y in tagElements)
-                    {
-                        inboundStops.Add(y.Attribute("tag").Value);
-                    }
-                }
-                else if (el.Attribute("name").Value == "Outbound")
-                {
-                    //Get all stop elements under direction element
-                    tagElements =
-                        from x in el.Elements("stop")
-                        select x;
-
-                    if (outboundStops.Count != 0) outboundStops.Clear();
-                    //Add tags for direction to a collection
-                    foreach (XElement y in tagElements)
-                    {
-                        outboundStops.Add(y.Attribute("tag").Value);
-                    }
-                }
-            }
-            return directions;
-        }
+        //            if (outboundStops.Count != 0) outboundStops.Clear();
+        //            //Add tags for direction to a collection
+        //            foreach (XElement y in tagElements)
+        //            {
+        //                outboundStops.Add(y.Attribute("tag").Value);
+        //            }
+        //        }
+        //    }
+        //    return directions;
+        //}
 
         private void SyncFavoriteIds()
         {

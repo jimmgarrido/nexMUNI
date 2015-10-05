@@ -100,9 +100,6 @@ namespace nexMuni.Views
 
         private async void RouteSelected(object sender, SelectionChangedEventArgs args)
         {
-            //RoutesFlyout.SelectedIndex = sender.SelectedIndex;
-            //RouteButton.Content = sender.SelectedItem.ToString();
-
 #if WINDOWS_PHONE_APP
             StatusBar.GetForCurrentView().ProgressIndicator.ProgressValue = null;
             StatusBar.GetForCurrentView().ProgressIndicator.Text = "";
@@ -132,11 +129,7 @@ namespace nexMuni.Views
 
             if (routePath.Any())
             {
-                //foreach (MapPolyline line in routePath)
-                //{
-                //    SearchMap.MapElements.Add(line);
-                //}
-                foreach (IEnumerable<BasicGeoposition> points in routePath)
+                foreach (var points in routePath)
                 {
                     SearchMap.MapElements.Add(new MapPolyline
                     {
@@ -146,13 +139,6 @@ namespace nexMuni.Views
                         ZIndex = 99
                     });
                 }
-                //SearchMap.MapElements.Add(new MapPolyline
-                //{
-                //    Path = new Geopath(routePath),
-                //    StrokeColor = Color.FromArgb(255, 179, 27, 27),
-                //    StrokeThickness = 2.00,
-                //    ZIndex = 99
-                //});
             }
 
             await SearchMap.TrySetViewAsync(searchVm.MapCenter, 11.40);

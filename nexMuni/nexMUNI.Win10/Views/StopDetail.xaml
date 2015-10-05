@@ -178,11 +178,7 @@
 
     <Page.BottomAppBar>
         <CommandBar Background="#FF9B1414" Foreground="White">
-            <AppBarButton x:Name="RefreshBtn"  IsCompact="true" Label="refresh" Click="RefreshTimes">
-			    <AppBarButton.Icon>
-        			<BitmapIcon UriSource="Assets/refresh.png"/>
-        		</AppBarButton.Icon>
-			</AppBarButton>
+            <AppBarButton x:Name="RefreshBtn" Icon="Refresh" IsCompact="true" Label="refresh" Click="RefreshTimes" />
             <AppBarButton x:Name="FavButton"/>
             <AppBarButton x:Name="PinButton" Visibility="Collapsed"/>
         </CommandBar>
@@ -208,9 +204,9 @@
         <Pivot x:Name="DetailPivot" Margin="0,-25,0,0" Grid.Row="1">
             <PivotItem x:Name="TimesPivotItem" Header="times">
                 <Grid>
+                    <ProgressRing x:Name="LoadingRing" Height="40" Width="40" FontSize="30" IsActive="True" Foreground="White" />
                     <TextBlock x:Name="NoTimesBlock" Text="{Binding NoTimesText}" FontSize="21" Margin="13,180,0,0" TextAlignment="Center"/>
-                    <ListView x:Name="RouteInfoList" IsItemClickEnabled="True" ItemsSource="{Binding Routes}"
-                      Margin="-18,0,0,0" IsTapEnabled="False" IsHoldingEnabled="False" 
+                    <ListView x:Name="RouteInfoList" ItemsSource="{Binding Routes}" Margin="-18,0,0,0" SelectionMode="None"
                       ItemClick="GoToRouteMap" ItemTemplateSelector="{StaticResource TemplateSelector}">
                         <ListView.ItemContainerTransitions>
                             <TransitionCollection>

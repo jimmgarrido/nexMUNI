@@ -19,7 +19,7 @@
       <m3:VisualElements DisplayName="nexMuni Beta" Square150x150Logo="Assets\Logo.png" Square44x44Logo="Assets\SmallLogo.png" Description="nexMuni.WindowsPhone" ForegroundText="light" BackgroundColor="transparent">
         <m3:DefaultTile Square71x71Logo="Assets\Square71x71Logo.png">
         </m3:DefaultTile>
-        <m3:SplashScreen Image="Assets\SplashScreen.png" BackgroundColor="#b31b1b" />
+        <!--<m3:SplashScreen Image="Assets\SplashScreen.png" BackgroundColor="#b31b1b" />-->
         <m3:ApplicationView MinWidth="width320" />
         <!--Used in XAML Designer. DO NOT REMOVE-->
         <m3:InitialRotationPreference>

@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" IgnorableNamespaces="uap mp">
-  <Identity Name="1ac3f9cb-2ea4-49dc-a1b7-c0b3c03f234a" Publisher="CN=jimmy" Version="1.0.0.0" />
-  <mp:PhoneIdentity PhoneProductId="1ac3f9cb-2ea4-49dc-a1b7-c0b3c03f234a" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
+  <Identity Name="10642JimmyGarrido.nexMuniBeta" Publisher="CN=28976100-24E8-4BA4-858A-2545BD9EA0E9" Version="1.1.0.0" />
+  <mp:PhoneIdentity PhoneProductId="6073a83b-1c94-49ee-8e6a-94c3f6cdf839" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
-    <DisplayName>nexMUNI.Win10</DisplayName>
-    <PublisherDisplayName>jimmy</PublisherDisplayName>
+    <DisplayName>nexMuni Beta</DisplayName>
+    <PublisherDisplayName>nexDevelopment</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
   <Dependencies>
@@ -15,7 +15,7 @@
   </Resources>
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="nexMUNI.Win10.App">
-      <uap:VisualElements DisplayName="nexMUNI.Win10" Square150x150Logo="Assets\Square150x150Logo.png" Square44x44Logo="Assets\Square44x44Logo.png" Description="nexMUNI.Win10" BackgroundColor="transparent">
+      <uap:VisualElements DisplayName="nexMuni Beta" Square150x150Logo="Assets\Square150x150Logo.png" Square44x44Logo="Assets\Square44x44Logo.png" Description="nexMUNI.Win10" BackgroundColor="transparent">
         <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png">
         </uap:DefaultTile>
         <uap:SplashScreen Image="Assets\SplashScreen.png" />

@@ -1,0 +1,65 @@
+﻿<Page
+    x:Class="nexMuni.AboutPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:nexMuni"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="#FFB31B1B" Foreground="White">
+
+    <Grid x:Name="LayoutRoot">
+
+        <Grid.ChildrenTransitions>
+            <TransitionCollection>
+                <EntranceThemeTransition/>
+            </TransitionCollection>
+        </Grid.ChildrenTransitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Title Panel -->
+        <StackPanel Grid.Row="0" Margin="19,10,0,15">
+            <TextBlock Text="about" FontSize="36" Style="{ThemeResource HeaderTextBlockStyle}" Foreground="White"/>
+        </StackPanel>
+
+        <!--TODO: Content should be placed within the following grid-->
+        <Grid Grid.Row="1" x:Name="ContentRoot" Margin="19,0,19,0">
+            <RichTextBlock FontSize="21" FontFamily="Segoe WP SemiLight" Tapped="OnClicked" IsTextSelectionEnabled="False">
+				<Paragraph>
+					Real time data is provided by the
+                    <Bold>
+                        nextbus api
+					</Bold>
+				</Paragraph>
+				<Paragraph Margin="0,40,0,0">
+					For questions or to report a bug contact
+					<Underline x:Name="email" FontWeight="Bold">
+					nexmuni@nexdev.co
+					</Underline>
+				</Paragraph>
+                <Paragraph Margin="0,40,0,0">
+                    Follow
+                    <Underline x:Name="twitter" FontWeight="Bold">
+                        @nexDevCo
+                    </Underline> for news and announcements 
+                </Paragraph>
+                <Paragraph Margin="0,40,0,0">
+                    nexMuni is open source and can be checked out on
+                    <Underline x:Name="github" FontWeight="Bold">
+                        GitHub
+                    </Underline>
+                </Paragraph>
+                <Paragraph Margin="0,40,0,0">
+                    See more apps at
+                    <Underline x:Name="website" FontWeight="Bold">
+                        nexdev.co
+                    </Underline>
+                </Paragraph>
+            </RichTextBlock>
+        </Grid>
+    </Grid>
+</Page>

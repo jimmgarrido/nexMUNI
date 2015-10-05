@@ -23,6 +23,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\MapHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\ParseHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\SettingsHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\UIHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\WebHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\MainViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\RouteMapViewModel.cs" />

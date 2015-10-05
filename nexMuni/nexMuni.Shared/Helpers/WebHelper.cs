@@ -14,7 +14,7 @@ namespace nexMuni.Helpers
         private static HttpClient client = new HttpClient();
         private static XDocument xmlDoc = new XDocument();
 
-        private static readonly Dictionary<string, string> urls = new Dictionary<string, string>()
+        private static readonly Dictionary<string, string> baseUrls = new Dictionary<string, string>()
         {
             {"multiPredictions","http://webservices.nextbus.com/service/publicXMLFeed?command=predictionsForMultiStops&a=sf-muni"},
             {"routeConfig","http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=sf-muni&r="},
@@ -32,7 +32,7 @@ namespace nexMuni.Helpers
                 builder.Append("&stops=" + tag);
             }
 
-            string url = urls["multiPredictions"] + builder;
+            string url = baseUrls["multiPredictions"] + builder;
 
             //Make sure to pull from the network and not cache everytime predictions are refreshed 
             client.DefaultRequestHeaders.IfModifiedSince = DateTime.Now;
@@ -45,7 +45,7 @@ namespace nexMuni.Helpers
             }
             catch (Exception)
             {
-                ErrorHandler.NetworkError("Error getting predictions. Check network connection and try again.");
+                await ErrorHandler.NetworkError("Error getting predictions. Check network connection and try again.");
                 return null;
             }
 
@@ -54,7 +54,7 @@ namespace nexMuni.Helpers
 
         public static async Task<XDocument> GetSearchPredictionsAsync(Stop stop, string route)
         {
-            var url = urls["searchPrediction"] + stop.stopId + "&routeTag=" + route.Substring(0, route.IndexOf('-'));
+            var url = baseUrls["searchPrediction"] + stop.stopId + "&routeTag=" + route.Substring(0, route.IndexOf('-'));
 
              //Make sure to pull from the network and not cache everytime predictions are refreshed 
             client.DefaultRequestHeaders.IfModifiedSince = DateTime.Now;
@@ -67,7 +67,7 @@ namespace nexMuni.Helpers
             }
             catch (Exception)
             {
-                ErrorHandler.NetworkError("Error getting predictions. Check network connection and try again.");
+                await ErrorHandler.NetworkError("Error getting predictions. Check network connection and try again.");
                 return null;
             }
 
@@ -84,7 +84,7 @@ namespace nexMuni.Helpers
                 route = route.Substring(0, route.IndexOf('-'));
             }
 
-            var url = urls["routeConfig"] + route;
+            var url = baseUrls["routeConfig"] + route;
 
             try
             {
@@ -95,7 +95,7 @@ namespace nexMuni.Helpers
             }
             catch (Exception)
             {
-                ErrorHandler.NetworkError("Error getting route info. Check network connection and try again.");
+                await ErrorHandler.NetworkError("Error getting route info. Check network connection and try again.");
                 return null;
             }
 
@@ -116,7 +116,7 @@ namespace nexMuni.Helpers
                 route = route.Substring(0, route.IndexOf('-'));
             }
 
-            var url = urls["busLocations"] + route + "&t=" + timestamp;
+            var url = baseUrls["busLocations"] + route + "&t=" + timestamp;
 
              try
             {
@@ -127,11 +127,38 @@ namespace nexMuni.Helpers
             }
             catch (Exception)
             {
-                ErrorHandler.NetworkError("Error getting route info. Check network connection and try again.");
+                await ErrorHandler.NetworkError("Error getting route info. Check network connection and try again.");
                 return null;
             }
 
              return xmlDoc;
+        }
+
+        public async static Task<XDocument> GetRouteDirections(string route)
+        {
+            var client = new HttpClient();
+            var response = new HttpResponseMessage();
+            var xmlDoc = new XDocument();
+
+            var url = baseUrls["routeConfig"] + route;
+
+            //Make sure to pull from network not cache everytime predictions are refreshed 
+            client.DefaultRequestHeaders.IfModifiedSince = DateTime.Now;
+            try
+            {
+                response = await client.GetAsync(new Uri(url));
+                response.EnsureSuccessStatusCode();
+                xmlDoc = await Task.Run(async () => XDocument.Parse(await response.Content.ReadAsStringAsync()));
+            }
+            catch (Exception)
+            {
+                await ErrorHandler.NetworkError("Error getting route information. Check your network connection and try again.");
+            }
+
+            response.Dispose();
+            client.Dispose();
+
+            return xmlDoc;
         }
     }
 }

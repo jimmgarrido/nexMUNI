@@ -41,7 +41,7 @@ namespace nexMuni.Views
                 {
                     FavButton.Click += UnfavoriteBtnPressed;
                     FavButton.Label = "unfavorite";
-                    FavButton.Icon = new SymbolIcon(Symbol.Remove);
+                    FavButton.Icon = new SymbolIcon(Symbol.UnFavorite);
                 }
                 else
                 {
@@ -66,20 +66,17 @@ namespace nexMuni.Views
                 alreadyLoaded = true;
             }
 
-            //StatusBar statusBar = StatusBar.GetForCurrentView();
-            //await statusBar.ProgressIndicator.ShowAsync();
-            //statusBar.ProgressIndicator.Text = "Getting Arrival Times";
-            //statusBar.ProgressIndicator.ProgressValue = null;
+            await UIHelper.ShowStatusBar("Getting Arrival Times");
 
             if (!await detailVm.LoadTimes())
             {
                 Frame.GoBack();
             }
 
-            if (!detailVm.Alerts.Any()) DetailPivot.Items.RemoveAt(1);
+            if (detailVm.Alerts.Any()) DetailPivot.Items.RemoveAt(1);
 
-            //statusBar.ProgressIndicator.ProgressValue = 0;
-            //await statusBar.ProgressIndicator.HideAsync();
+            LoadingRing.IsActive = false;
+            await UIHelper.HideStatusBar();
         }
 
         private async void RefreshTimes(object sender, RoutedEventArgs e)
@@ -105,7 +102,7 @@ namespace nexMuni.Views
             await detailVm.AddFavoriteAsync();
             FavButton.Click -= FavoriteBtnPressed;
             FavButton.Click += UnfavoriteBtnPressed;
-            FavButton.Icon = new SymbolIcon(Symbol.Remove);
+            FavButton.Icon = new SymbolIcon(Symbol.UnFavorite);
             FavButton.Label = "unfavorite";
         }
 

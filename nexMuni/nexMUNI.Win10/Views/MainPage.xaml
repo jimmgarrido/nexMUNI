@@ -215,6 +215,16 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <DataTemplate x:Key="ListItem">
+            <Grid Background="#b31b1b" Margin="0,0,0,10" Height="93" Width="400" VerticalAlignment="Top">
+                <StackPanel>
+                    <TextBlock Text="{Binding StopName}"  Margin="10,2,0,0" FontSize="18" Foreground="White"/>
+                    <TextBlock Text="{Binding DistanceAsString}" Margin="10,0,0,0" FontSize="13" Foreground="White"/>
+                    <TextBlock Text="{Binding Routes}" Margin="5,20,0,0" FontSize="15" FontWeight="SemiBold" Foreground="White"/>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
     </Page.Resources>
 
     <Page.BottomAppBar>
@@ -228,13 +238,13 @@
             </CommandBar.CommandBarOverflowPresenterStyle>
 
             <CommandBar.PrimaryCommands>
-                <AppBarButton x:Name="RefreshBtn" Label="refresh" Click="UpdateButtonPressed" IsEnabled="False" Foreground="White">
-                    <AppBarButton.Icon>
+                <AppBarButton x:Name="RefreshBtn" Icon="Refresh" Label="refresh" Click="UpdateButtonPressed" IsEnabled="False" Foreground="White">
+                    <!--<AppBarButton.Icon>
                         <BitmapIcon UriSource="Assets/refresh.png"/>
-                    </AppBarButton.Icon>
+                    </AppBarButton.Icon>-->
                 </AppBarButton>
-                <AppBarButton x:Name="SortBtn" Icon="sort" Label="sort" Click="SortFavorites" Visibility="Collapsed" IsEnabled="False" Foreground="White"/>
-                <AppBarButton x:Name="DetailBtn" Icon="List" Label="more" Click="DetailButtonPressed" Visibility="Collapsed" IsEnabled="False" Foreground="White"/>
+                <AppBarButton x:Name="SortBtn" Icon="Sort" Label="sort" Click="SortFavorites" Visibility="Collapsed" IsEnabled="False" Foreground="White"/>
+                <AppBarButton x:Name="DetailBtn" Icon="Go" Label="details" Click="DetailButtonPressed" Visibility="Collapsed" IsEnabled="False" Foreground="White"/>
                 <AppBarButton x:Name="FavoriteBtn" Icon="Favorite" Label="favorite" Visibility="Collapsed" IsEnabled="False" Foreground="White"/>
             </CommandBar.PrimaryCommands>
             <CommandBar.SecondaryCommands>
@@ -247,20 +257,10 @@
     <Pivot x:Name="MainPivot" Background="White" Margin="0,-5,0,0" Style="{StaticResource MainPivotStyle}">
         <PivotItem x:Name="NearbyPivot" Header="nearby">
             <Grid>
+                <ProgressRing x:Name="LoadingRing" Visibility="Visible" Foreground="#b31b1b" Height="40" Width="40" IsActive="True" />
                 <TextBlock x:Name="NoStopsNotice" Text="{Binding NoStopsText}" Foreground="#b31b1b" TextAlignment="Center" FontSize="21" Margin="0,220,0,0"/>
-                <ListView x:Name="NearbyListView" ItemsSource="{Binding NearbyStops}" HorizontalAlignment="Stretch" VerticalAlignment="Top" 
-							  SelectionMode="None" IsItemClickEnabled="True" ItemClick="StopClicked" Padding="0,10,0,0">
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <Grid Background="#b31b1b" Margin="0,0,0,10" Height="90" Width="500">
-                                <StackPanel Margin="0,0,0,0">
-                                    <TextBlock Text="{Binding StopName}"  Margin="10,0,0,0" FontSize="18" Foreground="White"/>
-                                    <TextBlock Text="{Binding DistanceAsString}" Margin="10,0,0,0" FontSize="14" Foreground="White"/>
-                                    <TextBlock Text="{Binding Routes}" Margin="5,20,0,0" FontSize="15" Foreground="White"/>
-                                </StackPanel>
-                            </Grid>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
+                <ListView x:Name="NearbyListView" ItemsSource="{Binding NearbyStops}" ItemTemplate="{StaticResource ListItem}" HorizontalAlignment="Stretch" 
+                          VerticalAlignment="Top" ItemClick="StopClicked" SelectionMode="None" IsItemClickEnabled="True" Padding="-10,10,-10,0">
                     <ListView.ItemContainerTransitions>
                         <TransitionCollection>
                             <EntranceThemeTransition FromHorizontalOffset="0" FromVerticalOffset="200"/>
@@ -274,19 +274,14 @@
         <PivotItem x:Name="FavoritesPivot" Header="favorites" Margin="10,13,10,0">
             <Grid>
                 <TextBlock x:Name="NoFavsNotice" Text="{Binding NoFavoritesText}" Foreground="#b31b1b" TextAlignment="Center" FontFamily="Segoe UI Symbol" FontSize="21" Margin="0,220,0,0" Width="250" TextWrapping="WrapWholeWords"/>
-                <ListView x:Name="FavoritesListView" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Top" 
-                              ItemsSource="{Binding FavoriteStops}" SelectionMode="None" IsItemClickEnabled="True" ItemClick="StopClicked" Padding="0,10,0,0">
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <Grid Background="#b31b1b" Margin="0,0,0,11	" Height="100" Width="500">
-                                <StackPanel Margin="0,0,0,0">
-                                    <TextBlock Text="{Binding StopName}"  Margin="10,0,0,0" FontSize="20" Foreground="White"/>
-                                    <TextBlock Text="{Binding DistanceAsString}" Margin="10,0,0,0" FontSize="15" Foreground="White"/>
-                                    <TextBlock Text="{Binding Routes}" Margin="5,25,0,0" FontSize="17" Foreground="White"/>
-                                </StackPanel>
-                            </Grid>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
+                <ListView x:Name="FavoritesListView" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Top" ItemsSource="{Binding FavoriteStops}" 
+                          ItemTemplate="{StaticResource ListItem}" SelectionMode="None" IsItemClickEnabled="True" ItemClick="StopClicked" Padding="-10,10,-10,0">
+                    <ListView.ItemContainerTransitions>
+                        <TransitionCollection>
+                            <EntranceThemeTransition FromHorizontalOffset="0" FromVerticalOffset="200"/>
+                            <AddDeleteThemeTransition />
+                        </TransitionCollection>
+                    </ListView.ItemContainerTransitions>
                 </ListView>
             </Grid>
         </PivotItem>
@@ -294,56 +289,46 @@
         <PivotItem x:Name="SearchPivot" Header="search" Foreground="White" Padding="-19">
             <Grid HorizontalAlignment="Center" Width="400" Margin="0,5,0,0">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="260"/>
+                    <RowDefinition Height="240"/>
                     <RowDefinition Height="300"/>
                 </Grid.RowDefinitions>
 
                 <StackPanel Background="#b31b1b" Margin="0,10,0,0" Grid.Row="0">
-                    <TextBlock Text="Select Route" HorizontalAlignment="Center" Margin="-220,0,0,5" FontSize="16" FontFamily="Global User Interface"/>
-                    <ComboBox x:Name="RouteBox" ItemsSource="{Binding RoutesList}" Width="310" HorizontalAlignment="Center"
+                    <!--<TextBlock Text="Select Route" HorizontalAlignment="Center" Margin="-220,0,0,3" FontSize="16"/>-->
+                    <ComboBox x:Name="RouteBox" Header="Select Route" IsSynchronizedWithCurrentItem="{x:Null}" ItemsSource="{Binding RoutesList}" Width="310" HorizontalAlignment="Center"
                               IsEnabled="False"/>
-                    <!--<Button x:Name="RouteButton" HorizontalAlignment="Center" Width="350" Style="{StaticResource ButtonStyle}" IsEnabled="True" Content="{Binding SelectedRoute}">
-                        <Button.Flyout>
-                            <ListPickerFlyout x:Name="RoutesFlyout" Title="SELECT ROUTE" ItemsSource="{Binding RoutesList}" Placement="Right" >
-                                <ListPickerFlyout.ItemTemplate>
-                                    <DataTemplate>
-                                        <ContentControl Width="350" Content="{Binding}"/>
-                                    </DataTemplate>
-                                </ListPickerFlyout.ItemTemplate>
-                            </ListPickerFlyout>
-                        </Button.Flyout>
-                    </Button>-->
 
-                    <TextBlock x:Name="DirLabel" Text="Select Direction" HorizontalAlignment="Center" Margin="-245,0,0,-7" FontSize="16" FontFamily="Global User Interface" Visibility="Collapsed"/>
-                    <ComboBox x:Name="DirBox" Width="350" HorizontalAlignment="Center" ItemsSource="{Binding DirectionsList}" Visibility="Collapsed"/>
+                    <!--<TextBlock x:Name="DirLabel" Text="Select Direction" HorizontalAlignment="Center" Margin="-200,3,0,3" FontSize="16" Visibility="Collapsed"/>-->
+                    <ComboBox x:Name="DirBox" Width="310" Header="Select Direction" HorizontalAlignment="Center" ItemsSource="{Binding DirectionsList}" IsSynchronizedWithCurrentItem="{x:Null}" Visibility="Collapsed"/>
 
-                    <TextBlock x:Name="StopLabel" Text="Select Stop" HorizontalAlignment="Center" Margin="-275,0,0,-7" FontSize="16" FontFamily="Global User Interface" Visibility="Collapsed"/>
-                    <!--<Button x:Name="StopButton" HorizontalAlignment="Center" Width="350" Style="{StaticResource ButtonStyle}" Content="{Binding SelectedStop.StopName}" Visibility="Collapsed" >
-                        <Button.Flyout>
-                            <ListPickerFlyout x:Name="StopsFlyout" Title="SELECT STOP" Placement="Right" ItemsSource="{Binding StopsList}">
-                                <ListPickerFlyout.ItemTemplate>
-                                    <DataTemplate>
-                                        <ContentControl Width="350" Content="{Binding Path = StopName}"/>
-                                    </DataTemplate>
-                                </ListPickerFlyout.ItemTemplate>
-                            </ListPickerFlyout>
-                        </Button.Flyout>
-                    </Button>-->
+                    <!--<TextBlock x:Name="StopLabel" Text="Select Stop" HorizontalAlignment="Center" Margin="-230,3,0,3" FontSize="16" Visibility="Collapsed"/>-->
+                    <ComboBox x:Name="StopBox" Header="Select Route" ItemsSource="{Binding StopsList}" HorizontalAlignment="Center" Width="310" Visibility="Collapsed">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <ContentControl Width="350" Content="{Binding Path = StopName}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
 
-                    <TextBlock x:Name="SearchTimes" Text="{Binding SearchTimes}" HorizontalAlignment="Center" Margin="0,5,0,0" FontSize="24" FontWeight="Bold" Visibility="Collapsed" />
+                    <TextBlock x:Name="SearchTimes" Text="{Binding SearchTimes}" HorizontalAlignment="Center" Margin="0,10,0,0" FontSize="21" FontWeight="SemiBold" Visibility="Collapsed" />
                 </StackPanel>
 
-                <Maps:MapControl Grid.Row="1">
-
-                </Maps:MapControl>
-                <!--<maps:MapControl x:Name="SearchMap" Center="{Binding MapCenter}" HorizontalAlignment="Center" Margin="0,0,0,0" Grid.Row="1"
+                <Maps:MapControl x:Name="SearchMap" Center="{Binding MapCenter}" HorizontalAlignment="Center" Grid.Row="1"
                                      VerticalAlignment="Center" MapServiceToken="jjA5Pn6AN4an5lgqKNN_Rg" Height="350" 
                                      Width="450" ZoomLevel="11.40">
-                    <maps:MapControl.Children>
-                        <Image x:Name="LocationIcon" Source="/Assets/Location.png" Height="20" Width="20"/>
-                        <Image x:Name="StopIcon" Source="/Assets/Stop.png" Height="30" Width="30" Visibility="Collapsed"/>
-                    </maps:MapControl.Children>
-                </maps:MapControl>-->
+                    <Maps:MapControl.Children>
+                        <Image x:Name="LocationIcon" Height="20" Width="20">
+                            <Image.Source>
+                                <BitmapImage UriSource="/Assets/Location.png" DecodePixelHeight="20" DecodePixelWidth="20"/>
+                            </Image.Source>
+                        </Image>
+                        <!--<Image x:Name="StopIcon" Height="30" Width="30" Visibility="Collapsed">
+                            <Image.Source>
+                                <BitmapImage UriSource="/Assets/Stop.png" DecodePixelHeight="30" DecodePixelWidth="30" />
+                            </Image.Source>
+                        </Image>-->
+                    </Maps:MapControl.Children>
+                </Maps:MapControl>
             </Grid>
         </PivotItem>
     </Pivot>

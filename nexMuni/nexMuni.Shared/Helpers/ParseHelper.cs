@@ -96,6 +96,75 @@ namespace nexMuni.Helpers
             return alerts;
         }
 
+        public static List<string> ParseDirections(XDocument document)
+        {
+            var directions = new List<string>();
+            var elements = document.Element("body").Element("route").Elements("direction");
+
+            foreach (XElement el in elements)
+            {
+                //Add direction title
+                directions.Add(el.Attribute("title").Value);
+
+                //IEnumerable<XElement> tagElements;
+                //if (el.Attribute("name").Value == "Inbound")
+                //{
+                //    //Get all stop elements under direction element
+                //    tagElements =
+                //        from x in el.Elements("stop")
+                //        select x;
+
+                //    if (inboundStops.Count != 0) inboundStops.Clear();
+                //    //Add tags for direction to a collection
+                //    foreach (XElement y in tagElements)
+                //    {
+                //        inboundStops.Add(y.Attribute("tag").Value);
+                //    }
+                //}
+                //else if (el.Attribute("name").Value == "Outbound")
+                //{
+                //    //Get all stop elements under direction element
+                //    tagElements =
+                //        from x in el.Elements("stop")
+                //        select x;
+
+                //    if (outboundStops.Count != 0) outboundStops.Clear();
+                //    //Add tags for direction to a collection
+                //    foreach (XElement y in tagElements)
+                //    {
+                //        outboundStops.Add(y.Attribute("tag").Value);
+                //    }
+                //}
+            }
+            return directions;
+        }
+
+        public static List<Stop> ParseStops(XDocument document)
+        {
+            var stopsList = new List<Stop>();
+            var elements = document.Element("body").Element("route").Elements("stop");
+
+            //Add all route's stops to a collection
+            foreach (XElement el in elements)
+            {
+                stopsList.Add(new Stop(el.Attribute("title").Value,
+                                              el.Attribute("stopId").Value,
+                                              "",
+                                              el.Attribute("tag").Value,
+                                              double.Parse(el.Attribute("lon").Value),
+                                              double.Parse(el.Attribute("lat").Value)));
+            }
+
+            return stopsList;
+        }
+
+        public static List<string> ParseStopTags(XDocument document, List<string> inbound, List<string> outbound)
+        {
+            var elements = document.Element("body").Element("route").Elements("stop");
+
+        
+        }
+
         private static string ParseTimes(XElement element)
         {
             int maxTimes;
