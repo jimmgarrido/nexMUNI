@@ -10,7 +10,7 @@
 
     <Page.Resources>
         <Style x:Key="LabelStyle" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="26"/>
+            <Setter Property="FontSize" Value="24"/>
             <Setter Property="HorizontalAlignment" Value="Left"/>
         </Style>
 
@@ -52,7 +52,7 @@
                     <TextBlock Text="{Binding RouteName}" Style="{StaticResource LabelStyle}" FontSize="25" Margin="10,0,0,0" VerticalAlignment="Top" TextWrapping="WrapWholeWords" LineStackingStrategy="BlockLineHeight" LineHeight="30" />
 
                     <TextBlock Text="{Binding Directions[0].Title}" Style="{StaticResource DetailText}"/>
-                    <TextBlock Text="{Binding Directions[0].Times}" Style="{StaticResource DetailText}" FontWeight="Bold"/>
+                    <TextBlock Text="{Binding Directions[0].Times}" Style="{StaticResource DetailText}" FontWeight="Bold" Margin="12,0,0,3"/>
 
                     <TextBlock Text="{Binding Directions[1].Title}" Style="{StaticResource DetailText}" />
                     <TextBlock Text="{Binding Directions[1].Times}" Style="{StaticResource DetailText}" FontWeight="Bold"/>
@@ -71,10 +71,10 @@
                     <TextBlock Text="{Binding RouteName}" Style="{StaticResource LabelStyle}" FontSize="25" Margin="10,0,0,0" VerticalAlignment="Top" TextWrapping="WrapWholeWords" LineStackingStrategy="BlockLineHeight" LineHeight="30" />
 
                     <TextBlock Text="{Binding Directions[0].Title}" Style="{StaticResource DetailText}"/>
-                    <TextBlock Text="{Binding Directions[0].Times}" Style="{StaticResource DetailText}" FontWeight="Bold"/>
+                    <TextBlock Text="{Binding Directions[0].Times}" Style="{StaticResource DetailText}" FontWeight="Bold" Margin="12,0,0,3"/>
 
                     <TextBlock Text="{Binding Directions[1].Title}" Style="{StaticResource DetailText}" />
-                    <TextBlock Text="{Binding Directions[1].Times}" Style="{StaticResource DetailText}" FontWeight="Bold" />
+                    <TextBlock Text="{Binding Directions[1].Times}" Style="{StaticResource DetailText}" FontWeight="Bold" Margin="12,0,0,3"/>
 
                     <TextBlock Text="{Binding Directions[2].Title}" Style="{StaticResource DetailText}" />
                     <TextBlock Text="{Binding Directions[2].Times}" Style="{StaticResource DetailText}" FontWeight="Bold" />
@@ -207,7 +207,7 @@
                     <ProgressRing x:Name="LoadingRing" Height="40" Width="40" FontSize="30" IsActive="True" Foreground="White" />
                     <TextBlock x:Name="NoTimesBlock" Text="{Binding NoTimesText}" FontSize="21" Margin="13,180,0,0" TextAlignment="Center"/>
                     <ListView x:Name="RouteInfoList" ItemsSource="{Binding Routes}" Margin="-18,0,0,0" SelectionMode="None"
-                      ItemClick="GoToRouteMap" ItemTemplateSelector="{StaticResource TemplateSelector}">
+                      IsItemClickEnabled="True" ItemClick="GoToRouteMap" ItemTemplateSelector="{StaticResource TemplateSelector}">
                         <ListView.ItemContainerTransitions>
                             <TransitionCollection>
                                 <EntranceThemeTransition />

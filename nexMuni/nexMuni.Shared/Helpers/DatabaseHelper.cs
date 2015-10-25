@@ -7,14 +7,6 @@ using Windows.ApplicationModel;
 using Windows.Storage;
 using nexMuni.DataModels;
 using SQLite;
-//using SQLite.Net.Async;
-//using SQLite.Net;
-//using SQLite.Net.Platform.WinRT;
-#if WINDOWS_PHONE_APP
-//using SQLite;
-#elif WINDOWS_UWP
-
-#endif
 
 namespace nexMuni.Helpers
 {
@@ -61,6 +53,7 @@ namespace nexMuni.Helpers
             var _stopsAsyncConnection = new SQLiteAsyncConnection("muni.sqlite");
             //var _stopsAsyncConnection = new SQLiteAsyncConnection(()=> new SQLiteConnectionWithLock(new SQLitePlatformWinRT(), new SQLiteConnectionString("muni.sqlite", false)));
             var results = await _stopsAsyncConnection.QueryAsync<Stop>(query);
+            _stopsAsyncConnection = null;
 
             //Check results for enough stops
             if (results.Count >= 15)
@@ -78,8 +71,9 @@ namespace nexMuni.Helpers
             //var _stopsAsyncConnection = new SQLiteAsyncConnection(()=> new SQLiteConnectionWithLock(new SQLitePlatformWinRT(), new SQLiteConnectionString("muni.db", false)));
 
             var results = await _stopsAsyncConnection.QueryAsync<Stop>(query);
+            _stopsAsyncConnection = null;
 
-            if(!results.Any())
+            if (!results.Any())
             {
                 string[] temp = stopName.Split('&');
                 if (temp.Count() > 1)
@@ -107,6 +101,7 @@ namespace nexMuni.Helpers
                 list.Add(route.Title);
             }
 
+            _stopsAsyncConnection = null;
             return list;
         }
 
@@ -186,8 +181,9 @@ namespace nexMuni.Helpers
         {
             var _favoritesAsyncConnection = new SQLiteAsyncConnection(favoriteDbPath);
             //var _favoritesAsyncConnection = new SQLiteAsyncConnection(()=> new SQLiteConnectionWithLock(new SQLitePlatformWinRT(), new SQLiteConnectionString(favoriteDbPath, false)));
-
+            
             FavoritesList = await _favoritesAsyncConnection.QueryAsync<FavoriteData>("SELECT * FROM FavoriteData");
+            _favoritesAsyncConnection = null;
         }
 
         private static async Task CheckStopsDatabaseAsync()
@@ -244,6 +240,7 @@ namespace nexMuni.Helpers
 
             await _favoritesAsyncConnection.CreateTableAsync<FavoriteData>();
             await LoadFavoritesAsync();
+            _favoritesAsyncConnection = null;
         }
     }
 }

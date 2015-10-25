@@ -217,7 +217,7 @@
         </Style>
 
         <DataTemplate x:Key="ListItem">
-            <Grid Background="#b31b1b" Margin="0,0,0,10" Height="93" Width="400" VerticalAlignment="Top">
+            <Grid Background="#b31b1b" Margin="0,0,0,10" Height="90" Width="400" VerticalAlignment="Top">
                 <StackPanel>
                     <TextBlock Text="{Binding StopName}"  Margin="10,2,0,0" FontSize="18" Foreground="White"/>
                     <TextBlock Text="{Binding DistanceAsString}" Margin="10,0,0,0" FontSize="13" Foreground="White"/>
@@ -254,6 +254,19 @@
         </CommandBar>
     </Page.BottomAppBar>
 
+    <VisualStateManager.VisualStateGroups>
+        <VisualStateGroup>
+            <VisualState x:Name="desktopView">
+                <VisualState.StateTriggers>
+                    <AdaptiveTrigger MinWindowHeight="720"/>
+                </VisualState.StateTriggers>
+                <VisualState.Setters>
+                    <Setter Target="MainPivot.Visibility" Value="Collapsed"/>
+                </VisualState.Setters>
+            </VisualState>
+        </VisualStateGroup>
+    </VisualStateManager.VisualStateGroups>
+
     <Pivot x:Name="MainPivot" Background="White" Margin="0,-5,0,0" Style="{StaticResource MainPivotStyle}">
         <PivotItem x:Name="NearbyPivot" Header="nearby">
             <Grid>
@@ -271,9 +284,10 @@
             </Grid>
         </PivotItem>
 
-        <PivotItem x:Name="FavoritesPivot" Header="favorites" Margin="10,13,10,0">
+        <PivotItem x:Name="FavoritesPivot" Header="favorites">
             <Grid>
-                <TextBlock x:Name="NoFavsNotice" Text="{Binding NoFavoritesText}" Foreground="#b31b1b" TextAlignment="Center" FontFamily="Segoe UI Symbol" FontSize="21" Margin="0,220,0,0" Width="250" TextWrapping="WrapWholeWords"/>
+                <TextBlock x:Name="NoFavsNotice" Text="{Binding NoFavoritesText}" Foreground="#b31b1b" TextAlignment="Center" 
+                           FontFamily="Segoe UI Symbol" FontSize="21" Margin="0,220,0,0" Width="250" TextWrapping="WrapWholeWords"/>
                 <ListView x:Name="FavoritesListView" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Top" ItemsSource="{Binding FavoriteStops}" 
                           ItemTemplate="{StaticResource ListItem}" SelectionMode="None" IsItemClickEnabled="True" ItemClick="StopClicked" Padding="-10,10,-10,0">
                     <ListView.ItemContainerTransitions>

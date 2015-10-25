@@ -36,19 +36,19 @@ namespace nexMuni.Views
             PivotBox.SelectionChanged += ChangePivotSetting;
             TileSwitch.Toggled += TileSwitchToggled;
 
-            //if (SettingsHelper.GetNearbySetting() == 25)
-            //{
-            //    CountBox.SelectedIndex = 1;
-            //}
-            //else
-            //{
-            //    CountBox.SelectedIndex = 0;
-            //}
+            if (SettingsHelper.nearbyCount == 15)
+            {
+                CountBox.SelectedIndex = 0;
+            }
+            else
+            {
+                CountBox.SelectedIndex = 1;
+            }
 
-            CountBox.SelectedIndex = SettingsHelper.GetNearbySetting();
-            PivotBox.SelectedIndex = SettingsHelper.GetLaunchPivotSetting();
 
-            if(SettingsHelper.GetTileSetting())
+            PivotBox.SelectedIndex = SettingsHelper.launchPivot;
+
+            if (SettingsHelper.GetTileSetting())
             {
                 TileSwitch.IsOn = true;
             }

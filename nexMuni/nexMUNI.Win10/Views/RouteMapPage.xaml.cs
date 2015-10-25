@@ -13,6 +13,7 @@ using nexMuni.Helpers;
 using nexMuni.ViewModels;
 using System.Threading.Tasks;
 using System.Linq;
+using Windows.Storage.Streams;
 
 namespace nexMuni.Views
 {
@@ -73,60 +74,125 @@ namespace nexMuni.Views
         {
             var busLocations = await routeMapVm.GetBusLocations();
 
-            var inboundBus = new BitmapImage(new Uri("ms-appx:///Assets/Inbound.png"));
-            var outboundBus = new BitmapImage(new Uri("ms-appx:///Assets/Outbound.png"));
+            //var inboundBus = new BitmapImage(new Uri("ms-appx:///Assets/Inbound.png"));
+            //var outboundBus = new BitmapImage(new Uri("ms-appx:///Assets/Outbound.png"));
 
-            MapControl.SetNormalizedAnchorPoint(inboundBus, new Point(0.5, 0.5));
-            MapControl.SetNormalizedAnchorPoint(outboundBus, new Point(0.5, 0.5));
+            //MapControl.SetNormalizedAnchorPoint(inboundBus, new Point(0.5, 0.5));
+            //MapControl.SetNormalizedAnchorPoint(outboundBus, new Point(0.5, 0.5));
 
-            while (vehicleCounter > 0)
-            {
-                RouteMap.Children.RemoveAt(RouteMap.Children.Count - 1);
-                vehicleCounter--;
-            }
+            //while (vehicleCounter > 0)
+            //{
+            //    RouteMap.Children.RemoveAt(RouteMap.Children.Count - 1);
+            //    vehicleCounter--;
+            //}
+
+            //foreach (Bus bus in busLocations)
+            //{
+            //    //for (int i=3; i < RouteMap.Children.Count; i++)
+            //    //{
+            //    //    //RouteMap.Children[i];
+            //    //    Bus mapBus = (Bus) RouteMap.Children.ElementAt(i);
+
+            //    //    if(mapBus.busId == bus.busId)
+            //    //    {
+            //    //        MapControl.SetLocation(RouteMap.Children[i], new Geopoint(new BasicGeoposition { Latitude = bus.latitude, Longitude = bus.longitude }));
+            //    //    }
+            //    //}
+
+            //    if (bus.direction.Equals("inbound"))
+            //    {
+            //        var busMarker = new Image
+            //        {
+            //            Source = inboundBus,
+            //            Height = 20,
+            //            Width = 20,
+
+            //            RenderTransform = new RotateTransform { Angle = bus.busHeading },
+            //            RenderTransformOrigin = new Point(0.5, 0.5)
+            //        };
+            //        MapControl.SetNormalizedAnchorPoint(busMarker, new Point(0.5, 0.5));
+            //        MapControl.SetLocation(busMarker, new Geopoint(new BasicGeoposition { Latitude = bus.latitude, Longitude = bus.longitude }));
+            //        RouteMap.Children.Add(busMarker);
+            //    }
+            //    else if (bus.direction.Equals("outbound"))
+            //    {
+            //        var busMarker = new Image
+            //        {
+            //            Source = outboundBus,
+            //            Height = 20,
+            //            Width = 20,
+
+            //            RenderTransform = new RotateTransform { Angle = bus.busHeading },
+            //            RenderTransformOrigin = new Point(0.5, 0.5)
+            //        };
+            //        MapControl.SetNormalizedAnchorPoint(busMarker, new Point(0.5, 0.5));
+            //        MapControl.SetLocation(busMarker, new Geopoint(new BasicGeoposition { Latitude = bus.latitude, Longitude = bus.longitude }));
+            //        RouteMap.Children.Add(busMarker);
+            //    }
+            //    vehicleCounter++;
+            //}
+
+            //var xmlDoc = await WebHelper.GetBusLocationsAsync(routeMapVm.SelectedRoute);
+            //var vehicleLocations = await Task.Run(() => MapHelper.ParseBusLocations(xmlDoc));
+
+            //var inboundBus = new BitmapImage();
+            //inboundBus.DecodePixelHeight = 20;
+            //inboundBus.UriSource = new Uri("ms-appx:///Assets/Inbound.png");
+
+            //var outboundBus = new BitmapImage();
+            //outboundBus.DecodePixelHeight = 20;
+            //outboundBus.UriSource = new Uri("ms-appx:///Assets/Outbound.png");
+
+            //MapControl.SetNormalizedAnchorPoint(inboundBus, new Point(0.5, 0.5));
+            //MapControl.SetNormalizedAnchorPoint(outboundBus, new Point(0.5, 0.5));
 
             foreach (Bus bus in busLocations)
             {
-                //for (int i=3; i < RouteMap.Children.Count; i++)
-                //{
-                //    //RouteMap.Children[i];
-                //    Bus mapBus = (Bus) RouteMap.Children.ElementAt(i);
-                    
-                //    if(mapBus.busId == bus.busId)
-                //    {
-                //        MapControl.SetLocation(RouteMap.Children[i], new Geopoint(new BasicGeoposition { Latitude = bus.latitude, Longitude = bus.longitude }));
-                //    }
-                //}
-
                 if (bus.direction.Equals("inbound"))
                 {
-                    var busMarker = new Image
-                    {
-                        Source = inboundBus,
-                        Height = 20,
-                        Width = 20,
+                    //var busMarker = new Image
+                    //{
+                    //    Source = inboundBus,
+                    //    Height = 20,
+                    //    Width = 20,
 
-                        RenderTransform = new RotateTransform { Angle = bus.busHeading },
-                        RenderTransformOrigin = new Point(0.5, 0.5)
+                    //    RenderTransform = new RotateTransform { Angle = bus.busHeading },
+                    //    RenderTransformOrigin = new Point(0.5, 0.5)
+                    //};
+                    var busMarker = new MapIcon
+                    {
+                        Image = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/Inbound.png")),
+                        CollisionBehaviorDesired = MapElementCollisionBehavior.RemainVisible,
+                        Location = new Geopoint(new BasicGeoposition { Latitude = bus.latitude, Longitude = bus.longitude }),
+                        NormalizedAnchorPoint = new Point(0.5, 0.5),
                     };
-                    MapControl.SetNormalizedAnchorPoint(busMarker, new Point(0.5, 0.5));
-                    MapControl.SetLocation(busMarker, new Geopoint(new BasicGeoposition { Latitude = bus.latitude, Longitude = bus.longitude }));
-                    RouteMap.Children.Add(busMarker);
+
+                    //MapControl.SetNormalizedAnchorPoint(busMarker, new Point(0.5, 0.5));
+                    //MapControl.SetLocation(busMarker, new Geopoint(new BasicGeoposition { Latitude = bus.latitude, Longitude = bus.longitude }));
+                    RouteMap.MapElements.Add(busMarker);
                 }
                 else if (bus.direction.Equals("outbound"))
                 {
-                    var busMarker = new Image
-                    {
-                        Source = outboundBus,
-                        Height = 20,
-                        Width = 20,
+                    //var busMarker = new Image
+                    //{
+                    //    Source = outboundBus,
+                    //    Height = 20,
+                    //    Width = 20,
 
-                        RenderTransform = new RotateTransform { Angle = bus.busHeading },
-                        RenderTransformOrigin = new Point(0.5, 0.5)
+                    //    RenderTransform = new RotateTransform { Angle = bus.busHeading },
+                    //    RenderTransformOrigin = new Point(0.5, 0.5)
+                    //};
+                    var busMarker = new MapIcon
+                    {
+                        Image = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/Outbound.png")),
+                        CollisionBehaviorDesired = MapElementCollisionBehavior.RemainVisible,
+                        Location = new Geopoint(new BasicGeoposition { Latitude = bus.latitude, Longitude = bus.longitude }),
+                        NormalizedAnchorPoint = new Point(0.5, 0.5),
                     };
-                    MapControl.SetNormalizedAnchorPoint(busMarker, new Point(0.5, 0.5));
-                    MapControl.SetLocation(busMarker, new Geopoint(new BasicGeoposition { Latitude = bus.latitude, Longitude = bus.longitude }));
-                    RouteMap.Children.Add(busMarker);
+
+                    //MapControl.SetNormalizedAnchorPoint(busMarker, new Point(0.5, 0.5));
+                    //MapControl.SetLocation(busMarker, new Geopoint(new BasicGeoposition { Latitude = bus.latitude, Longitude = bus.longitude }));
+                    RouteMap.MapElements.Add(busMarker);
                 }
                 vehicleCounter++;
             }

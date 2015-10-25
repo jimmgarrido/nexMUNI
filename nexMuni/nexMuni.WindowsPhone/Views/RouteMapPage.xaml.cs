@@ -35,7 +35,7 @@ namespace nexMuni.Views
 
             refreshTimer = new DispatcherTimer();
             refreshTimer.Tick += TimerDue;
-            refreshTimer.Interval = new System.TimeSpan(0, 0, 30);
+            refreshTimer.Interval = new TimeSpan(0, 0, 30);
         }
 
         public NavigationHelper NavigationHelper

@@ -47,7 +47,9 @@ namespace nexMuni.Views
         {
             if (alreadyLoaded) return;
 
-            MainPivot.SelectedIndex = SettingsHelper.GetLaunchPivotSetting();
+            SettingsHelper.LoadNearbySetting();
+            SettingsHelper.LoadLaunchPivotSetting();
+            MainPivot.SelectedIndex = SettingsHelper.launchPivot;
 
             mainVm = new MainViewModel();
             searchVm = new SearchViewModel();

@@ -120,7 +120,7 @@ namespace nexMuni.Views
             var route = (Route)e.ClickedItem;
             route.stopLocation = new Geopoint(new BasicGeoposition { Latitude = detailVm.SelectedStop.Latitude, Longitude = detailVm.SelectedStop.Longitude });
 
-            //Frame.Navigate(typeof(RouteMapPage), route);
+            Frame.Navigate(typeof(RouteMapPage), route);
         }
 
         #region NavigationHelper registration

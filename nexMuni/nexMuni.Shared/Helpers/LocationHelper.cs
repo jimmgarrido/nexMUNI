@@ -7,7 +7,7 @@ using nexMuni.DataModels;
 
 namespace nexMuni.Helpers
 {
-    class LocationHelper
+    public class LocationHelper
     {
         public static Geoposition Location { get; private set; }
         public static Geopoint Point

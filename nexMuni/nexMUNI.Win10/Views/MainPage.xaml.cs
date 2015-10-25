@@ -81,11 +81,11 @@ namespace nexMuni.Views
             FavoriteBtn.IsEnabled = false;
             DetailBtn.IsEnabled = false;
 
-            while (vehicleCounter > 0)
-            {
-                SearchMap.Children.RemoveAt(SearchMap.Children.Count - 1);
-                vehicleCounter--;
-            }
+            //while (vehicleCounter > 0)
+            //{
+            //    SearchMap.Children.RemoveAt(SearchMap.Children.Count - 1);
+            //    vehicleCounter--;
+            //}
 
             var routePath = await mainVm.GetRoutePathAsync(searchVm.SelectedRoute);
 

@@ -150,7 +150,6 @@ namespace nexMuni.ViewModels
             DirectionsList = await Task.Run(() => ParseHelper.ParseDirections(xmlDoc));
             allStopsList = await Task.Run(() => ParseHelper.ParseStops(xmlDoc));
             await Task.Run(() => ParseHelper.ParseStopTags(xmlDoc, inboundStops, outboundStops));
-            //await SortStops(xmlDoc);
         }
 
         public async Task LoadStops(string direction)
@@ -237,44 +236,6 @@ namespace nexMuni.ViewModels
                 return stops.ElementAt(0);
             else return null;
         }
-
-        //private async Task SortStops(XDocument doc)
-        //{
-        //    var tagElements = await Task.Run(() => ParseHelper.ParseStopTags(doc));
-        //    foreach (string direction in DirectionsList)
-        //    {
-        //        IEnumerable<XElement> tagElements;
-        //        if (el.Attribute("name").Value == "Inbound")
-        //        {
-        //            //Get all stop elements under direction element
-        //            tagElements =
-        //                from x in el.Elements("stop")
-        //                select x;
-
-        //            if (inboundStops.Count != 0) inboundStops.Clear();
-        //            //Add tags for direction to a collection
-        //            foreach (XElement y in tagElements)
-        //            {
-        //                inboundStops.Add(y.Attribute("tag").Value);
-        //            }
-        //        }
-        //        else if (el.Attribute("name").Value == "Outbound")
-        //        {
-        //            //Get all stop elements under direction element
-        //            tagElements =
-        //                from x in el.Elements("stop")
-        //                select x;
-
-        //            if (outboundStops.Count != 0) outboundStops.Clear();
-        //            //Add tags for direction to a collection
-        //            foreach (XElement y in tagElements)
-        //            {
-        //                outboundStops.Add(y.Attribute("tag").Value);
-        //            }
-        //        }
-        //    }
-        //    return directions;
-        //}
 
         private void SyncFavoriteIds()
         {

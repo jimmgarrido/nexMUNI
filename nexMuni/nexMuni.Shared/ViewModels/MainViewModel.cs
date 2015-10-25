@@ -54,6 +54,7 @@ namespace nexMuni.ViewModels
             FavoriteStops = new ObservableCollection<Stop>();
 
             DatabaseHelper.FavoritesChanged += LoadFavoritesAsync;
+            nearbyCount = SettingsHelper.nearbyCount;
         }
 
         public async Task LoadAsync()
@@ -66,9 +67,6 @@ namespace nexMuni.ViewModels
         {
             //Make sure user has given permission to access location
             await LocationHelper.UpdateLocation();
-
-            if (SettingsHelper.GetNearbySetting() == 1) nearbyCount = 25;
-            else nearbyCount = 15;
 
             if (LocationHelper.Location != null)
             {
