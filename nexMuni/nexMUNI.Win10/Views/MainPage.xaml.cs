@@ -281,7 +281,7 @@ namespace nexMuni.Views
             await searchVm.FavoriteSearchAsync();
             FavoriteBtn.Click -= FavoriteSearch;
             FavoriteBtn.Click += UnfavoriteSearch;
-            FavoriteBtn.Icon = new SymbolIcon(Symbol.Remove);
+            FavoriteBtn.Icon = new SymbolIcon(Symbol.UnFavorite);
             FavoriteBtn.Label = "unfavorite";
         }
 

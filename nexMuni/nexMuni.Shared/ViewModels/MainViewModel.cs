@@ -59,12 +59,13 @@ namespace nexMuni.ViewModels
         public async Task LoadAsync()
         {
             //LoadFavoritesAsync();
-            nearbyCount = SettingsHelper.nearbyCount;
             await UpdateNearbyStopsAsync();
         }
 
         public async Task UpdateNearbyStopsAsync()
         {
+            nearbyCount = SettingsHelper.nearbyCount;
+
             //Make sure user has given permission to access location
             await LocationHelper.UpdateLocation();
 

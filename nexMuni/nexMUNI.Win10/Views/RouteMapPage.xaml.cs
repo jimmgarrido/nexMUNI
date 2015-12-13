@@ -26,6 +26,11 @@ namespace nexMuni.Views
 
         public RouteMapViewModel routeMapVm;
 
+        public NavigationHelper NavigationHelper
+        {
+            get { return this.navigationHelper; }
+        }
+
         public RouteMapPage()
         {
             this.InitializeComponent(); 
@@ -34,14 +39,11 @@ namespace nexMuni.Views
             this.navigationHelper.LoadState += this.NavigationHelper_LoadState;
             this.navigationHelper.SaveState += this.NavigationHelper_SaveState;
 
+            RouteMap.Loaded += MapLoaded;
+
             refreshTimer = new DispatcherTimer();
             refreshTimer.Tick += TimerDue;
             refreshTimer.Interval = new System.TimeSpan(0, 0, 30);
-        }
-
-        public NavigationHelper NavigationHelper
-        {
-            get { return this.navigationHelper; }
         }
 
         private async void NavigationHelper_LoadState(object sender, LoadStateEventArgs e)
@@ -62,10 +64,6 @@ namespace nexMuni.Views
                 LocationIcon.Visibility = Visibility.Visible;
             }
 
-            var routePath = await routeMapVm.GetRoutePath();
-
-
-            await AddVehicleLocations();
             if (!refreshTimer.IsEnabled) refreshTimer.Start();
             alreadyLoaded = true;
         }
@@ -200,6 +198,14 @@ namespace nexMuni.Views
                 vehicleCounter++;
             }
         }
+
+        private async void MapLoaded(object sender, RoutedEventArgs e)
+        {
+            var routePath = await routeMapVm.GetRoutePath();
+
+            await AddVehicleLocations();
+        }
+
         private async void TimerDue(object sender, object e)
         {
             await AddVehicleLocations();
