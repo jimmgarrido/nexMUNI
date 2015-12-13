@@ -54,12 +54,12 @@ namespace nexMuni.ViewModels
             FavoriteStops = new ObservableCollection<Stop>();
 
             DatabaseHelper.FavoritesChanged += LoadFavoritesAsync;
-            nearbyCount = SettingsHelper.nearbyCount;
         }
 
         public async Task LoadAsync()
         {
             //LoadFavoritesAsync();
+            nearbyCount = SettingsHelper.nearbyCount;
             await UpdateNearbyStopsAsync();
         }
 

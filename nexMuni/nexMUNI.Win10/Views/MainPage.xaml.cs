@@ -58,6 +58,10 @@ namespace nexMuni.Views
                 DirBox.SelectionChanged += DirectionSelected;
                 StopBox.SelectionChanged += StopSelected;
 
+                SettingsHelper.LoadNearbySetting();
+                SettingsHelper.LoadLaunchPivotSetting();
+                MainPivot.SelectedIndex = SettingsHelper.launchPivot;
+
                 await DatabaseHelper.CheckDatabasesAsync();
                 await searchVm.LoadRoutesAsync();
                 RouteBox.IsEnabled = true;

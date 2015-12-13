@@ -12,6 +12,7 @@ namespace nexMuni.Helpers
         public static void LoadNearbySetting()
         {
             var settings = ApplicationData.Current.RoamingSettings;
+            var test = settings.Values["NearbyCount"];
             if (settings.Values["NearbyCount"] == null)
             {
                 settings.Values["NearbyCount"] = 15;

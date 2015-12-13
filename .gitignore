@@ -113,3 +113,4 @@ UpgradeLog*.XML
 
 #User Added
 profiler/
+ApplicationInsights.config

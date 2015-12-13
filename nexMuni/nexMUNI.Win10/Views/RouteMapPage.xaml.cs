@@ -142,6 +142,7 @@ namespace nexMuni.Views
             //var outboundBus = new BitmapImage();
             //outboundBus.DecodePixelHeight = 20;
             //outboundBus.UriSource = new Uri("ms-appx:///Assets/Outbound.png");
+            //outboundBus.
 
             //MapControl.SetNormalizedAnchorPoint(inboundBus, new Point(0.5, 0.5));
             //MapControl.SetNormalizedAnchorPoint(outboundBus, new Point(0.5, 0.5));
@@ -150,7 +151,7 @@ namespace nexMuni.Views
             {
                 if (bus.direction.Equals("inbound"))
                 {
-                    //var busMarker = new Image
+                    //var busM = new Image
                     //{
                     //    Source = inboundBus,
                     //    Height = 20,
@@ -159,6 +160,8 @@ namespace nexMuni.Views
                     //    RenderTransform = new RotateTransform { Angle = bus.busHeading },
                     //    RenderTransformOrigin = new Point(0.5, 0.5)
                     //};
+                    //busM.
+
                     var busMarker = new MapIcon
                     {
                         Image = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/Inbound.png")),

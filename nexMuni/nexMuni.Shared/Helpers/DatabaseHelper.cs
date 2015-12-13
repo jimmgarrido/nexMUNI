@@ -71,7 +71,6 @@ namespace nexMuni.Helpers
             //var _stopsAsyncConnection = new SQLiteAsyncConnection(()=> new SQLiteConnectionWithLock(new SQLitePlatformWinRT(), new SQLiteConnectionString("muni.db", false)));
 
             var results = await _stopsAsyncConnection.QueryAsync<Stop>(query);
-            _stopsAsyncConnection = null;
 
             if (!results.Any())
             {
@@ -84,6 +83,8 @@ namespace nexMuni.Helpers
                 query = "SELECT * FROM BusStops WHERE StopName IS \"" + stopName + "\"";
                 results = await _stopsAsyncConnection.QueryAsync<Stop>(query);
             }
+
+            _stopsAsyncConnection = null;
             return results;
         }
 

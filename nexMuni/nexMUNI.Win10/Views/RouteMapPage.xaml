@@ -10,11 +10,11 @@
     Background="#FFB31B1B">
 
     <!-- Title Panel -->
-    <StackPanel>
+    <StackPanel HorizontalAlignment="Stretch">
         <TextBlock x:Name="routeTitle" Text="{Binding SelectedRoute.Title}" Style="{ThemeResource TitleTextBlockStyle}" Margin="19,10,0,0"/>
 
         <maps:MapControl x:Name="RouteMap" HorizontalAlignment="Stretch" Margin="0,15,0,0" Height="590"
-                             MapServiceToken="jjA5Pn6AN4an5lgqKNN_Rg" ZoomLevel="13">
+                             MapServiceToken="s2f4CjGPV6MOUDb98nLK~DmNiG9uHKyAyOF5haOKLCA~AkTKqZV2aw9t9mH8w5KYONdnKnBGBL80hdNNSKY6YsC0HAc_qm3o9lgxui2Eu7Sr" ZoomLevel="13">
             <maps:MapControl.Children>
                 <Image x:Name="LocationIcon" Source="/Assets/Location.png" Height="20" Width="20" Visibility="Collapsed"/>
                 <Image x:Name="StopIcon" Source="/Assets/Stop.png" Height="30" Width="30" Visibility="Collapsed"/>

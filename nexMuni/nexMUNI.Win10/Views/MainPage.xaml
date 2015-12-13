@@ -229,7 +229,6 @@
 
     <Page.BottomAppBar>
         <CommandBar x:Name="AppBar" Background="#FF9B1414" ClosedDisplayMode="Compact" Foreground="White">
-            
             <CommandBar.CommandBarOverflowPresenterStyle>
                 <Style TargetType="CommandBarOverflowPresenter">
                     <Setter Property="Background"
@@ -273,7 +272,7 @@
                 <ProgressRing x:Name="LoadingRing" Visibility="Visible" Foreground="#b31b1b" Height="40" Width="40" IsActive="True" />
                 <TextBlock x:Name="NoStopsNotice" Text="{Binding NoStopsText}" Foreground="#b31b1b" TextAlignment="Center" FontSize="21" Margin="0,220,0,0"/>
                 <ListView x:Name="NearbyListView" ItemsSource="{Binding NearbyStops}" ItemTemplate="{StaticResource ListItem}" HorizontalAlignment="Stretch" 
-                          VerticalAlignment="Top" ItemClick="StopClicked" SelectionMode="None" IsItemClickEnabled="True" Padding="-10,10,-10,0">
+                          VerticalAlignment="Stretch" ItemClick="StopClicked" SelectionMode="None" IsItemClickEnabled="True" Padding="-10,10,-10,0">
                     <ListView.ItemContainerTransitions>
                         <TransitionCollection>
                             <EntranceThemeTransition FromHorizontalOffset="0" FromVerticalOffset="200"/>
@@ -288,7 +287,7 @@
             <Grid>
                 <TextBlock x:Name="NoFavsNotice" Text="{Binding NoFavoritesText}" Foreground="#b31b1b" TextAlignment="Center" 
                            FontFamily="Segoe UI Symbol" FontSize="21" Margin="0,220,0,0" Width="250" TextWrapping="WrapWholeWords"/>
-                <ListView x:Name="FavoritesListView" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Top" ItemsSource="{Binding FavoriteStops}" 
+                <ListView x:Name="FavoritesListView" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Stretch" ItemsSource="{Binding FavoriteStops}" 
                           ItemTemplate="{StaticResource ListItem}" SelectionMode="None" IsItemClickEnabled="True" ItemClick="StopClicked" Padding="-10,10,-10,0">
                     <ListView.ItemContainerTransitions>
                         <TransitionCollection>
