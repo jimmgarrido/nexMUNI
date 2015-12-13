@@ -308,7 +308,7 @@
 
                 <StackPanel Background="#b31b1b" Margin="0,10,0,0" Grid.Row="0">
                     <!--<TextBlock Text="Select Route" HorizontalAlignment="Center" Margin="-220,0,0,3" FontSize="16"/>-->
-                    <ComboBox x:Name="RouteBox" Header="Select Route" IsSynchronizedWithCurrentItem="{x:Null}" ItemsSource="{Binding RoutesList}" Width="310" HorizontalAlignment="Center"
+                    <ComboBox x:Name="RouteBox" Header="Select Route" ItemsSource="{Binding RoutesList}" Width="310" HorizontalAlignment="Center"
                               IsEnabled="False"/>
 
                     <!--<TextBlock x:Name="DirLabel" Text="Select Direction" HorizontalAlignment="Center" Margin="-200,3,0,3" FontSize="16" Visibility="Collapsed"/>-->
