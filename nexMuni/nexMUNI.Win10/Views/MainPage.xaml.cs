@@ -91,25 +91,8 @@ namespace nexMuni.Views
             //    vehicleCounter--;
             //}
 
-            var routePath = await mainVm.GetRoutePathAsync(searchVm.SelectedRoute);
-
-            SearchMap.MapElements.Clear();
-
-            if (routePath.Any())
-            {
-                foreach (var points in routePath)
-                {
-                    SearchMap.MapElements.Add(new MapPolyline
-                    {
-                        Path = new Geopath(points),
-                        StrokeColor = Color.FromArgb(255, 179, 27, 27),
-                        StrokeThickness = 2.00,
-                        ZIndex = 99
-                    });
-                }
-            }
-
             await SearchMap.TrySetViewAsync(searchVm.MapCenter, 11.40);
+            await ShowRoutePath();
             await ShowVehicleLocations();
         }
 
@@ -154,6 +137,26 @@ namespace nexMuni.Views
             DetailBtn.IsEnabled = true;
 
             await ShowStopLocation();
+        }
+
+        private async Task ShowRoutePath()
+        {
+            SearchMap.MapElements.Clear();
+
+            var routePath = await mainVm.GetRoutePathAsync(searchVm.SelectedRoute);
+            if (routePath.Any())
+            {
+                foreach (var points in routePath)
+                {
+                    SearchMap.MapElements.Add(new MapPolyline
+                    {
+                        Path = new Geopath(points),
+                        StrokeColor = Color.FromArgb(255, 179, 27, 27),
+                        StrokeThickness = 2.00,
+                        ZIndex = 99
+                    });
+                }
+            }
         }
 
         private async Task ShowVehicleLocations()

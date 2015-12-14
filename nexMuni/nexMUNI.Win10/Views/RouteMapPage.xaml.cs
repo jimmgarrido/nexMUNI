@@ -14,6 +14,7 @@ using nexMuni.ViewModels;
 using System.Threading.Tasks;
 using System.Linq;
 using Windows.Storage.Streams;
+using Windows.UI;
 
 namespace nexMuni.Views
 {
@@ -22,7 +23,7 @@ namespace nexMuni.Views
         private NavigationHelper navigationHelper;
         private bool alreadyLoaded;
         private DispatcherTimer refreshTimer;
-        private int vehicleCounter;
+        private int vehicleCounter = 0;
 
         public RouteMapViewModel routeMapVm;
 
@@ -43,10 +44,10 @@ namespace nexMuni.Views
 
             refreshTimer = new DispatcherTimer();
             refreshTimer.Tick += TimerDue;
-            refreshTimer.Interval = new System.TimeSpan(0, 0, 30);
+            refreshTimer.Interval = new System.TimeSpan(0, 0, 20);
         }
 
-        private async void NavigationHelper_LoadState(object sender, LoadStateEventArgs e)
+        private void NavigationHelper_LoadState(object sender, LoadStateEventArgs e)
         {
             if (alreadyLoaded) return;
             routeMapVm = new RouteMapViewModel(e.NavigationParameter as Route);
@@ -56,8 +57,6 @@ namespace nexMuni.Views
             MapControl.SetNormalizedAnchorPoint(StopIcon, new Point(0.5, 1.0));
             MapControl.SetNormalizedAnchorPoint(LocationIcon, new Point(0.5, 0.5));
 
-            MapControl.SetLocation(StopIcon, routeMapVm.SelectedRoute.stopLocation);
-            StopIcon.Visibility = Visibility.Visible;
             if (LocationHelper.Location != null)
             {
                 MapControl.SetLocation(LocationIcon, LocationHelper.Point);
@@ -68,9 +67,32 @@ namespace nexMuni.Views
             alreadyLoaded = true;
         }
 
+        private async Task ShowRoutePath()
+        {
+            var routePath = await routeMapVm.GetRoutePath();
+            if (routePath.Any())
+            {
+                foreach (var points in routePath)
+                {
+                    RouteMap.MapElements.Add(new MapPolyline
+                    {
+                        Path = new Geopath(points),
+                        StrokeColor = Color.FromArgb(255, 179, 27, 27),
+                        StrokeThickness = 2.00
+                    });
+                }
+            }
+        }
+
         private async Task AddVehicleLocations()
         {
             var busLocations = await routeMapVm.GetBusLocations();
+
+            while (vehicleCounter > 0)
+            {
+                RouteMap.MapElements.RemoveAt(RouteMap.MapElements.Count - 1);
+                vehicleCounter--;
+            }
 
             //var inboundBus = new BitmapImage(new Uri("ms-appx:///Assets/Inbound.png"));
             //var outboundBus = new BitmapImage(new Uri("ms-appx:///Assets/Outbound.png"));
@@ -201,8 +223,10 @@ namespace nexMuni.Views
 
         private async void MapLoaded(object sender, RoutedEventArgs e)
         {
-            var routePath = await routeMapVm.GetRoutePath();
+            MapControl.SetLocation(StopIcon, routeMapVm.SelectedRoute.stopLocation);
+            StopIcon.Visibility = Visibility.Visible;
 
+            await ShowRoutePath();
             await AddVehicleLocations();
         }
 
