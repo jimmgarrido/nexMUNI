@@ -73,7 +73,7 @@ namespace nexMuni.Views
                 Frame.GoBack();
             }
 
-            if (detailVm.Alerts.Any()) DetailPivot.Items.RemoveAt(1);
+            if (!detailVm.Alerts.Any()) DetailPivot.Items.RemoveAt(1);
 
             LoadingRing.IsActive = false;
             await UIHelper.HideStatusBar();
