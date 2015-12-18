@@ -44,7 +44,7 @@ namespace nexMuni.Views
 
             refreshTimer = new DispatcherTimer();
             refreshTimer.Tick += TimerDue;
-            refreshTimer.Interval = new System.TimeSpan(0, 0, 20);
+            refreshTimer.Interval = new TimeSpan(0, 0, 20);
         }
 
         private void NavigationHelper_LoadState(object sender, LoadStateEventArgs e)
@@ -250,6 +250,7 @@ namespace nexMuni.Views
         {
             this.navigationHelper.OnNavigatedFrom(e);
             refreshTimer.Stop();
+            refreshTimer.Tick -= TimerDue;
         }
 
         #endregion

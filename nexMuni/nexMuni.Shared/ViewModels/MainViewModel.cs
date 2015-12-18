@@ -118,7 +118,7 @@ namespace nexMuni.ViewModels
             }
         }
 
-        public async Task<List<IEnumerable<BasicGeoposition>>> GetRoutePathAsync(string route)
+        public async Task<List<List<BasicGeoposition>>> GetRoutePathAsync(string route)
         {
             var xmlDoc = await WebHelper.GetRoutePathAsync(route);
             return await Task.Run(() => MapHelper.ParseRoutePath(xmlDoc));

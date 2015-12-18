@@ -274,7 +274,7 @@
         <PivotItem x:Name="NearbyPivot" Header="nearby">
             <Grid>
                 <ProgressRing x:Name="LoadingRing" Visibility="Visible" Foreground="#b31b1b" Height="40" Width="40" IsActive="True" />
-                <TextBlock x:Name="NoStopsNotice" Text="{Binding NoStopsText}" Foreground="#b31b1b" TextAlignment="Center" FontSize="21" Margin="0,220,0,0"/>
+                <TextBlock x:Name="NoStopsNotice" Text="{Binding NoStopsText}" Foreground="#b31b1b" TextAlignment="Center" FontSize="20" Margin="0,220,0,0"/>
                 <ListView x:Name="NearbyListView" ItemsSource="{Binding NearbyStops}" ItemTemplate="{StaticResource ListItem}" HorizontalAlignment="Stretch" 
                           VerticalAlignment="Stretch" ItemClick="StopClicked" SelectionMode="None" IsItemClickEnabled="True" Padding="-10,10,-10,0">
                     <ListView.ItemContainerTransitions>
@@ -290,7 +290,7 @@
         <PivotItem x:Name="FavoritesPivot" Header="favorites">
             <Grid>
                 <TextBlock x:Name="NoFavsNotice" Text="{Binding NoFavoritesText}" Foreground="#b31b1b" TextAlignment="Center" 
-                           FontFamily="Segoe UI Symbol" FontSize="21" Margin="0,220,0,0" Width="250" TextWrapping="WrapWholeWords"/>
+                           FontFamily="Segoe UI Symbol" FontSize="20" Margin="0,220,0,0" Width="250" TextWrapping="WrapWholeWords"/>
                 <ListView x:Name="FavoritesListView" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Stretch" ItemsSource="{Binding FavoriteStops}" 
                           ItemTemplate="{StaticResource ListItem}" SelectionMode="None" IsItemClickEnabled="True" ItemClick="StopClicked" Padding="-10,10,-10,0">
                     <ListView.ItemContainerTransitions>
@@ -328,7 +328,7 @@
                                 VerticalAlignment="Stretch" HorizontalAlignment="Stretch" ZoomLevel="11.40"
                                 MapServiceToken="s2f4CjGPV6MOUDb98nLK~DmNiG9uHKyAyOF5haOKLCA~AkTKqZV2aw9t9mH8w5KYONdnKnBGBL80hdNNSKY6YsC0HAc_qm3o9lgxui2Eu7Sr" >
                     <Maps:MapControl.Children>
-                        <Image x:Name="LocationIcon" Height="20" Width="20">
+                        <Image x:Name="LocationIcon" Height="20" Width="20" Visibility="Collapsed">
                             <Image.Source>
                                 <BitmapImage UriSource="/Assets/Location.png" DecodePixelHeight="20" DecodePixelWidth="20"/>
                             </Image.Source>

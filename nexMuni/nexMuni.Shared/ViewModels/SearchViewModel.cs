@@ -146,10 +146,21 @@ namespace nexMuni.ViewModels
                 route = route.Substring(0, route.IndexOf('-'));
             }
 
-            var xmlDoc = await WebHelper.GetRouteDirections(route);
-            DirectionsList = await Task.Run(() => ParseHelper.ParseDirections(xmlDoc));
-            allStopsList = await Task.Run(() => ParseHelper.ParseStops(xmlDoc));
-            await Task.Run(() => ParseHelper.ParseStopTags(xmlDoc, inboundStops, outboundStops));
+            try {
+                var xmlDoc = await WebHelper.GetRouteDirections(route);
+
+                if (xmlDoc != null)
+                {
+                    DirectionsList = await Task.Run(() => ParseHelper.ParseDirections(xmlDoc));
+                    allStopsList = await Task.Run(() => ParseHelper.ParseStops(xmlDoc));
+                    await Task.Run(() => ParseHelper.ParseStopTags(xmlDoc, inboundStops, outboundStops));
+                }
+            } 
+            catch (Exception)
+            {
+                throw;
+            }
+   
         }
 
         public async Task LoadStops(string direction)

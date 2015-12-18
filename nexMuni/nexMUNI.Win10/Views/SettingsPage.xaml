@@ -29,7 +29,7 @@
         </Grid.RowDefinitions>
 
         <!-- Title Panel -->
-        <StackPanel Grid.Row="0" Margin="19,10,0,10">
+        <StackPanel Grid.Row="0" Margin="19,0,0,10">
             <TextBlock Text="settings" FontSize="36" Style="{ThemeResource HeaderTextBlockStyle}" Foreground="White"/>
         </StackPanel>
 

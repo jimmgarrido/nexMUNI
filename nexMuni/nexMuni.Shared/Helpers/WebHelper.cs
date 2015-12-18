@@ -153,6 +153,7 @@ namespace nexMuni.Helpers
             catch (Exception)
             {
                 await ErrorHandler.NetworkError("Error getting route information. Check your network connection and try again.");
+                throw;
             }
 
             response.Dispose();

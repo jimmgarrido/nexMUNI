@@ -163,6 +163,7 @@ namespace nexMuni.ViewModels
         public void StopTimer()
         {
             refreshTimer.Stop();
+            refreshTimer.Tick -= TimerDue;
         }
 
         private async void TimerDue(object sender, object e)

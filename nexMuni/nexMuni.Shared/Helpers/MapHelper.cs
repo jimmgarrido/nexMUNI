@@ -11,7 +11,7 @@ namespace nexMuni.Helpers
 {
     public class MapHelper
     {
-        public static List<IEnumerable<BasicGeoposition>> ParseRoutePath(XDocument document)
+        public static List<List<BasicGeoposition>> ParseRoutePath(XDocument document)
         {
             //IEnumerable<XElement> elements =
             //    from e in document.Element("body").Element("route").Elements("path")
@@ -46,7 +46,7 @@ namespace nexMuni.Helpers
                 select e;
 
             //var path = new List<MapPolyline>();
-            var pathPoints = new List<IEnumerable<BasicGeoposition>>();
+            var pathPoints = new List<List<BasicGeoposition>>();
 
             foreach (XElement element in pathElements)
             {
@@ -61,7 +61,7 @@ namespace nexMuni.Helpers
                 //    StrokeThickness = 2.00,
                 //    ZIndex = 99
                 //});
-                pathPoints.Add(points);
+                pathPoints.Add(points.ToList());
             }
 
             return pathPoints;

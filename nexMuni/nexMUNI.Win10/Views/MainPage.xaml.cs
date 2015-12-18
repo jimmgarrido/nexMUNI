@@ -3,23 +3,15 @@ using nexMuni.Helpers;
 using nexMuni.ViewModels;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Devices.Geolocation;
 using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.Storage.Streams;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Maps;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
 namespace nexMuni.Views
@@ -30,7 +22,8 @@ namespace nexMuni.Views
         SearchViewModel searchVm;
 
         bool alreadyLoaded;
-        int vehicleCounter;
+        int vehicleCounter = 0;
+        DispatcherTimer refreshTimer;
 
         public MainPage()
         {
@@ -51,8 +44,8 @@ namespace nexMuni.Views
                 //searchVm.UpdateLocation += LocationUpdated;
 
                 NearbyPivot.DataContext = mainVm;
-                SearchPivot.DataContext = searchVm;
                 FavoritesPivot.DataContext = mainVm;
+                SearchPivot.DataContext = searchVm;
 
                 RouteBox.SelectionChanged += RouteSelected;
                 DirBox.SelectionChanged += DirectionSelected;
@@ -67,33 +60,45 @@ namespace nexMuni.Views
                 RouteBox.IsEnabled = true;
                 await mainVm.LoadAsync();
                 LoadingRing.IsActive = false;
+
                 alreadyLoaded = true;
             }
         }
 
         private async void RouteSelected(object sender, SelectionChangedEventArgs args)
         {
-            DirBox.SelectedIndex = -1;
-            StopBox.SelectedIndex = -1;
-            await searchVm.LoadDirectionsAsync(((ComboBox)sender).SelectedItem.ToString());
+            await UIHelper.ShowStatusBar("Getting Route Info...");
 
-            //DirLabel.Visibility = Visibility.Visible;
-            DirBox.Visibility = Visibility.Visible;
-            //StopIcon.Visibility = Visibility.Collapsed;
-            DirBox.SelectedIndex = 0;
+            try {
+                DirBox.SelectedIndex = -1;
+                StopBox.SelectedIndex = -1;
+                await searchVm.LoadDirectionsAsync(((ComboBox)sender).SelectedItem.ToString());
 
-            FavoriteBtn.IsEnabled = false;
-            DetailBtn.IsEnabled = false;
+                DirBox.Visibility = Visibility.Visible;
+                DirBox.SelectedIndex = 0;
 
-            //while (vehicleCounter > 0)
-            //{
-            //    SearchMap.Children.RemoveAt(SearchMap.Children.Count - 1);
-            //    vehicleCounter--;
-            //}
+                FavoriteBtn.IsEnabled = false;
+                DetailBtn.IsEnabled = false;
 
-            await SearchMap.TrySetViewAsync(searchVm.MapCenter, 11.40);
-            await ShowRoutePath();
-            await ShowVehicleLocations();
+                await SearchMap.TrySetViewAsync(searchVm.MapCenter, 11.40);
+                await ShowRoutePath();
+                await ShowVehicleLocations();
+
+                if (refreshTimer == null)
+                {
+                    refreshTimer = new DispatcherTimer();
+                    refreshTimer.Tick += TimerDue;
+                    refreshTimer.Interval = new TimeSpan(0, 0, 20);
+                }
+
+                if (!refreshTimer.IsEnabled) refreshTimer.Start();
+            }
+            catch (Exception)
+            {
+
+            }
+
+            await UIHelper.HideStatusBar();
         }
 
         private async void DirectionSelected(object sender, SelectionChangedEventArgs e)
@@ -148,13 +153,20 @@ namespace nexMuni.Views
             {
                 foreach (var points in routePath)
                 {
-                    SearchMap.MapElements.Add(new MapPolyline
-                    {
-                        Path = new Geopath(points),
-                        StrokeColor = Color.FromArgb(255, 179, 27, 27),
-                        StrokeThickness = 2.00,
-                        ZIndex = 99
-                    });
+                    var temp = new MapPolyline();
+                    temp.StrokeColor = Color.FromArgb(255, 179, 27, 27);
+                    temp.StrokeThickness = 2.0;
+                    temp.ZIndex = 99;
+                    temp.Path = new Geopath(points);
+
+                    //var temp = new MapPolyline
+                    //{
+                    //    Path = new Geopath(points),
+                    //    StrokeColor = Color.FromArgb(255, 179, 27, 27),
+                    //    StrokeThickness = 2.00,
+                    //    ZIndex = 99
+                    //};
+                    SearchMap.MapElements.Add(temp);
                 }
             }
         }
@@ -164,16 +176,11 @@ namespace nexMuni.Views
             var xmlDoc = await WebHelper.GetBusLocationsAsync(searchVm.SelectedRoute);
             var vehicleLocations = await Task.Run(() => MapHelper.ParseBusLocations(xmlDoc));
 
-            //var inboundBus = new BitmapImage();
-            //inboundBus.DecodePixelHeight = 20;
-            //inboundBus.UriSource = new Uri("ms-appx:///Assets/Inbound.png");
-
-            //var outboundBus = new BitmapImage();
-            //outboundBus.DecodePixelHeight = 20;
-            //outboundBus.UriSource = new Uri("ms-appx:///Assets/Outbound.png");
-
-            //MapControl.SetNormalizedAnchorPoint(inboundBus, new Point(0.5, 0.5));
-            //MapControl.SetNormalizedAnchorPoint(outboundBus, new Point(0.5, 0.5));
+            while (vehicleCounter > 0)
+            {
+                SearchMap.MapElements.RemoveAt(SearchMap.MapElements.Count - 1);
+                vehicleCounter--;
+            }
 
             foreach (Bus bus in vehicleLocations)
             {
@@ -263,6 +270,7 @@ namespace nexMuni.Views
             RefreshBtn.IsEnabled = true;
             MapControl.SetNormalizedAnchorPoint(LocationIcon, new Point(0.5, 0.5));
             MapControl.SetLocation(LocationIcon, LocationHelper.Location.Coordinate.Point);
+            LocationIcon.Visibility = Visibility.Visible;
             mainVm.FavoritesDistances();
             SortBtn.IsEnabled = true;
         }
@@ -316,6 +324,11 @@ namespace nexMuni.Views
             Frame.Navigate(typeof(SettingsPage));
         }
 
+        private async void TimerDue(object sender, object e)
+        {
+            await ShowVehicleLocations();
+        }
+
         private void PivotItemChanged(object sender, SelectionChangedEventArgs e)
         {
             switch (((Pivot)sender).SelectedIndex)
@@ -339,6 +352,14 @@ namespace nexMuni.Views
                     RefreshBtn.Visibility = Visibility.Collapsed;
                     break;
             }
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            base.OnNavigatedFrom(e);
+
+            if(refreshTimer != null && refreshTimer.IsEnabled)
+                refreshTimer.Stop();
         }
     }
 }
