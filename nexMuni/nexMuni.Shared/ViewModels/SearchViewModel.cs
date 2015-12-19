@@ -213,15 +213,19 @@ namespace nexMuni.ViewModels
             }
             else reversed = "";
 
-            var xmlDoc = await WebHelper.GetSearchPredictionsAsync(SelectedStop, SelectedRoute);
-            if (xmlDoc != null)
+            try
             {
+                var xmlDoc = await WebHelper.GetSearchPredictionsAsync(SelectedStop, SelectedRoute);
                 //Get bus predictions for stop
                 SearchTimes = await Task.Run(() => ParseHelper.ParseSearchTimesAsync(xmlDoc));
 
                 Stop tempStop = await GetStopAsync();
                 if (tempStop != null) SelectedStop = tempStop;
             }
+            catch(Exception)
+            {
+                throw;
+            }        
         }
 
         public async Task FavoriteSearchAsync()

@@ -67,7 +67,7 @@ namespace nexMuni.Views
 
         private async void RouteSelected(object sender, SelectionChangedEventArgs args)
         {
-            await UIHelper.ShowStatusBar("Getting Route Info...");
+            await UIHelper.ShowStatusBar("Getting Route Info");
 
             try {
                 DirBox.SelectedIndex = -1;
@@ -108,9 +108,7 @@ namespace nexMuni.Views
                 StopBox.SelectedIndex = -1;
                 await searchVm.LoadStops(((ComboBox)sender).SelectedItem.ToString());
 
-                //StopLabel.Visibility = Visibility.Visible;
                 StopBox.Visibility = Visibility.Visible;
-                //StopIcon.Visibility = Visibility.Collapsed;
             }
 
             FavoriteBtn.IsEnabled = false;
@@ -120,28 +118,38 @@ namespace nexMuni.Views
         private async void StopSelected(object sender, SelectionChangedEventArgs args)
         {
             if (((ComboBox)sender).SelectedIndex == -1) return;
+            await UIHelper.ShowStatusBar("Getting Arrival Times");
 
-            await searchVm.StopSelectedAsync(((ComboBox)sender).SelectedItem as Stop);
-            SearchTimes.Visibility = Visibility.Visible;
-
-            if (searchVm.IsFavorite())
+            try
             {
-                if (FavoriteBtn.Label == "favorite") FavoriteBtn.Click -= FavoriteSearch;
-                FavoriteBtn.Click += UnfavoriteSearch;
-                FavoriteBtn.Label = "unfavorite";
-                FavoriteBtn.Icon = new SymbolIcon(Symbol.Remove);
-            }
-            else
-            {
-                if (FavoriteBtn.Label == "unfavorite") FavoriteBtn.Click -= UnfavoriteSearch;
-                FavoriteBtn.Click += FavoriteSearch;
-                FavoriteBtn.Label = "favorite";
-                FavoriteBtn.Icon = new SymbolIcon(Symbol.Favorite);
-            }
-            FavoriteBtn.IsEnabled = true;
-            DetailBtn.IsEnabled = true;
+                await searchVm.StopSelectedAsync(((ComboBox)sender).SelectedItem as Stop);
+                SearchTimes.Visibility = Visibility.Visible;
 
-            await ShowStopLocation();
+                if (searchVm.IsFavorite())
+                {
+                    if (FavoriteBtn.Label == "favorite") FavoriteBtn.Click -= FavoriteSearch;
+                    FavoriteBtn.Click += UnfavoriteSearch;
+                    FavoriteBtn.Label = "unfavorite";
+                    FavoriteBtn.Icon = new SymbolIcon(Symbol.Remove);
+                }
+                else
+                {
+                    if (FavoriteBtn.Label == "unfavorite") FavoriteBtn.Click -= UnfavoriteSearch;
+                    FavoriteBtn.Click += FavoriteSearch;
+                    FavoriteBtn.Label = "favorite";
+                    FavoriteBtn.Icon = new SymbolIcon(Symbol.Favorite);
+                }
+                FavoriteBtn.IsEnabled = true;
+                DetailBtn.IsEnabled = true;
+
+                await ShowStopLocation();
+            }
+            catch(Exception)
+            {
+
+            }
+
+            await UIHelper.HideStatusBar();
         }
 
         private async Task ShowRoutePath()

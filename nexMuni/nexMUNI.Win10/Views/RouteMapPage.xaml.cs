@@ -15,6 +15,9 @@ using System.Threading.Tasks;
 using System.Linq;
 using Windows.Storage.Streams;
 using Windows.UI;
+using System.IO;
+using Windows.Graphics.Imaging;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace nexMuni.Views
 {
@@ -94,131 +97,59 @@ namespace nexMuni.Views
                 vehicleCounter--;
             }
 
-            //var inboundBus = new BitmapImage(new Uri("ms-appx:///Assets/Inbound.png"));
-            //var outboundBus = new BitmapImage(new Uri("ms-appx:///Assets/Outbound.png"));
+            var inboundBM = new WriteableBitmap(48, 48);
+            await inboundBM.SetSourceAsync(await RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/Inbound.png")).OpenReadAsync());
 
-            //MapControl.SetNormalizedAnchorPoint(inboundBus, new Point(0.5, 0.5));
-            //MapControl.SetNormalizedAnchorPoint(outboundBus, new Point(0.5, 0.5));
-
-            //while (vehicleCounter > 0)
-            //{
-            //    RouteMap.Children.RemoveAt(RouteMap.Children.Count - 1);
-            //    vehicleCounter--;
-            //}
-
-            //foreach (Bus bus in busLocations)
-            //{
-            //    //for (int i=3; i < RouteMap.Children.Count; i++)
-            //    //{
-            //    //    //RouteMap.Children[i];
-            //    //    Bus mapBus = (Bus) RouteMap.Children.ElementAt(i);
-
-            //    //    if(mapBus.busId == bus.busId)
-            //    //    {
-            //    //        MapControl.SetLocation(RouteMap.Children[i], new Geopoint(new BasicGeoposition { Latitude = bus.latitude, Longitude = bus.longitude }));
-            //    //    }
-            //    //}
-
-            //    if (bus.direction.Equals("inbound"))
-            //    {
-            //        var busMarker = new Image
-            //        {
-            //            Source = inboundBus,
-            //            Height = 20,
-            //            Width = 20,
-
-            //            RenderTransform = new RotateTransform { Angle = bus.busHeading },
-            //            RenderTransformOrigin = new Point(0.5, 0.5)
-            //        };
-            //        MapControl.SetNormalizedAnchorPoint(busMarker, new Point(0.5, 0.5));
-            //        MapControl.SetLocation(busMarker, new Geopoint(new BasicGeoposition { Latitude = bus.latitude, Longitude = bus.longitude }));
-            //        RouteMap.Children.Add(busMarker);
-            //    }
-            //    else if (bus.direction.Equals("outbound"))
-            //    {
-            //        var busMarker = new Image
-            //        {
-            //            Source = outboundBus,
-            //            Height = 20,
-            //            Width = 20,
-
-            //            RenderTransform = new RotateTransform { Angle = bus.busHeading },
-            //            RenderTransformOrigin = new Point(0.5, 0.5)
-            //        };
-            //        MapControl.SetNormalizedAnchorPoint(busMarker, new Point(0.5, 0.5));
-            //        MapControl.SetLocation(busMarker, new Geopoint(new BasicGeoposition { Latitude = bus.latitude, Longitude = bus.longitude }));
-            //        RouteMap.Children.Add(busMarker);
-            //    }
-            //    vehicleCounter++;
-            //}
-
-            //var xmlDoc = await WebHelper.GetBusLocationsAsync(routeMapVm.SelectedRoute);
-            //var vehicleLocations = await Task.Run(() => MapHelper.ParseBusLocations(xmlDoc));
-
-            //var inboundBus = new BitmapImage();
-            //inboundBus.DecodePixelHeight = 20;
-            //inboundBus.UriSource = new Uri("ms-appx:///Assets/Inbound.png");
-
-            //var outboundBus = new BitmapImage();
-            //outboundBus.DecodePixelHeight = 20;
-            //outboundBus.UriSource = new Uri("ms-appx:///Assets/Outbound.png");
-            //outboundBus.
-
-            //MapControl.SetNormalizedAnchorPoint(inboundBus, new Point(0.5, 0.5));
-            //MapControl.SetNormalizedAnchorPoint(outboundBus, new Point(0.5, 0.5));
+            var outboundBM = new WriteableBitmap(48, 48);
+            await outboundBM.SetSourceAsync(await RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/Outbound.png")).OpenReadAsync());
 
             foreach (Bus bus in busLocations)
             {
                 if (bus.direction.Equals("inbound"))
                 {
-                    //var busM = new Image
-                    //{
-                    //    Source = inboundBus,
-                    //    Height = 20,
-                    //    Width = 20,
-
-                    //    RenderTransform = new RotateTransform { Angle = bus.busHeading },
-                    //    RenderTransformOrigin = new Point(0.5, 0.5)
-                    //};
-                    //busM.
+                    var rotatedImage = inboundBM.RotateFree(bus.busHeading, false);
+                    var stream = new InMemoryRandomAccessStream();
+                    await rotatedImage.ToStream(stream, BitmapEncoder.PngEncoderId);
 
                     var busMarker = new MapIcon
                     {
-                        Image = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/Inbound.png")),
+                        Image = RandomAccessStreamReference.CreateFromStream(stream),
                         CollisionBehaviorDesired = MapElementCollisionBehavior.RemainVisible,
                         Location = new Geopoint(new BasicGeoposition { Latitude = bus.latitude, Longitude = bus.longitude }),
-                        NormalizedAnchorPoint = new Point(0.5, 0.5),
+                        NormalizedAnchorPoint = new Point(0.5, 0.5)
                     };
 
-                    //MapControl.SetNormalizedAnchorPoint(busMarker, new Point(0.5, 0.5));
-                    //MapControl.SetLocation(busMarker, new Geopoint(new BasicGeoposition { Latitude = bus.latitude, Longitude = bus.longitude }));
                     RouteMap.MapElements.Add(busMarker);
+
+                    await stream.FlushAsync();
+                    stream.Dispose();
+                    rotatedImage = null;
                 }
                 else if (bus.direction.Equals("outbound"))
                 {
-                    //var busMarker = new Image
-                    //{
-                    //    Source = outboundBus,
-                    //    Height = 20,
-                    //    Width = 20,
+                    var rotatedImage = outboundBM.RotateFree(bus.busHeading, false);
+                    var stream = new InMemoryRandomAccessStream();
+                    await rotatedImage.ToStream(stream, BitmapEncoder.PngEncoderId);
 
-                    //    RenderTransform = new RotateTransform { Angle = bus.busHeading },
-                    //    RenderTransformOrigin = new Point(0.5, 0.5)
-                    //};
                     var busMarker = new MapIcon
                     {
-                        Image = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/Outbound.png")),
+                        Image = RandomAccessStreamReference.CreateFromStream(stream),
                         CollisionBehaviorDesired = MapElementCollisionBehavior.RemainVisible,
                         Location = new Geopoint(new BasicGeoposition { Latitude = bus.latitude, Longitude = bus.longitude }),
                         NormalizedAnchorPoint = new Point(0.5, 0.5),
                     };
 
-                    //MapControl.SetNormalizedAnchorPoint(busMarker, new Point(0.5, 0.5));
-                    //MapControl.SetLocation(busMarker, new Geopoint(new BasicGeoposition { Latitude = bus.latitude, Longitude = bus.longitude }));
                     RouteMap.MapElements.Add(busMarker);
+
+                    await stream.FlushAsync();
+                    stream.Dispose();
+                    rotatedImage = null;
                 }
                 vehicleCounter++;
             }
+
+            inboundBM = null;
+            outboundBM = null;
         }
 
         private async void MapLoaded(object sender, RoutedEventArgs e)

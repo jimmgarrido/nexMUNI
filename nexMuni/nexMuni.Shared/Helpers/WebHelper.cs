@@ -68,7 +68,7 @@ namespace nexMuni.Helpers
             catch (Exception)
             {
                 await ErrorHandler.NetworkError("Error getting predictions. Check network connection and try again.");
-                return null;
+                throw;
             }
 
             return xmlDoc;
