@@ -120,3 +120,4 @@ Package.StoreAssociation.xml
 _pkginfo.txt
 _scale-100.appx
 *.appxmanifest
+[Bb]undle/
