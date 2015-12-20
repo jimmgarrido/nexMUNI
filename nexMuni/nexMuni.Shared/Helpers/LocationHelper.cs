@@ -77,12 +77,12 @@ namespace nexMuni.Helpers
             return (2 * 3963.19) * Math.Asin(Math.Sqrt(Math.Pow(Math.Sin(rHalfDeltaLat), 2) + Math.Cos(rLatA) * Math.Cos(rLatB) * Math.Pow(Math.Sin(rHalfDeltaLon), 2)));
         }
 
-        public static void FavoritesDistances(ObservableCollection<Stop> favorites)
+        public static async void FavoritesDistances(ObservableCollection<Stop> favorites)
         {
             if (Location == null) return;
             foreach (Stop stop in favorites)
             {
-                stop.DistanceAsDouble = GetDistance(stop.Latitude, stop.Longitude);
+                stop.DistanceAsDouble = await Task.Run(()=> GetDistance(stop.Latitude, stop.Longitude));
             }
         }
 

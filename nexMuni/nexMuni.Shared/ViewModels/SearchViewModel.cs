@@ -238,6 +238,12 @@ namespace nexMuni.ViewModels
             await DatabaseHelper.RemoveFavoriteAsync(SelectedStop);
         }
 
+        public async Task<List<Bus>> GetBusLocations()
+        {
+            var xmlDoc = await WebHelper.GetBusLocationsAsync(SelectedRoute);
+            return await Task.Run(() => MapHelper.ParseBusLocations(xmlDoc));
+        }
+
         public bool IsFavorite()
         {
             return DatabaseHelper.FavoritesList.Any(f => f.Name == SelectedStop.StopName);

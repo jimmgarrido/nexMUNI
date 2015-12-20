@@ -116,7 +116,8 @@ namespace nexMuni.Views
                         Image = RandomAccessStreamReference.CreateFromStream(stream),
                         CollisionBehaviorDesired = MapElementCollisionBehavior.RemainVisible,
                         Location = new Geopoint(new BasicGeoposition { Latitude = bus.latitude, Longitude = bus.longitude }),
-                        NormalizedAnchorPoint = new Point(0.5, 0.5)
+                        NormalizedAnchorPoint = new Point(0.5, 0.5),
+                        ZIndex = 99
                     };
 
                     RouteMap.MapElements.Add(busMarker);
@@ -137,6 +138,7 @@ namespace nexMuni.Views
                         CollisionBehaviorDesired = MapElementCollisionBehavior.RemainVisible,
                         Location = new Geopoint(new BasicGeoposition { Latitude = bus.latitude, Longitude = bus.longitude }),
                         NormalizedAnchorPoint = new Point(0.5, 0.5),
+                        ZIndex = 99
                     };
 
                     RouteMap.MapElements.Add(busMarker);

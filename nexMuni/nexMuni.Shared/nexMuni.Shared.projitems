@@ -34,7 +34,6 @@
   <ItemGroup>
     <Content Include="$(MSBuildThisFileDirectory)Assets\AddStar.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Inbound.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Assets\Marker.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Location.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Outbound.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\RemoveStar.png" />

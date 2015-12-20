@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "nexMuni", "nexMuni", "{DC3EA2AB-2C94-43DC-A409-CE56BB08984B}"
 EndProject
@@ -34,7 +34,7 @@ Global
 		{21A2852E-0604-4D65-A349-8F1C60A0CBD1}.Debug|ARM.ActiveCfg = Debug|ARM
 		{21A2852E-0604-4D65-A349-8F1C60A0CBD1}.Debug|ARM.Build.0 = Debug|ARM
 		{21A2852E-0604-4D65-A349-8F1C60A0CBD1}.Debug|ARM.Deploy.0 = Debug|ARM
-		{21A2852E-0604-4D65-A349-8F1C60A0CBD1}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{21A2852E-0604-4D65-A349-8F1C60A0CBD1}.Debug|x64.ActiveCfg = Debug|x86
 		{21A2852E-0604-4D65-A349-8F1C60A0CBD1}.Debug|x86.ActiveCfg = Debug|x86
 		{21A2852E-0604-4D65-A349-8F1C60A0CBD1}.Debug|x86.Build.0 = Debug|x86
 		{21A2852E-0604-4D65-A349-8F1C60A0CBD1}.Debug|x86.Deploy.0 = Debug|x86

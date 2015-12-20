@@ -143,7 +143,7 @@ namespace nexMuni.ViewModels
             sorted = true;
         }
 
-        private async void LoadFavoritesAsync()
+        private void LoadFavoritesAsync()
         {
             List<FavoriteData> favorites = DatabaseHelper.FavoritesList;
             FavoriteStops.Clear();
@@ -165,7 +165,7 @@ namespace nexMuni.ViewModels
             
             //Check if any stops in NearbyStops are also favorites so users have the ability to remove them
             SyncFavoriteIds();
-            await Task.Run(() => FavoritesDistances());
+            FavoritesDistances();
             if (sorted) SortFavorites();
         }
 
