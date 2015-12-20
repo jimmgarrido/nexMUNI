@@ -115,3 +115,8 @@ UpgradeLog*.XML
 profiler/
 ApplicationInsights.config
 *.appxmanifest
+*.pfx
+Package.StoreAssociation.xml
+_pkginfo.txt
+_scale-100.appx
+*.appxmanifest
