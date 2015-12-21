@@ -113,4 +113,13 @@ UpgradeLog*.XML
 
 #User Added
 profiler/
-nexMuni/nexMuni.WindowsPhone/Package.StoreAssociation.xml
+ApplicationInsights.config
+*.appxmanifest
+*.pfx
+Package.StoreAssociation.xml
+_pkginfo.txt
+_scale-100.appx
+*.appxmanifest
+[Bb]undle/
+[Bb]undleArtifacts/
+.vs/

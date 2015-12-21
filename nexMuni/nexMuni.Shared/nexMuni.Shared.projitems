@@ -9,24 +9,21 @@
     <Import_RootNamespace>nexMuni</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="$(MSBuildThisFileDirectory)App.xaml">
-      <SubType>Designer</SubType>
-    </ApplicationDefinition>
-    <Compile Include="$(MSBuildThisFileDirectory)App.xaml.cs">
-      <DependentUpon>App.xaml</DependentUpon>
-    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)DataModels\Alert.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModels\Bus.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModels\FavoriteData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModels\Route.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModels\RouteDirection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModels\Stop.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)db\SQLite.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)db\SQLiteAsync.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\DatabaseHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\ErrorHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\LocationHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\MapHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\ParseHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\SettingsHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\UIHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\WebHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\MainViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\RouteMapViewModel.cs" />
@@ -37,9 +34,7 @@
   <ItemGroup>
     <Content Include="$(MSBuildThisFileDirectory)Assets\AddStar.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Inbound.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Assets\Marker.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Location.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Assets\Marker2.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Outbound.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\RemoveStar.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\refresh.png" />

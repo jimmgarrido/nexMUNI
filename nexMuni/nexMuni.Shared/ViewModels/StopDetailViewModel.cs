@@ -68,7 +68,7 @@ namespace nexMuni.ViewModels
             SelectedStop = stop;
             refreshTimer = new DispatcherTimer();
             refreshTimer.Tick += TimerDue;
-            refreshTimer.Interval = new System.TimeSpan(0, 0, 15);
+            refreshTimer.Interval = new TimeSpan(0, 0, 15);
             tileId = stop.StopName;
         }
 
@@ -163,6 +163,7 @@ namespace nexMuni.ViewModels
         public void StopTimer()
         {
             refreshTimer.Stop();
+            refreshTimer.Tick -= TimerDue;
         }
 
         private async void TimerDue(object sender, object e)

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "nexMuni", "nexMuni", "{DC3EA2AB-2C94-43DC-A409-CE56BB08984B}"
 EndProject
@@ -9,8 +9,11 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "nexMuni.Shared", "nexMuni\n
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nexMuni.WindowsPhone", "nexMuni\nexMuni.WindowsPhone\nexMuni.WindowsPhone.csproj", "{21A2852E-0604-4D65-A349-8F1C60A0CBD1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nexMUNI.Win10", "nexMuni\nexMUNI.Win10\nexMUNI.Win10.csproj", "{E9A12802-B77F-4628-9909-FE7C5023610B}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		nexMuni\nexMuni.Shared\nexMuni.Shared.projitems*{e9a12802-b77f-4628-9909-fe7c5023610b}*SharedItemsImports = 4
 		nexMuni\nexMuni.Shared\nexMuni.Shared.projitems*{21a2852e-0604-4d65-a349-8f1c60a0cbd1}*SharedItemsImports = 4
 		nexMuni\nexMuni.Shared\nexMuni.Shared.projitems*{a8d4e81c-9639-48cb-aca6-4cf0ce053724}*SharedItemsImports = 13
 	EndGlobalSection
@@ -31,7 +34,7 @@ Global
 		{21A2852E-0604-4D65-A349-8F1C60A0CBD1}.Debug|ARM.ActiveCfg = Debug|ARM
 		{21A2852E-0604-4D65-A349-8F1C60A0CBD1}.Debug|ARM.Build.0 = Debug|ARM
 		{21A2852E-0604-4D65-A349-8F1C60A0CBD1}.Debug|ARM.Deploy.0 = Debug|ARM
-		{21A2852E-0604-4D65-A349-8F1C60A0CBD1}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{21A2852E-0604-4D65-A349-8F1C60A0CBD1}.Debug|x64.ActiveCfg = Debug|x86
 		{21A2852E-0604-4D65-A349-8F1C60A0CBD1}.Debug|x86.ActiveCfg = Debug|x86
 		{21A2852E-0604-4D65-A349-8F1C60A0CBD1}.Debug|x86.Build.0 = Debug|x86
 		{21A2852E-0604-4D65-A349-8F1C60A0CBD1}.Debug|x86.Deploy.0 = Debug|x86
@@ -45,6 +48,26 @@ Global
 		{21A2852E-0604-4D65-A349-8F1C60A0CBD1}.Release|x86.ActiveCfg = Release|x86
 		{21A2852E-0604-4D65-A349-8F1C60A0CBD1}.Release|x86.Build.0 = Release|x86
 		{21A2852E-0604-4D65-A349-8F1C60A0CBD1}.Release|x86.Deploy.0 = Release|x86
+		{E9A12802-B77F-4628-9909-FE7C5023610B}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{E9A12802-B77F-4628-9909-FE7C5023610B}.Debug|ARM.ActiveCfg = Debug|ARM
+		{E9A12802-B77F-4628-9909-FE7C5023610B}.Debug|ARM.Build.0 = Debug|ARM
+		{E9A12802-B77F-4628-9909-FE7C5023610B}.Debug|ARM.Deploy.0 = Debug|ARM
+		{E9A12802-B77F-4628-9909-FE7C5023610B}.Debug|x64.ActiveCfg = Debug|x64
+		{E9A12802-B77F-4628-9909-FE7C5023610B}.Debug|x64.Build.0 = Debug|x64
+		{E9A12802-B77F-4628-9909-FE7C5023610B}.Debug|x64.Deploy.0 = Debug|x64
+		{E9A12802-B77F-4628-9909-FE7C5023610B}.Debug|x86.ActiveCfg = Debug|x86
+		{E9A12802-B77F-4628-9909-FE7C5023610B}.Debug|x86.Build.0 = Debug|x86
+		{E9A12802-B77F-4628-9909-FE7C5023610B}.Debug|x86.Deploy.0 = Debug|x86
+		{E9A12802-B77F-4628-9909-FE7C5023610B}.Release|Any CPU.ActiveCfg = Release|x86
+		{E9A12802-B77F-4628-9909-FE7C5023610B}.Release|ARM.ActiveCfg = Release|ARM
+		{E9A12802-B77F-4628-9909-FE7C5023610B}.Release|ARM.Build.0 = Release|ARM
+		{E9A12802-B77F-4628-9909-FE7C5023610B}.Release|ARM.Deploy.0 = Release|ARM
+		{E9A12802-B77F-4628-9909-FE7C5023610B}.Release|x64.ActiveCfg = Release|x64
+		{E9A12802-B77F-4628-9909-FE7C5023610B}.Release|x64.Build.0 = Release|x64
+		{E9A12802-B77F-4628-9909-FE7C5023610B}.Release|x64.Deploy.0 = Release|x64
+		{E9A12802-B77F-4628-9909-FE7C5023610B}.Release|x86.ActiveCfg = Release|x86
+		{E9A12802-B77F-4628-9909-FE7C5023610B}.Release|x86.Build.0 = Release|x86
+		{E9A12802-B77F-4628-9909-FE7C5023610B}.Release|x86.Deploy.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -52,5 +75,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{A8D4E81C-9639-48CB-ACA6-4CF0CE053724} = {DC3EA2AB-2C94-43DC-A409-CE56BB08984B}
 		{21A2852E-0604-4D65-A349-8F1C60A0CBD1} = {DC3EA2AB-2C94-43DC-A409-CE56BB08984B}
+		{E9A12802-B77F-4628-9909-FE7C5023610B} = {DC3EA2AB-2C94-43DC-A409-CE56BB08984B}
 	EndGlobalSection
 EndGlobal

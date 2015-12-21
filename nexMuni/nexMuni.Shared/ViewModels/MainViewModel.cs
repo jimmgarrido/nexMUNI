@@ -64,11 +64,10 @@ namespace nexMuni.ViewModels
 
         public async Task UpdateNearbyStopsAsync()
         {
+            nearbyCount = SettingsHelper.nearbyCount;
+
             //Make sure user has given permission to access location
             await LocationHelper.UpdateLocation();
-
-            if (SettingsHelper.GetNearbySetting() == 1) nearbyCount = 25;
-            else nearbyCount = 15;
 
             if (LocationHelper.Location != null)
             {
@@ -119,7 +118,7 @@ namespace nexMuni.ViewModels
             }
         }
 
-        public async Task<List<IEnumerable<BasicGeoposition>>> GetRoutePathAsync(string route)
+        public async Task<List<List<BasicGeoposition>>> GetRoutePathAsync(string route)
         {
             var xmlDoc = await WebHelper.GetRoutePathAsync(route);
             return await Task.Run(() => MapHelper.ParseRoutePath(xmlDoc));
@@ -144,7 +143,7 @@ namespace nexMuni.ViewModels
             sorted = true;
         }
 
-        private async void LoadFavoritesAsync()
+        private void LoadFavoritesAsync()
         {
             List<FavoriteData> favorites = DatabaseHelper.FavoritesList;
             FavoriteStops.Clear();
@@ -166,7 +165,7 @@ namespace nexMuni.ViewModels
             
             //Check if any stops in NearbyStops are also favorites so users have the ability to remove them
             SyncFavoriteIds();
-            await Task.Run(() => FavoritesDistances());
+            FavoritesDistances();
             if (sorted) SortFavorites();
         }
 

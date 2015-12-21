@@ -47,7 +47,9 @@ namespace nexMuni.Views
         {
             if (alreadyLoaded) return;
 
-            MainPivot.SelectedIndex = SettingsHelper.GetLaunchPivotSetting();
+            SettingsHelper.LoadNearbySetting();
+            SettingsHelper.LoadLaunchPivotSetting();
+            MainPivot.SelectedIndex = SettingsHelper.launchPivot;
 
             mainVm = new MainViewModel();
             searchVm = new SearchViewModel();
@@ -125,7 +127,20 @@ namespace nexMuni.Views
 
             SearchMap.MapElements.Clear();
 
-            await AddRoutePath();
+            if (routePath.Any())
+            {
+                foreach (var points in routePath)
+                {
+                    SearchMap.MapElements.Add(new MapPolyline
+                    {
+                        Path = new Geopath(points),
+                        StrokeColor = Color.FromArgb(255, 179, 27, 27),
+                        StrokeThickness = 2.00,
+                        ZIndex = 99
+                    });
+                }
+            }
+
             await ShowVehicleLocations();
             await SearchMap.TrySetViewAsync(searchVm.MapCenter, 11.40);
 
@@ -163,19 +178,25 @@ namespace nexMuni.Views
             await searchVm.StopSelectedAsync(((ComboBox)sender).SelectedItem as Stop);
             SearchTimes.Visibility = Visibility.Visible;
 
-            if (searchVm.IsFavorite())
+            if (searchVm.IsFavorite)
             {
-                if (FavoriteBtn.Label == "favorite") FavoriteBtn.Click -= FavoriteSearch;
-                FavoriteBtn.Click += UnfavoriteSearch;
-                FavoriteBtn.Label = "unfavorite";
-                FavoriteBtn.Icon = new SymbolIcon(Symbol.Remove);
+                if (FavoriteBtn.Label == "favorite")
+                {
+                    FavoriteBtn.Click -= FavoriteSearch;
+                    FavoriteBtn.Click += UnfavoriteSearch;
+                    FavoriteBtn.Label = "unfavorite";
+                    FavoriteBtn.Icon = new SymbolIcon(Symbol.Remove);
+                }
             }
             else
             {
-                if (FavoriteBtn.Label == "unfavorite") FavoriteBtn.Click -= UnfavoriteSearch;
-                FavoriteBtn.Click += FavoriteSearch;
-                FavoriteBtn.Label = "favorite";
-                FavoriteBtn.Icon = new SymbolIcon(Symbol.Favorite);
+                if (FavoriteBtn.Label == "unfavorite")
+                {
+                    FavoriteBtn.Click -= UnfavoriteSearch;
+                    FavoriteBtn.Click += FavoriteSearch;
+                    FavoriteBtn.Label = "favorite";
+                    FavoriteBtn.Icon = new SymbolIcon(Symbol.Favorite);
+                }
             }
             FavoriteBtn.IsEnabled = true;
             DetailBtn.IsEnabled = true;

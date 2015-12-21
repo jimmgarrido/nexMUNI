@@ -7,7 +7,7 @@ using nexMuni.DataModels;
 
 namespace nexMuni.Helpers
 {
-    class LocationHelper
+    public class LocationHelper
     {
         public static Geoposition Location { get; private set; }
         public static Geopoint Point
@@ -25,13 +25,9 @@ namespace nexMuni.Helpers
 
         public static async Task UpdateLocation()
         {
-#if WINDOWS_PHONE_APP
-            var statusBar = StatusBar.GetForCurrentView();
-            await statusBar.ProgressIndicator.ShowAsync();
-            statusBar.ProgressIndicator.Text = "Getting Location";
-            statusBar.ProgressIndicator.ProgressValue = null;
-#endif
-            if(geolocator == null) geolocator = new Geolocator { DesiredAccuracyInMeters = 50 };
+            await UIHelper.ShowStatusBar("Getting Location");
+
+            if (geolocator == null) geolocator = new Geolocator { DesiredAccuracyInMeters = 50 };
             if (geolocator.LocationStatus == PositionStatus.Disabled)
             {
                 //MainPage.noNearbyText.Text = "Location services disabled";
@@ -44,10 +40,7 @@ namespace nexMuni.Helpers
                 if (LocationChanged != null) LocationChanged();
             }
 
-#if WINDOWS_PHONE_APP
-            statusBar.ProgressIndicator.ProgressValue = 0;
-            await statusBar.ProgressIndicator.HideAsync();
-#endif
+            await UIHelper.HideStatusBar();
         }
 
         public static double[][] MakeBounds(double dist)
@@ -84,12 +77,12 @@ namespace nexMuni.Helpers
             return (2 * 3963.19) * Math.Asin(Math.Sqrt(Math.Pow(Math.Sin(rHalfDeltaLat), 2) + Math.Cos(rLatA) * Math.Cos(rLatB) * Math.Pow(Math.Sin(rHalfDeltaLon), 2)));
         }
 
-        public static void FavoritesDistances(ObservableCollection<Stop> favorites)
+        public static async void FavoritesDistances(ObservableCollection<Stop> favorites)
         {
             if (Location == null) return;
             foreach (Stop stop in favorites)
             {
-                stop.DistanceAsDouble = GetDistance(stop.Latitude, stop.Longitude);
+                stop.DistanceAsDouble = await Task.Run(()=> GetDistance(stop.Latitude, stop.Longitude));
             }
         }
 

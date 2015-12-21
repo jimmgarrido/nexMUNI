@@ -96,6 +96,74 @@ namespace nexMuni.Helpers
             return alerts;
         }
 
+        public static List<string> ParseDirections(XDocument document)
+        {
+            var directions = new List<string>();
+            var elements = document.Element("body").Element("route").Elements("direction");
+
+            foreach (XElement el in elements)
+            {
+                //Add direction title
+                directions.Add(el.Attribute("title").Value);
+
+                //IEnumerable<XElement> tagElements;
+               
+            }
+            return directions;
+        }
+
+        public static List<Stop> ParseStops(XDocument document)
+        {
+            var stopsList = new List<Stop>();
+            var elements = document.Element("body").Element("route").Elements("stop");
+
+            //Add all route's stops to a collection
+            foreach (XElement el in elements)
+            {
+                stopsList.Add(new Stop(el.Attribute("title").Value,
+                                              el.Attribute("stopId").Value,
+                                              "",
+                                              el.Attribute("tag").Value,
+                                              double.Parse(el.Attribute("lon").Value),
+                                              double.Parse(el.Attribute("lat").Value)));
+            }
+
+            return stopsList;
+        }
+
+        public static void ParseStopTags(XDocument document, List<string> inbound, List<string> outbound)
+        {
+            var rootElements = document.Element("body").Element("route").Elements("direction");
+
+            foreach(var direction in rootElements)
+            {
+                if (direction.Attribute("name").Value == "Inbound")
+                {
+                    //Get all stop elements under direction element
+                    var tagElements = direction.Elements("stop");
+
+                    if (inbound.Count != 0) inbound.Clear();
+                    //Add tags for direction to a collection
+                    foreach (XElement stop in tagElements)
+                    {
+                        inbound.Add(stop.Attribute("tag").Value);
+                    }
+                }
+                else if (direction.Attribute("name").Value == "Outbound")
+                {
+                    //Get all stop elements under direction element
+                    var tagElements = direction.Elements("stop");
+
+                    if (outbound.Count != 0) outbound.Clear();
+                    //Add tags for direction to a collection
+                    foreach (XElement stop in tagElements)
+                    {
+                        outbound.Add(stop.Attribute("tag").Value);
+                    }
+                }
+            }
+        }
+
         private static string ParseTimes(XElement element)
         {
             int maxTimes;

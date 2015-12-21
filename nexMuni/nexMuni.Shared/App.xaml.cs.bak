@@ -11,7 +11,7 @@ using Windows.UI.Xaml.Navigation;
 using nexMuni.Views;
 using Microsoft.ApplicationInsights;
 
-namespace nexMuni
+namespace nexMuni.WindowsPhone
 {
     public sealed partial class App : Application
     {

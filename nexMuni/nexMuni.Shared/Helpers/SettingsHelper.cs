@@ -6,28 +6,49 @@ namespace nexMuni.Helpers
 {
     public class SettingsHelper
     {
-        public static int GetNearbySetting()
+        public static int nearbyCount;
+        public static int launchPivot;
+
+        public static void LoadNearbySetting()
         {
             var settings = ApplicationData.Current.RoamingSettings;
+            var test = settings.Values["NearbyCount"];
             if (settings.Values["NearbyCount"] == null)
             {
                 settings.Values["NearbyCount"] = 15;
             }
-
-            if ((int)settings.Values["NearbyCount"] == 25) return 1;
-            else return 0;
+            else if ((int)settings.Values["NearbyCount"] == 0)
+            {
+                settings.Values["NearbyCount"] = 15;
+                nearbyCount = 15;
+            }
+            else if ((int)settings.Values["NearbyCount"] == 1)
+            {
+                settings.Values["NearbyCount"] = 25;
+                nearbyCount = 25;
+            }
+            else
+            {
+                nearbyCount = (int) settings.Values["NearbyCount"];
+            }
         }
 
-        public static int GetLaunchPivotSetting()
+        public static void LoadLaunchPivotSetting()
         {
             var settings = ApplicationData.Current.RoamingSettings;
             if (settings.Values["LaunchPivot"] == null)
             {
                 settings.Values["LaunchPivot"] = "nearby";
             }
-            var test = settings.Values["LaunchPivot"];
-            if ((string)settings.Values["LaunchPivot"] == "favorites") return 1;
-            else return 0; 
+
+            if ((string)settings.Values["LaunchPivot"] == "favorites")
+            {
+                launchPivot = 1;
+            }
+            else
+            {
+                launchPivot = 0;
+            } 
         }
 
         public static bool GetTileSetting()
@@ -47,10 +68,12 @@ namespace nexMuni.Helpers
             if (index == 1)
             {
                 settings.Values["NearbyCount"] = 25;
+                nearbyCount = 25;
             }
             else
             {
                 settings.Values["NearbyCount"] = 15;
+                nearbyCount = 15;
             }
         }
 
@@ -60,10 +83,12 @@ namespace nexMuni.Helpers
             if (index == 1)
             {
                 settings.Values["LaunchPivot"] = "favorites";
+                launchPivot = 1;
             }
             else
             {
                 settings.Values["LaunchPivot"] = "nearby";
+                launchPivot = 0;
             }
         }
 
