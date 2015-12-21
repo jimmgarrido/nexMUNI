@@ -71,7 +71,7 @@ namespace nexMuni.Views
 
         private async Task AddRoutePath()
         {
-            var routePath = await routeMapVm.GetRoutePathAsync();
+            var routePath = await routeMapVm.GetRoutePath();
 
             foreach (var path in routePath)
             {

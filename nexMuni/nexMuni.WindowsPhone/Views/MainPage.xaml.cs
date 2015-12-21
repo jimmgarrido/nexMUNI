@@ -127,6 +127,10 @@ namespace nexMuni.Views
 
             SearchMap.MapElements.Clear();
 
+            var routePath = await mainVm.GetRoutePathAsync(searchVm.SelectedRoute);
+
+            SearchMap.MapElements.Clear();
+
             if (routePath.Any())
             {
                 foreach (var points in routePath)
