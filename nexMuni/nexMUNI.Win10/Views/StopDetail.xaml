@@ -223,7 +223,7 @@
                 <Grid>
                     <TextBlock x:Name="NoAlertsBlock" Text="{Binding NoAlertsText}" FontSize="21" Margin="13,180,0,0" TextAlignment="Center"/>
                     <ListView x:Name="AlertsList" IsItemClickEnabled="True" ItemsSource="{Binding Alerts}"
-                      Margin="-18,0,0,0" IsTapEnabled="False" IsHoldingEnabled="False">
+                      Margin="-18,0,0,0" SelectionMode="None">
                         <ListView.ItemContainerTransitions>
                             <TransitionCollection>
                                 <EntranceThemeTransition />

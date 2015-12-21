@@ -81,20 +81,9 @@ namespace nexMuni.Views
 
         private async void RefreshTimes(object sender, RoutedEventArgs e)
         {
-#if WINDOWS_PHONE_APP
-            var statusBar = StatusBar.GetForCurrentView();
-            await statusBar.ProgressIndicator.ShowAsync();
-            statusBar.ProgressIndicator.Text = "Refreshing Times";
-            statusBar.ProgressIndicator.ProgressValue = null;
-#endif
             RefreshBtn.IsEnabled = false;
             await detailVm.RefreshTimes();
             RefreshBtn.IsEnabled = true;
-
-#if WINDOWS_PHONE_APP
-            statusBar.ProgressIndicator.ProgressValue = 0;
-            await statusBar.ProgressIndicator.HideAsync();
-#endif
         }
 
         private async void FavoriteBtnPressed(object sender, RoutedEventArgs e)

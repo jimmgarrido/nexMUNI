@@ -57,7 +57,6 @@ namespace nexMuni.Views
             DataContext = routeMapVm;
 
             RouteMap.Center= routeMapVm.SelectedRoute.stopLocation;
-            MapControl.SetNormalizedAnchorPoint(StopIcon, new Point(0.5, 1.0));
             MapControl.SetNormalizedAnchorPoint(LocationIcon, new Point(0.5, 0.5));
 
             if (LocationHelper.Location != null)
@@ -81,7 +80,8 @@ namespace nexMuni.Views
                     {
                         Path = new Geopath(points),
                         StrokeColor = Color.FromArgb(255, 179, 27, 27),
-                        StrokeThickness = 2.00
+                        StrokeThickness = 2.00,
+                        ZIndex = 50
                     });
                 }
             }
@@ -97,10 +97,10 @@ namespace nexMuni.Views
                 vehicleCounter--;
             }
 
-            var inboundBM = new WriteableBitmap(48, 48);
+            var inboundBM = new WriteableBitmap(40, 40);
             await inboundBM.SetSourceAsync(await RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/Inbound.png")).OpenReadAsync());
 
-            var outboundBM = new WriteableBitmap(48, 48);
+            var outboundBM = new WriteableBitmap(40, 40);
             await outboundBM.SetSourceAsync(await RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/Outbound.png")).OpenReadAsync());
 
             foreach (Bus bus in busLocations)
@@ -156,8 +156,16 @@ namespace nexMuni.Views
 
         private async void MapLoaded(object sender, RoutedEventArgs e)
         {
-            MapControl.SetLocation(StopIcon, routeMapVm.SelectedRoute.stopLocation);
-            StopIcon.Visibility = Visibility.Visible;
+            var StopIcon = new MapIcon
+            {
+                Image = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/Stop.png")),
+                CollisionBehaviorDesired = MapElementCollisionBehavior.RemainVisible,
+                Location = routeMapVm.SelectedRoute.stopLocation,
+                NormalizedAnchorPoint = new Point(0.5, 1.0),
+                ZIndex = 99
+            };
+
+            RouteMap.MapElements.Add(StopIcon);
 
             await ShowRoutePath();
             await AddVehicleLocations();

@@ -167,11 +167,21 @@ namespace nexMuni.Views
                     var temp = new MapPolyline();
                     temp.StrokeColor = Color.FromArgb(255, 179, 27, 27);
                     temp.StrokeThickness = 2.0;
-                    temp.ZIndex = 99;
+                    temp.ZIndex = 50;
                     temp.Path = new Geopath(points);
 
                     SearchMap.MapElements.Add(temp);
                 }
+
+                var StopIcon = new MapIcon
+                {
+                    Image = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/Stop.png")),
+                    CollisionBehaviorDesired = MapElementCollisionBehavior.RemainVisible,
+                    NormalizedAnchorPoint = new Point(0.5, 1.0),
+                    ZIndex = 99
+                };
+
+                SearchMap.MapElements.Insert(0,StopIcon);
             }
         }
 
@@ -185,10 +195,10 @@ namespace nexMuni.Views
                 vehicleCounter--;
             }
 
-            var inboundBM = new WriteableBitmap(48, 48);
+            var inboundBM = new WriteableBitmap(40, 40);
             await inboundBM.SetSourceAsync(await RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/Inbound.png")).OpenReadAsync());
 
-            var outboundBM = new WriteableBitmap(48, 48);
+            var outboundBM = new WriteableBitmap(40, 40);
             await outboundBM.SetSourceAsync(await RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/Outbound.png")).OpenReadAsync());
 
             foreach (Bus bus in vehicleLocations)
@@ -250,22 +260,22 @@ namespace nexMuni.Views
             //var stopImage = new BitmapImage();
             //stopImage.DecodePixelHeight = 30;
             //stopImage.UriSource = new Uri("ms-appx:///Assets/Stop.png");
-            var StopIcon = new MapIcon
-            {
-                Image = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/Stop.png")),
-                CollisionBehaviorDesired = MapElementCollisionBehavior.RemainVisible,
-                Location = stopLocation,
-                NormalizedAnchorPoint = new Point(0.5, 1.0),
-                ZIndex = 99
-            };
-   
-            MapControl.SetNormalizedAnchorPoint(StopIcon, new Point(0.5, 1.0));
-            //MapControl.SetLocation(StopIcon, stopLocation);
-            //StopIcon.Visibility = Visibility.Visible;
+            //var StopIcon = new MapIcon
+            //{
+            //    Image = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/Stop.png")),
+            //    CollisionBehaviorDesired = MapElementCollisionBehavior.RemainVisible,
+            //    Location = stopLocation,
+            //    NormalizedAnchorPoint = new Point(0.5, 1.0),
+            //    ZIndex = 100
+            //};
+            var stopIcon = (MapIcon) SearchMap.MapElements[0];
+            stopIcon.Location = stopLocation;
+            await SearchMap.TrySetViewAsync(stopLocation, 13.0);
+
             try
             {
-                SearchMap.MapElements.Add(StopIcon);
-                await SearchMap.TrySetViewAsync(stopLocation, 13.0);
+                //SearchMap.MapElements.in(0,StopIcon);
+                //await SearchMap.TrySetViewAsync(stopLocation, 13.0);
             }
             catch (Exception ex)
             {

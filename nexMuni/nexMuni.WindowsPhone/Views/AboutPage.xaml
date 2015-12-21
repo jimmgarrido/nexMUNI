@@ -48,7 +48,7 @@
                     </Underline> for news and announcements 
                 </Paragraph>
                 <Paragraph Margin="0,40,0,0">
-                    nexMuni is open source and can be checked out on
+                    nexMUNI is open source and can be checked out on
                     <Underline x:Name="github" FontWeight="Bold">
                         GitHub
                     </Underline>

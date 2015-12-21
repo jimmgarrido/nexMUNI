@@ -121,3 +121,5 @@ _pkginfo.txt
 _scale-100.appx
 *.appxmanifest
 [Bb]undle/
+[Bb]undleArtifacts/
+.vs/
