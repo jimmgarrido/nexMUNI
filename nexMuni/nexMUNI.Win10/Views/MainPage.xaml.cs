@@ -127,19 +127,25 @@ namespace nexMuni.Views
                 await searchVm.StopSelectedAsync(((ComboBox)sender).SelectedItem as Stop);
                 SearchTimes.Visibility = Visibility.Visible;
 
-                if (searchVm.IsFavorite())
+                if (searchVm.IsFavorite)
                 {
-                    if (FavoriteBtn.Label == "favorite") FavoriteBtn.Click -= FavoriteSearch;
-                    FavoriteBtn.Click += UnfavoriteSearch;
-                    FavoriteBtn.Label = "unfavorite";
-                    FavoriteBtn.Icon = new SymbolIcon(Symbol.Remove);
+                    if (FavoriteBtn.Label == "favorite")
+                    {
+                        FavoriteBtn.Click -= FavoriteSearch;
+                        FavoriteBtn.Click += UnfavoriteSearch;
+                        FavoriteBtn.Label = "unfavorite";
+                        FavoriteBtn.Icon = new SymbolIcon(Symbol.UnFavorite);
+                    }
                 }
                 else
                 {
-                    if (FavoriteBtn.Label == "unfavorite") FavoriteBtn.Click -= UnfavoriteSearch;
-                    FavoriteBtn.Click += FavoriteSearch;
-                    FavoriteBtn.Label = "favorite";
-                    FavoriteBtn.Icon = new SymbolIcon(Symbol.Favorite);
+                    if (FavoriteBtn.Label == "unfavorite")
+                    {
+                        FavoriteBtn.Click -= UnfavoriteSearch;
+                        FavoriteBtn.Click += FavoriteSearch;
+                        FavoriteBtn.Label = "favorite";
+                        FavoriteBtn.Icon = new SymbolIcon(Symbol.Favorite);
+                    }
                 }
                 FavoriteBtn.IsEnabled = true;
                 DetailBtn.IsEnabled = true;

@@ -126,7 +126,6 @@ namespace nexMuni.Helpers
         {
             string q = "DELETE FROM FavoriteData WHERE Id IS " + stop.favId;
             var _favoritesAsyncConnection = new SQLiteAsyncConnection(favoriteDbPath);
-            //var _favoritesAsyncConnection = new SQLiteAsyncConnection(()=> new SQLiteConnectionWithLock(new SQLitePlatformWinRT(), new SQLiteConnectionString(favoriteDbPath, false)));
 
             await _favoritesAsyncConnection.QueryAsync<FavoriteData>(q);
             await LoadFavoritesAsync();
@@ -163,7 +162,6 @@ namespace nexMuni.Helpers
             foreach(Stop fav in results)
             {
                 var _favoritesAsyncConnection = new SQLiteAsyncConnection(favoriteDbPath);
-                //var _favoritesAsyncConnection = new SQLiteAsyncConnection(()=> new SQLiteConnectionWithLock(new SQLitePlatformWinRT(), new SQLiteConnectionString(favoriteDbPath, false)));
 
                 await _favoritesAsyncConnection.InsertAsync(new FavoriteData
                 {

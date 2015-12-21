@@ -24,6 +24,11 @@ namespace nexMuni.ViewModels
         private List<Stop> _stopsList;
         private Stop _selectedStop;
         private Geopoint _mapCenter;
+        private Task initialize;
+        private Stop foundStop;
+        private List<Stop> allStopsList;
+        private List<string> outboundStops = new List<string>();
+        private List<string> inboundStops = new List<string>();
 
         public string SearchTimes
         {
@@ -110,12 +115,7 @@ namespace nexMuni.ViewModels
                 NotifyPropertyChanged("MapCenter");
             }
         }
-
-        private Task initialize;
-        private Stop foundStop;
-        private List<Stop> allStopsList;
-        private List<string> outboundStops = new List<string>();
-        private List<string> inboundStops = new List<string>();
+        public bool IsFavorite { get; set; }
 
         public SearchViewModel()
         {
@@ -205,13 +205,13 @@ namespace nexMuni.ViewModels
                 SelectedStop.StopName = title.Replace(" Outbound", "");
             }
 
-            string[] temp = SelectedStop.StopName.Split('&');
-            string reversed;
-            if (temp.Count() > 1)
-            {
-                reversed = temp[1].Substring(1) + " & " + temp[0].Substring(0, (temp[0].Length - 1));
-            }
-            else reversed = "";
+            //string[] temp = SelectedStop.StopName.Split('&');
+            //string reversed;
+            //if (temp.Count() > 1)
+            //{
+            //    reversed = temp[1].Substring(1) + " & " + temp[0].Substring(0, (temp[0].Length - 1));
+            //}
+            //else reversed = "";
 
             try
             {
@@ -221,6 +221,10 @@ namespace nexMuni.ViewModels
 
                 Stop tempStop = await GetStopAsync();
                 if (tempStop != null) SelectedStop = tempStop;
+
+                IsFavorite = DatabaseHelper.FavoritesList.Any(f => f.Name == SelectedStop.StopName);
+
+                if (IsFavorite) SyncFavoriteIds();
             }
             catch(Exception)
             {
@@ -244,10 +248,10 @@ namespace nexMuni.ViewModels
             return await Task.Run(() => MapHelper.ParseBusLocations(xmlDoc));
         }
 
-        public bool IsFavorite()
-        {
-            return DatabaseHelper.FavoritesList.Any(f => f.Name == SelectedStop.StopName);
-        }
+        //public bool IsFavorite()
+        //{
+        //    return DatabaseHelper.FavoritesList.Any(f => f.Name == SelectedStop.StopName);
+        //}
 
         private async Task<Stop> GetStopAsync()
         {
