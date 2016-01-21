@@ -132,20 +132,22 @@ namespace nexMuni.Views
                     if (FavoriteBtn.Label == "favorite")
                     {
                         FavoriteBtn.Click -= FavoriteSearch;
-                        FavoriteBtn.Click += UnfavoriteSearch;
-                        FavoriteBtn.Label = "unfavorite";
-                        FavoriteBtn.Icon = new SymbolIcon(Symbol.UnFavorite);
                     }
+
+                    FavoriteBtn.Click += UnfavoriteSearch;
+                    FavoriteBtn.Label = "unfavorite";
+                    FavoriteBtn.Icon = new SymbolIcon(Symbol.UnFavorite);
                 }
                 else
                 {
                     if (FavoriteBtn.Label == "unfavorite")
                     {
                         FavoriteBtn.Click -= UnfavoriteSearch;
-                        FavoriteBtn.Click += FavoriteSearch;
-                        FavoriteBtn.Label = "favorite";
-                        FavoriteBtn.Icon = new SymbolIcon(Symbol.Favorite);
                     }
+
+                    FavoriteBtn.Label = "favorite";
+                    FavoriteBtn.Icon = new SymbolIcon(Symbol.Favorite);
+                    FavoriteBtn.Click += FavoriteSearch;
                 }
                 FavoriteBtn.IsEnabled = true;
                 DetailBtn.IsEnabled = true;
