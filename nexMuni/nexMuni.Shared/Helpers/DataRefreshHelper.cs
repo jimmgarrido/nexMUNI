@@ -14,8 +14,7 @@ namespace nexMuni.Helpers
     {
         public async Task RefreshDataAsync()
         {
-            var routeNums = new List<string>();
-            var routeTitles = new List<string>();
+            var routesList = new List<Route>();
             var allStopsList = new List<Stop>();
             var baseUrl = "http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=sf-muni&r=";
 
@@ -31,8 +30,9 @@ namespace nexMuni.Helpers
             //Read each XML line and add the route number or letter to a list
             foreach (var routeElement in routeElements)
             {
-                routeNums.Add(routeElement.Attribute("tag").Value);
-                routeTitles.Add(routeElement.Attribute("title").Value);
+                var title = routeElement.Attribute("title").Value;
+                var num = routeElement.Attribute("tag").Value;
+                routesList.Add(new Route(title, num));
             }
 
             //while (reader.Read())
@@ -83,9 +83,9 @@ namespace nexMuni.Helpers
             int counter = 0;
 
             //Go through each route in RouteNum and append to the base URL. Get XML from each URL and parse
-            foreach(var num in routeNums)
+            foreach(var route in routesList)
             {
-                var stopsUrl = string.Join(null, baseUrl, num);
+                var stopsUrl = string.Join(null, baseUrl, route.RouteNumber);
                 var stopsString = await GetData(stopsUrl);
 
                 var stopsDoc = XDocument.Parse(stopsString);
@@ -94,12 +94,12 @@ namespace nexMuni.Helpers
                 foreach(var element in stopElements)
                 {
                     var name = element.Attribute("title").Value;
-                    var stopTag = string.Join("|", num, element.Attribute("tag").Value);
+                    var stopTag = string.Join("|", route.RouteNumber, element.Attribute("tag").Value);
                     var lon = double.Parse(element.Attribute("lon").Value);
                     var lat = double.Parse(element.Attribute("lat").Value);
-                    var route = num;
+                    var num = route.RouteNumber;
 
-                    allStopsList.Add(new Stop(name, stopTag, route, lat, lon));
+                    allStopsList.Add(new Stop(name, stopTag, num, lat, lon));
                 }
             }
 
@@ -320,10 +320,32 @@ namespace nexMuni.Helpers
             //var _favoritesAsyncConnection = new SQLiteAsyncConnection(() => new SQLiteConnectionWithLock(new SQLitePlatformWinRT(), new SQLiteConnectionString(favoriteDbPath, false)));
 
             await _refreshAsyncConnection.CreateTableAsync<Stop>();
-            
-           foreach(var stop in sortedList)
+            foreach(var stop in sortedList)
             {
                 await _refreshAsyncConnection.InsertAsync(stop);
+            }
+
+            await _refreshAsyncConnection.CreateTableAsync<Route>();
+            foreach (var route in routesList)
+            {
+                await _refreshAsyncConnection.InsertAsync(route);
+            }
+
+            try
+            {
+                //StorageFile muniDb = await ApplicationData.Current.LocalFolder.GetFileAsync("muni.sqlite");
+
+                StorageFile dbFile = await ApplicationData.Current.LocalFolder.GetFileAsync("refresh.sqlite");
+                await dbFile.CopyAsync(ApplicationData.Current.LocalFolder, "muni.sqlite", NameCollisionOption.ReplaceExisting);
+
+                //StorageFile muniDb = await ApplicationData.Current.LocalFolder.GetFileAsync("muni.sqlite");
+
+                //var messageBox = new MessageDialog(message);
+                //await messageBox.ShowAsync();
+            }
+            catch
+            {
+                
             }
         }
 

@@ -9,6 +9,7 @@ using System.Collections.ObjectModel;
 
 namespace nexMuni.DataModels
 {
+    [Table("RouteData")]
     public class Route : INotifyPropertyChanged, IDisposable
     {
         [PrimaryKey, AutoIncrement]
@@ -26,6 +27,7 @@ namespace nexMuni.DataModels
         //        NotifyPropertyChanged("Directions");
         //    }
         //}
+        [Ignore]
         public ObservableCollection<RouteDirection> Directions { get; set; }
 
         private string predictions1 = String.Empty;

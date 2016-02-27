@@ -205,8 +205,11 @@ namespace nexMuni.Helpers
 
             if (!dbExists)
             {
-                StorageFile dbFile = await Package.Current.InstalledLocation.GetFileAsync("db\\muni.sqlite");
-                await dbFile.CopyAsync(ApplicationData.Current.LocalFolder, "muni.sqlite", NameCollisionOption.ReplaceExisting);
+                //StorageFile dbFile = await Package.Current.InstalledLocation.GetFileAsync("db\\muni.sqlite");
+                //await dbFile.CopyAsync(ApplicationData.Current.LocalFolder, "muni.sqlite", NameCollisionOption.ReplaceExisting);
+
+                var refreshClient = new DataRefreshHelper();
+                await refreshClient.RefreshDataAsync();
             }
         }
 
