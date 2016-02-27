@@ -44,7 +44,9 @@
                 <ComboBoxItem Content="favorites" />
             </ComboBox>
             
-            <ToggleSwitch x:Name="TileSwitch" Header="Use transperant tile" Margin="0,15,0,0" Grid.Row="1" />   
+            <ToggleSwitch x:Name="TileSwitch" Header="Use transperant tile" Margin="0,15,0,0" Grid.Row="1" />
+
+            <Button x:Name="RefreshButton" Content="Refresh Muni Data" Click="RefreshData"/>
         </StackPanel>
     </Grid>
 </Page>

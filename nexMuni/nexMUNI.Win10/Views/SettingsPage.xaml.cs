@@ -73,6 +73,14 @@ namespace nexMuni.Views
             SettingsHelper.SetLaunchPivotSetting(((ComboBox) sender).SelectedIndex);
         }
 
+        private async void RefreshData(object sender, RoutedEventArgs e)
+        {
+            RefreshButton.IsEnabled = false;
+            var refreshClient = new DataRefreshHelper();
+            await refreshClient.RefreshDataAsync();
+            RefreshButton.IsEnabled = true;          
+        }
+
         private void NavigationHelper_LoadState(object sender, LoadStateEventArgs e)
         {
         }

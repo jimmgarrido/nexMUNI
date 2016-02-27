@@ -18,6 +18,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)db\SQLite.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)db\SQLiteAsync.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\DatabaseHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\DataRefreshHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\ErrorHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\LocationHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\MapHelper.cs" />
