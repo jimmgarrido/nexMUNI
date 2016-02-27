@@ -15,10 +15,12 @@ namespace nexMuni.DataModels
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
         public string StopName { get; set; }
-        public string Routes { get; set; }
-        public string StopTags { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
+        public string Routes { get; set; }
+        public string StopTags { get; set; }
+
+        [Ignore]
         public string DistanceAsString
         {
             get
@@ -31,6 +33,7 @@ namespace nexMuni.DataModels
                 NotifyPropertyChanged("DistanceAsString");
             }
         }
+        [Ignore]
         public double DistanceAsDouble
         {
             get
@@ -49,9 +52,13 @@ namespace nexMuni.DataModels
 
         public Stop() {}
 
-        public Stop(string name, string tag, double lat, double lon)
+        public Stop(string name, string tag, string route, double lat, double lon)
         {
-
+            StopName = name;
+            StopTags = tag;
+            Routes = route;
+            Latitude = lat;
+            Longitude = lon;
         }
 
         public Stop(string name, string id, string routes, string tags, double lat, double lon )

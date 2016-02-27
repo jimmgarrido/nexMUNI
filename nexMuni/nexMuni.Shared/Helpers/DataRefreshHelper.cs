@@ -1,9 +1,11 @@
 ﻿using nexMuni.DataModels;
+using SQLite;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Windows.Storage;
 using Windows.Web.Http;
 
 namespace nexMuni.Helpers
@@ -87,7 +89,7 @@ namespace nexMuni.Helpers
                 var stopsString = await GetData(stopsUrl);
 
                 var stopsDoc = XDocument.Parse(stopsString);
-                var stopElements = stopsDoc.Element("route").Elements("stop");
+                var stopElements = stopsDoc.Element("body").Element("route").Elements("stop");
 
                 foreach(var element in stopElements)
                 {
@@ -95,8 +97,9 @@ namespace nexMuni.Helpers
                     var stopTag = string.Join("|", num, element.Attribute("tag").Value);
                     var lon = double.Parse(element.Attribute("lon").Value);
                     var lat = double.Parse(element.Attribute("lat").Value);
+                    var route = num;
 
-                    allStopsList.Add(new Stop(name, stopTag, lat, lon));
+                    allStopsList.Add(new Stop(name, stopTag, route, lat, lon));
                 }
             }
 
@@ -157,14 +160,17 @@ namespace nexMuni.Helpers
                 if (key.Contains("Outbound"))
                 {
                     key = key.Remove(key.IndexOf("Outbound") - 1);
+                    stop.StopName = key;
                 }
                 else if (key.Contains("Inbound"))
                 {
                     key = key.Remove(key.IndexOf("Inbound") - 1);
+                    stop.StopName = key;
                 }
                 else if (key.Contains("OB") || key.Contains("IB"))
                 {
                     key = key.Remove(key.Length - 2);
+                    stop.StopName = key;
                 }
 
                 if (sortedList.Exists(x => x.StopName == key))
@@ -236,8 +242,9 @@ namespace nexMuni.Helpers
             string[] splitName;
             string reversedName = string.Empty;
 
-            foreach (var stop in sortedList)
+            for(int i=0; i<sortedList.Count; i++)
             {
+                var stop = sortedList[i];
                 splitName = stop.StopName.Split(new string[] { " & " }, StringSplitOptions.None);
                 
                 if(splitName.Length > 1)
@@ -304,6 +311,20 @@ namespace nexMuni.Helpers
             //        stopsDb.Insert(new StopData(sortedList[k].title, Double.Parse(sortedList[k].lon), Double.Parse(sortedList[k].lat), sortedList[k].ListRoutes(), sortedList[k].ListTags()));
             //    }
             //}
+
+            await ApplicationData.Current.LocalFolder.CreateFileAsync("refresh.sqlite",CreationCollisionOption.ReplaceExisting);
+            var refreshDb = await ApplicationData.Current.LocalFolder.GetFileAsync("refresh.sqlite");
+
+            var refreshDbPath = refreshDb.Path;
+            var _refreshAsyncConnection = new SQLiteAsyncConnection(refreshDbPath);
+            //var _favoritesAsyncConnection = new SQLiteAsyncConnection(() => new SQLiteConnectionWithLock(new SQLitePlatformWinRT(), new SQLiteConnectionString(favoriteDbPath, false)));
+
+            await _refreshAsyncConnection.CreateTableAsync<Stop>();
+            
+           foreach(var stop in sortedList)
+            {
+                await _refreshAsyncConnection.InsertAsync(stop);
+            }
         }
 
         private async Task<string> GetData(string url)
