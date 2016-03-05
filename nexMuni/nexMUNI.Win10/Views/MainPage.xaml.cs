@@ -74,7 +74,7 @@ namespace nexMuni.Views
             try {
                 DirBox.SelectedIndex = -1;
                 StopBox.SelectedIndex = -1;
-                await searchVm.LoadDirectionsAsync(((ComboBox)sender).SelectedItem.ToString());
+                await searchVm.LoadDirectionsAsync(((ComboBox)sender).SelectedItem as Route);
 
                 DirBox.Visibility = Visibility.Visible;
                 DirBox.SelectedIndex = 0;

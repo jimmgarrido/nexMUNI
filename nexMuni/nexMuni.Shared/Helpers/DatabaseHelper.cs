@@ -88,9 +88,9 @@ namespace nexMuni.Helpers
             return results;
         }
 
-        public static async Task< List<string>> QueryForRoutes()
+        public static async Task< List<Route>> QueryForRoutes()
         {
-            List<string> list = new List<string>();
+            var list = new List<string>();
 
             var _stopsAsyncConnection = new SQLiteAsyncConnection("muni.sqlite");
             //var _stopsAsyncConnection = new SQLiteAsyncConnection(()=> new SQLiteConnectionWithLock(new SQLitePlatformWinRT(), new SQLiteConnectionString("muni.db", false)));
@@ -103,7 +103,7 @@ namespace nexMuni.Helpers
             }
 
             _stopsAsyncConnection = null;
-            return list;
+            return query;
         }
 
         public static async Task AddFavoriteAsync(Stop stop)

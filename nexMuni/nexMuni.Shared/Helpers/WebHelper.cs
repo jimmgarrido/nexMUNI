@@ -52,9 +52,9 @@ namespace nexMuni.Helpers
             return xmlDoc;
         }
 
-        public static async Task<XDocument> GetSearchPredictionsAsync(Stop stop, string route)
+        public static async Task<XDocument> GetSearchPredictionsAsync(Stop stop, Route route)
         {
-            var url = baseUrls["searchPrediction"] + stop.stopId + "&routeTag=" + route.Substring(0, route.IndexOf('-'));
+            var url = baseUrls["searchPrediction"] + stop.stopId + "&routeTag=" + route.RouteNumber;
 
              //Make sure to pull from the network and not cache everytime predictions are refreshed 
             client.DefaultRequestHeaders.IfModifiedSince = DateTime.Now;
@@ -102,21 +102,21 @@ namespace nexMuni.Helpers
             return xmlDoc;
         }
 
-        public async static Task<XDocument> GetBusLocationsAsync(string route)
+        public async static Task<XDocument> GetBusLocationsAsync(Route route)
         {
             //Because the API requires an epoch time offset for some reason...
             TimeSpan epoch = (DateTime.UtcNow - new DateTime(1970, 1, 1));
             var timestamp = (long)epoch.TotalMilliseconds - TimeSpan.FromMinutes(5).TotalMilliseconds;
 
-            if (route.Equals("Powell/Mason Cable Car")) route = "59";
-            else if (route.Equals("Powell/Hyde Cable Car")) route = "60";
-            else if (route.Equals("California Cable Car")) route = "61";
-            else if (route.Contains('-'))
-            {
-                route = route.Substring(0, route.IndexOf('-'));
-            }
+            //if (route.Equals("Powell/Mason Cable Car")) route = "59";
+            //else if (route.Equals("Powell/Hyde Cable Car")) route = "60";
+            //else if (route.Equals("California Cable Car")) route = "61";
+            //else if (route.Contains('-'))
+            //{
+            //    route = route.Substring(0, route.IndexOf('-'));
+            //}
 
-            var url = baseUrls["busLocations"] + route + "&t=" + timestamp;
+            var url = baseUrls["busLocations"] + route.RouteNumber + "&t=" + timestamp;
 
              try
             {

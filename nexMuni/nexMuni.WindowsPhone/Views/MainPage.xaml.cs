@@ -109,7 +109,7 @@ namespace nexMuni.Views
 #endif
             DirBox.SelectedIndex = -1;
             StopBox.SelectedIndex = -1;
-            await searchVm.LoadDirectionsAsync(((ComboBox)sender).SelectedItem.ToString());
+            await searchVm.LoadDirectionsAsync(((ComboBox)sender).SelectedItem as Route);
 
             DirLabel.Visibility = Visibility.Visible;
             DirBox.Visibility = Visibility.Visible;

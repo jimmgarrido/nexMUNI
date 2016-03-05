@@ -39,9 +39,10 @@ namespace nexMuni.DataModels
 
         public Route(string name, string num)
         {
-            RouteName = name;
+            RouteName = ParseTitle(name);
             RouteNumber = num;
-            Title = string.Format("{0}-{1}", num, name);
+            Title = string.Join("-", RouteNumber, RouteName);
+            //Title = string.Format("{0}-{1}", num, name);
             //Directions = new List<RouteDirection>();
             Directions = new ObservableCollection<RouteDirection>();
         }
@@ -72,6 +73,20 @@ namespace nexMuni.DataModels
             stopLocation = new Geopoint(new BasicGeoposition { Latitude = lat, Longitude = lon });
         }
 
+        private string ParseTitle(string title)
+        {
+            if (title.Contains("-"))
+            {
+                int index = title.IndexOf('-');
+                return title.Substring(index + 1, title.Length - (index + 1));
+            }
+            else
+            {
+                int index = title.IndexOf('"');
+                return title.Substring(index + 1, (title.Length - (index + 2)));
+            }
+        }
+
         #region INotify Methods
         private void NotifyPropertyChanged(string property)
         {
@@ -82,6 +97,7 @@ namespace nexMuni.DataModels
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+        #endregion
 
         #region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls
@@ -117,7 +133,6 @@ namespace nexMuni.DataModels
             // TODO: uncomment the following line if the finalizer is overridden above.
             // GC.SuppressFinalize(this);
         }
-        #endregion
         #endregion
     }
 }
