@@ -17,6 +17,7 @@ namespace nexMuni.DataModels
         public string Title { get; set; }
         public string RouteName { get; private set; }
         public string RouteNumber { get; private set; }
+        public string Color { get; private set; }
         //public List<RouteDirection> Directions { get
         //    {
         //        return _directions;
@@ -75,16 +76,26 @@ namespace nexMuni.DataModels
 
         private string ParseTitle(string title)
         {
+            var name = string.Empty;
+
             if (title.Contains("-"))
             {
                 int index = title.IndexOf('-');
-                return title.Substring(index + 1, title.Length - (index + 1));
+                name = title.Substring(index + 1, title.Length - (index + 1));
             }
             else
             {
                 int index = title.IndexOf('"');
-                return title.Substring(index + 1, (title.Length - (index + 2)));
+                name = title.Substring(index + 1, (title.Length - (index + 2)));
             }
+
+            if(name.IndexOf('-') == 0)
+            {
+                int index = title.IndexOf('-');
+                name = title.Substring(index + 1, title.Length - (index + 1));
+            }
+
+            return name;
         }
 
         #region INotify Methods

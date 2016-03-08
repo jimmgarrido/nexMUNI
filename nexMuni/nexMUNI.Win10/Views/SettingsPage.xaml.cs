@@ -76,8 +76,10 @@ namespace nexMuni.Views
         private async void RefreshData(object sender, RoutedEventArgs e)
         {
             RefreshButton.IsEnabled = false;
+            RefreshRing.IsActive = true;
             var refreshClient = new DataRefreshHelper();
             await refreshClient.RefreshDataAsync();
+            RefreshRing.IsActive = false;
             RefreshButton.IsEnabled = true;          
         }
 

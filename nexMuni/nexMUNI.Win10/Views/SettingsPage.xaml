@@ -46,7 +46,10 @@
             
             <ToggleSwitch x:Name="TileSwitch" Header="Use transperant tile" Margin="0,15,0,0" Grid.Row="1" />
 
-            <Button x:Name="RefreshButton" Content="Refresh Muni Data" Click="RefreshData"/>
+            <StackPanel Orientation="Horizontal" >
+                <Button x:Name="RefreshButton" Content="Refresh Muni Data" Click="RefreshData"/>
+                <ProgressRing x:Name="RefreshRing" Margin="15,0,0,0" />
+            </StackPanel>
         </StackPanel>
     </Grid>
 </Page>
