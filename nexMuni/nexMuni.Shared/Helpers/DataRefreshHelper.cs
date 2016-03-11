@@ -1,5 +1,8 @@
 ﻿using nexMuni.DataModels;
 using SQLite;
+using SQLite.Net;
+using SQLite.Net.Async;
+using SQLite.Net.Platform.WinRT;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -158,8 +161,8 @@ namespace nexMuni.Helpers
             var refreshDb = await ApplicationData.Current.LocalFolder.GetFileAsync("refresh.sqlite");
 
             var refreshDbPath = refreshDb.Path;
-            var _refreshAsyncConnection = new SQLiteAsyncConnection(refreshDbPath);
-            //var _favoritesAsyncConnection = new SQLiteAsyncConnection(() => new SQLiteConnectionWithLock(new SQLitePlatformWinRT(), new SQLiteConnectionString(favoriteDbPath, false)));
+            //var _refreshAsyncConnection = new SQLiteAsyncConnection(() => new SQLite.Net.SQLiteConnectionWithLock(new SQLite.Net, refreshDbPath);
+            var _refreshAsyncConnection = new SQLiteAsyncConnection(() => new SQLiteConnectionWithLock(new SQLitePlatformWinRT(), new SQLiteConnectionString(refreshDbPath, false)));
 
             await _refreshAsyncConnection.CreateTableAsync<Stop>();
             //foreach(var stop in allStopsList)

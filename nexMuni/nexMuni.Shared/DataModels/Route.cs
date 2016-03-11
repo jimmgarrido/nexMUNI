@@ -1,11 +1,11 @@
-﻿using SQLite;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Windows.Devices.Geolocation;
 using System.Collections.ObjectModel;
+using SQLite.Net.Attributes;
 
 namespace nexMuni.DataModels
 {
