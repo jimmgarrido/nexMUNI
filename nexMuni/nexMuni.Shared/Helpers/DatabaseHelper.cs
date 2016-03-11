@@ -207,14 +207,15 @@ namespace nexMuni.Helpers
 
         private static async Task CheckFavoritesDatabaseAsync()
         {
-            bool dbExists;
+            bool dbExists = true;
 
             try
             {
                 var favDb = await ApplicationData.Current.LocalFolder.GetFileAsync("favorites.sqlite");
                 favoriteDbPath = favDb.Path;
+
+                favoritesConnection = new SQLiteAsyncConnection(() => DbConnection(favoriteDbPath));
                 await LoadFavoritesAsync();
-                dbExists = true;
             }
             catch
             {
@@ -228,11 +229,9 @@ namespace nexMuni.Helpers
         {
             await ApplicationData.Current.LocalFolder.CreateFileAsync("favorites.sqlite");
             var favDb = await ApplicationData.Current.LocalFolder.GetFileAsync("favorites.sqlite");
-
             favoriteDbPath = favDb.Path;
-            //var _favoritesAsyncConnection = new SQLiteAsyncConnection(favoriteDbPath);
-            favoritesConnection = new SQLiteAsyncConnection(() => DbConnection(favoriteDbPath));
 
+            favoritesConnection = new SQLiteAsyncConnection(() => DbConnection(favoriteDbPath));
             await favoritesConnection.CreateTableAsync<FavoriteData>();
             await LoadFavoritesAsync();
         }
