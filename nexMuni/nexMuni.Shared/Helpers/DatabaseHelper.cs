@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
-using System.Linq.Expressions;
-using Windows.ApplicationModel;
 using Windows.Storage;
 using nexMuni.DataModels;
 using SQLite.Net.Async;
@@ -19,8 +17,10 @@ namespace nexMuni.Helpers
     public class DatabaseHelper
     {
         private static List<FavoriteData> _favoritesList;
+        private static string favoriteDbPath = string.Empty;
+        private static string muniDbPath = string.Empty;
+        public static ChangedEventHandler FavoritesChanged;
 
-        private static string favoriteDbPath;
         public static List<FavoriteData> FavoritesList
         {
             get
@@ -36,8 +36,6 @@ namespace nexMuni.Helpers
                 }
             }
         }
-        public static ChangedEventHandler FavoritesChanged;
-
 
         public static async Task CheckDatabasesAsync()
         {
@@ -55,7 +53,7 @@ namespace nexMuni.Helpers
                 " AND " + bounds[1][1] + " AND Latitude BETWEEN " + bounds[2][0] + " AND " + bounds[0][0];
 
             //var _stopsAsyncConnection = new SQLiteAsyncConnection("muni.sqlite");
-            var _stopsAsyncConnection = new SQLiteAsyncConnection(() => new SQLiteConnectionWithLock(new SQLitePlatformWinRT(), new SQLiteConnectionString("muni.sqlite", false)));
+            var _stopsAsyncConnection = new SQLiteAsyncConnection(() => new SQLiteConnectionWithLock(new SQLitePlatformWinRT(), new SQLiteConnectionString(muniDbPath, false)));
             var results = await _stopsAsyncConnection.QueryAsync<Stop>(query);
             _stopsAsyncConnection = null;
 
@@ -72,7 +70,7 @@ namespace nexMuni.Helpers
             string query = "SELECT * FROM BusStops WHERE StopName IS \"" + stopName + "\"";
 
             //var _stopsAsyncConnection = new SQLiteAsyncConnection("muni.sqlite");
-            var _stopsAsyncConnection = new SQLiteAsyncConnection(() => new SQLiteConnectionWithLock(new SQLitePlatformWinRT(), new SQLiteConnectionString("muni.sqlite", false)));
+            var _stopsAsyncConnection = new SQLiteAsyncConnection(() => new SQLiteConnectionWithLock(new SQLitePlatformWinRT(), new SQLiteConnectionString(muniDbPath, false)));
 
             var results = await _stopsAsyncConnection.QueryAsync<Stop>(query);
 
@@ -92,23 +90,20 @@ namespace nexMuni.Helpers
             return results;
         }
 
-        public static async Task< List<Route>> QueryForRoutes()
+        public static async Task<List<Route>> QueryForRoutes()
         {
-            var path = Path.Combine(ApplicationData.Current.LocalFolder.Path, "muni.sqlite");
             //var list = new List<string>();
             var results = new List<Route>();
 
             //var _stopsAsyncConnection = new SQLiteAsyncConnection("muni.sqlite");
-            //using (var _stopsAsyncConnection = new SQLiteAsyncConnection(() => new SQLiteConnectionWithLock(new SQLitePlatformWinRT(), new SQLiteConnectionString("muni.sqlite", false))))
-            using(var connection = new SQLiteConnection(new SQLitePlatformWinRT(),path,SQLiteOpenFlags.ReadOnly))
-            {
-                results = connection.Query<Route>("SELECT * FROM RouteData");
+            var _stopsAsyncConnection = new SQLiteAsyncConnection(() => new SQLiteConnectionWithLock(new SQLitePlatformWinRT(), new SQLiteConnectionString(muniDbPath, false)));
+            results = await _stopsAsyncConnection.QueryAsync<Route>("SELECT * FROM RouteData");
+            _stopsAsyncConnection = null;
+            //foreach (var route in query)
+            //{
+            //    list.Add(route.Title);
+            //}
 
-                //foreach (var route in query)
-                //{
-                //    list.Add(route.Title);
-                //}
-            }
             return results;
         }
 
@@ -195,18 +190,16 @@ namespace nexMuni.Helpers
 
         private static async Task CheckStopsDatabaseAsync()
         {
-            bool dbExists;
+            bool dbExists = true;
 
             try
             {
                 StorageFile muniDb = await ApplicationData.Current.LocalFolder.GetFileAsync("muni.sqlite");
 
                 if (muniDb.DateCreated.Date <= new DateTime(2016, 1, 23))
-                    dbExists = false;
-                else
-                    dbExists = true;
+                    throw new Exception("Database out of date");
             }
-            catch
+            catch (Exception ex)
             {
                 dbExists = false;
             }
@@ -219,6 +212,8 @@ namespace nexMuni.Helpers
                 var refreshClient = new DataRefreshHelper();
                 await refreshClient.RefreshDataAsync();
             }
+
+            muniDbPath = Path.Combine(ApplicationData.Current.LocalFolder.Path, "muni.sqlite");
         }
 
         private static async Task CheckFavoritesDatabaseAsync()

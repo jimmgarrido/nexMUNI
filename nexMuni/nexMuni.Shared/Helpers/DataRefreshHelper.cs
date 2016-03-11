@@ -169,10 +169,16 @@ namespace nexMuni.Helpers
             //{
             //    await _refreshAsyncConnection.InsertAsync(stop);
             //}
-            foreach (var stop in stopDictionary.Values)
+
+            await _refreshAsyncConnection.RunInTransactionAsync((SQLiteConnection tran) =>
             {
-                await _refreshAsyncConnection.InsertAsync(stop);
-            }
+                tran.InsertAll(stopDictionary.Values);
+            });
+
+            //foreach (var stop in stopDictionary.Values)
+            //{
+            //    await _refreshAsyncConnection.InsertAsync(stop);
+            //}
 
             await _refreshAsyncConnection.CreateTableAsync<Route>();
             foreach (var route in routesList)
