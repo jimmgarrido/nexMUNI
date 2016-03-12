@@ -19,7 +19,7 @@ namespace nexMuni.Helpers
 {
     public class DataRefreshHelper
     {
-        public async Task RefreshDataAsync()
+        public async Task RefreshDataAsync() 
         {
             var routesList = new List<Route>();
             //var allStopsList = new List<Stop>(1050);

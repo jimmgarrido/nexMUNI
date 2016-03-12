@@ -9,6 +9,7 @@ using SQLite.Net;
 using SQLite.Net.Platform.WinRT;
 using SQLite.Net.Interop;
 using System.IO;
+using Windows.ApplicationModel;
 
 namespace nexMuni.Helpers
 {
@@ -195,11 +196,16 @@ namespace nexMuni.Helpers
 
             if (!dbExists)
             {
-                //StorageFile dbFile = await Package.Current.InstalledLocation.GetFileAsync("db\\muni.sqlite");
-                //await dbFile.CopyAsync(ApplicationData.Current.LocalFolder, "muni.sqlite", NameCollisionOption.ReplaceExisting);
-
-                var refreshClient = new DataRefreshHelper();
-                await refreshClient.RefreshDataAsync();
+                try
+                {
+                    var refreshClient = new DataRefreshHelper();
+                    await refreshClient.RefreshDataAsync();
+                }
+                catch (Exception e)
+                {
+                    StorageFile dbFile = await Package.Current.InstalledLocation.GetFileAsync("db\\muni.sqlite");
+                    await dbFile.CopyAsync(ApplicationData.Current.LocalFolder, "muni.sqlite", NameCollisionOption.ReplaceExisting);
+                }
             }
 
             muniDbPath = Path.Combine(ApplicationData.Current.LocalFolder.Path, "muni.sqlite");
