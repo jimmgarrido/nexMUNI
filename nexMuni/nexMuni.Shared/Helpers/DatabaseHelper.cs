@@ -213,11 +213,18 @@ namespace nexMuni.Helpers
 
         private static async Task CheckFavoritesDatabaseAsync()
         {
-            bool dbExists = true;
+            /**
+             * Keep favorites database in the roaming folder so it synced across devices/installs
+             * Move over exisiting user's favorites from local to romaing folder if it exisits 
+             * */
+
+            bool dbExists = false;
+            bool isLocal = false;
 
             try
             {
-                var favDb = await ApplicationData.Current.LocalFolder.GetFileAsync("favorites.sqlite");
+                var favDb = await ApplicationData.Current.RoamingFolder.GetFileAsync("favorites.sqlite");
+                dbExists = true;
                 favoriteDbPath = favDb.Path;
 
                 favoritesConnection = new SQLiteAsyncConnection(() => DbConnection(favoriteDbPath));
@@ -228,13 +235,41 @@ namespace nexMuni.Helpers
                 dbExists = false;
             }
 
-            if (!dbExists) await MakeFavoritesDatabaseAsync();
+            // Check if there is an exisiting database in the local folder that needs to be migrated
+            if(!dbExists)
+            {
+                StorageFile localFavDb = null;
+
+                try
+                {
+                    localFavDb = await ApplicationData.Current.LocalFolder.GetFileAsync("favorites.sqlite");
+                    isLocal = true;
+                }
+                catch
+                {
+                    isLocal = false;
+                }
+
+                if(isLocal)
+                {
+                    await localFavDb.CopyAsync(ApplicationData.Current.RoamingFolder, "favorites.sqlite", NameCollisionOption.ReplaceExisting);
+                    var favDb = await ApplicationData.Current.RoamingFolder.GetFileAsync("favorites.sqlite");
+                    favoriteDbPath = favDb.Path;
+
+                    favoritesConnection = new SQLiteAsyncConnection(() => DbConnection(favoriteDbPath));
+                    await LoadFavoritesAsync();
+                }
+                else
+                {
+                    await MakeFavoritesDatabaseAsync();
+                }
+            }
         }
 
         private static async Task MakeFavoritesDatabaseAsync()
         {
-            await ApplicationData.Current.LocalFolder.CreateFileAsync("favorites.sqlite");
-            var favDb = await ApplicationData.Current.LocalFolder.GetFileAsync("favorites.sqlite");
+            await ApplicationData.Current.RoamingFolder.CreateFileAsync("favorites.sqlite");
+            var favDb = await ApplicationData.Current.RoamingFolder.GetFileAsync("favorites.sqlite");
             favoriteDbPath = favDb.Path;
 
             favoritesConnection = new SQLiteAsyncConnection(() => DbConnection(favoriteDbPath));
