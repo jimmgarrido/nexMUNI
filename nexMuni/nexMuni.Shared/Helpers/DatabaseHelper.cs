@@ -181,6 +181,7 @@ namespace nexMuni.Helpers
         private static async Task CheckStopsDatabaseAsync()
         {
             bool dbExists = true;
+            var expiryDate = DateTime.Today - (new TimeSpan(7, 0, 0, 0)); 
 
             try
             {

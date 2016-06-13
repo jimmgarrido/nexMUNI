@@ -1,4 +1,5 @@
-﻿using nexMuni.Views;
+﻿using Microsoft.HockeyApp;
+using nexMuni.Views;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -30,9 +31,7 @@ namespace nexMUNI.Win10
         public App()
         {
 #if !DEBUG
-            Microsoft.ApplicationInsights.WindowsAppInitializer.InitializeAsync(
-                Microsoft.ApplicationInsights.WindowsCollectors.Metadata |
-                Microsoft.ApplicationInsights.WindowsCollectors.Session);
+            Microsoft.HockeyApp.HockeyClient.Current.Configure("1409ce6415594fb7acb3edad0ea0295e");
 #endif
             this.InitializeComponent();
             this.Suspending += OnSuspending;
