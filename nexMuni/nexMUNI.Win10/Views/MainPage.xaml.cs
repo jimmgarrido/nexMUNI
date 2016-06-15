@@ -1,7 +1,4 @@
-﻿using nexMuni.DataModels;
-using nexMuni.Helpers;
-using nexMuni.ViewModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,6 +12,10 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Maps;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
+
+using nexMuni.DataModels;
+using nexMuni.Helpers;
+using nexMuni.ViewModels;
 
 namespace nexMuni.Views
 {
@@ -31,13 +32,18 @@ namespace nexMuni.Views
         {
             this.InitializeComponent();
             this.NavigationCacheMode = NavigationCacheMode.Required;
-            MainPivot.SelectionChanged += PivotItemChanged;
-            LocationHelper.LocationChanged += UpdateLocationOnMap;
         }
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
+
+            //Hook up event handlers
+            MainPivot.SelectionChanged += PivotItemChanged;
+            LocationHelper.LocationChanged += UpdateLocationOnMap;
+            RouteBox.SelectionChanged += RouteSelected;
+            DirBox.SelectionChanged += DirectionSelected;
+            StopBox.SelectionChanged += StopSelected;
 
             if (!alreadyLoaded)
             {
@@ -48,19 +54,14 @@ namespace nexMuni.Views
                 NearbyPivot.DataContext = mainVm;
                 FavoritesPivot.DataContext = mainVm;
                 SearchPivot.DataContext = searchVm;
-
-                RouteBox.SelectionChanged += RouteSelected;
-                DirBox.SelectionChanged += DirectionSelected;
-                StopBox.SelectionChanged += StopSelected;
-
-                SettingsHelper.LoadNearbySetting();
-                SettingsHelper.LoadLaunchPivotSetting();
-                MainPivot.SelectedIndex = SettingsHelper.launchPivot;
+                
+                MainPivot.SelectedIndex = SettingsHelper.LaunchPivotIndex;
 
                 await DatabaseHelper.CheckDatabasesAsync();
                 await searchVm.LoadRoutesAsync();
-                RouteBox.IsEnabled = true;
                 await mainVm.LoadAsync();
+
+                RouteBox.IsEnabled = true;
                 LoadingRing.IsActive = false;
 
                 alreadyLoaded = true;
@@ -384,7 +385,14 @@ namespace nexMuni.Views
         {
             base.OnNavigatedFrom(e);
 
-            if(refreshTimer != null && refreshTimer.IsEnabled)
+            //Unhook event handlers and stop timer
+            MainPivot.SelectionChanged -= PivotItemChanged;
+            LocationHelper.LocationChanged -= UpdateLocationOnMap;
+            RouteBox.SelectionChanged -= RouteSelected;
+            DirBox.SelectionChanged -= DirectionSelected;
+            StopBox.SelectionChanged -= StopSelected;
+
+            if (refreshTimer != null && refreshTimer.IsEnabled)
                 refreshTimer.Stop();
         }
     }

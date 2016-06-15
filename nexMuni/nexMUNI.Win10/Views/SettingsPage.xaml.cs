@@ -46,7 +46,7 @@ namespace nexMuni.Views
             }
 
 
-            PivotBox.SelectedIndex = SettingsHelper.launchPivot;
+            PivotBox.SelectedIndex = SettingsHelper.LaunchPivotIndex;
 
             if (SettingsHelper.GetTileSetting())
             {
@@ -56,6 +56,8 @@ namespace nexMuni.Views
             {
                 TileSwitch.IsOn = false;
             }
+
+            RefreshLabel.Text = SettingsHelper.RefreshedDate;
         }
 
         private void TileSwitchToggled(object sender, RoutedEventArgs e)

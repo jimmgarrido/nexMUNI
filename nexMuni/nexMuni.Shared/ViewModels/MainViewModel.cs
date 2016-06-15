@@ -54,6 +54,10 @@ namespace nexMuni.ViewModels
             FavoriteStops = new ObservableCollection<Stop>();
 
             DatabaseHelper.FavoritesChanged += LoadFavoritesAsync;
+
+
+            SettingsHelper.LoadNearbySetting();
+            SettingsHelper.LoadLaunchPivotSetting();
         }
 
         public async Task LoadAsync()

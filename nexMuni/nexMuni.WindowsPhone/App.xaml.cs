@@ -9,7 +9,6 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 using nexMuni.Views;
-using Microsoft.ApplicationInsights;
 
 namespace nexMuni.WindowsPhone
 {
@@ -26,7 +25,6 @@ namespace nexMuni.WindowsPhone
         public App()
         {
 #if !DEBUG
-            WindowsAppInitializer.InitializeAsync("1181ae3c-8eb6-4dd2-bb31-33e80f390dc7");
 #endif
 
             this.InitializeComponent();

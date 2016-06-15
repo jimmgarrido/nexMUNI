@@ -197,19 +197,74 @@ namespace nexMuni.Helpers
 
             if (!dbExists)
             {
+                StorageFile dbFile;
+
                 try
                 {
-                    var refreshClient = new DataRefreshHelper();
-                    await refreshClient.RefreshDataAsync();
+                    await MakeMuniDatabaseAsync();
                 }
                 catch (Exception e)
                 {
-                    StorageFile dbFile = await Package.Current.InstalledLocation.GetFileAsync("db\\muni.sqlite");
+                    dbFile = await Package.Current.InstalledLocation.GetFileAsync("db\\muni.sqlite");
                     await dbFile.CopyAsync(ApplicationData.Current.LocalFolder, "muni.sqlite", NameCollisionOption.ReplaceExisting);
                 }
             }
 
             muniDbPath = Path.Combine(ApplicationData.Current.LocalFolder.Path, "muni.sqlite");
+        }
+
+        private static async Task MakeMuniDatabaseAsync()
+        {
+            var refreshClient = new DataRefreshHelper();
+            await refreshClient.RefreshDataAsync();
+
+            var allStops = refreshClient.stopDictionary;
+            var allRoutes = refreshClient.routesList;
+
+            await ApplicationData.Current.LocalFolder.CreateFileAsync("muni.sqlite", CreationCollisionOption.ReplaceExisting);
+            var muniDb = await ApplicationData.Current.LocalFolder.GetFileAsync("muni.sqlite");
+
+            var _refreshAsyncConnection = new SQLiteAsyncConnection(() => new SQLiteConnectionWithLock(new SQLitePlatformWinRT(), new SQLiteConnectionString(muniDb.Path, false)));
+
+            await _refreshAsyncConnection.CreateTableAsync<Stop>();
+            //foreach(var stop in allStopsList)
+            //{
+            //    await _refreshAsyncConnection.InsertAsync(stop);
+            //}
+
+            await _refreshAsyncConnection.RunInTransactionAsync((SQLiteConnection transaction) =>
+            {
+                transaction.InsertAll(allStops.Values);
+            });
+
+            //foreach (var stop in stopDictionary.Values)
+            //{
+            //    await _refreshAsyncConnection.InsertAsync(stop);
+            //}
+
+            await _refreshAsyncConnection.CreateTableAsync<Route>();
+            foreach (var route in allRoutes)
+            {
+                await _refreshAsyncConnection.InsertAsync(route);
+            }
+
+            SettingsHelper.DatabaseRefreshed(DateTime.Today);
+            //try
+            //{
+            //    //StorageFile muniDb = await ApplicationData.Current.LocalFolder.GetFileAsync("muni.sqlite");
+
+            //    StorageFile dbFile = await ApplicationData.Current.LocalFolder.GetFileAsync("refresh.sqlite");
+            //    await dbFile.CopyAsync(ApplicationData.Current.LocalFolder, "muni.sqlite", NameCollisionOption.ReplaceExisting);
+
+            //    //StorageFile muniDb = await ApplicationData.Current.LocalFolder.GetFileAsync("muni.sqlite");
+
+            //    //var messageBox = new MessageDialog(message);
+            //    //await messageBox.ShowAsync();
+            //}
+            //catch
+            //{
+
+            //}
         }
 
         private static async Task CheckFavoritesDatabaseAsync()

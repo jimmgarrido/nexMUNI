@@ -46,7 +46,7 @@ namespace nexMuni.Views
             }
 
 
-            PivotBox.SelectedIndex = SettingsHelper.launchPivot;
+            PivotBox.SelectedIndex = SettingsHelper.LaunchPivotIndex;
 
             if(SettingsHelper.GetTileSetting())
             {

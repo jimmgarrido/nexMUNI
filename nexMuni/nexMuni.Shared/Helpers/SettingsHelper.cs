@@ -1,4 +1,5 @@
-﻿using Windows.Data.Xml.Dom;
+﻿using System;
+using Windows.Data.Xml.Dom;
 using Windows.Storage;
 using Windows.UI.Notifications;
 
@@ -6,8 +7,10 @@ namespace nexMuni.Helpers
 {
     public class SettingsHelper
     {
+        //TODO: Should load ALL settings at launch. If new setting is set, then modify class property
         public static int nearbyCount;
-        public static int launchPivot;
+        public static int LaunchPivotIndex { get; set; }
+        public static string RefreshedDate { get; set; }
 
         public static void LoadNearbySetting()
         {
@@ -43,11 +46,11 @@ namespace nexMuni.Helpers
 
             if ((string)settings.Values["LaunchPivot"] == "favorites")
             {
-                launchPivot = 1;
+                LaunchPivotIndex = 1;
             }
             else
             {
-                launchPivot = 0;
+                LaunchPivotIndex = 0;
             } 
         }
 
@@ -83,12 +86,12 @@ namespace nexMuni.Helpers
             if (index == 1)
             {
                 settings.Values["LaunchPivot"] = "favorites";
-                launchPivot = 1;
+                LaunchPivotIndex = 1;
             }
             else
             {
                 settings.Values["LaunchPivot"] = "nearby";
-                launchPivot = 0;
+                LaunchPivotIndex = 0;
             }
         }
 
@@ -127,6 +130,13 @@ namespace nexMuni.Helpers
             TileNotification tileNotification = new TileNotification(mediumTileXml);
 
             TileUpdateManager.CreateTileUpdaterForApplication().Update(tileNotification);
+        }
+
+        public static void DatabaseRefreshed(DateTime today)
+        {
+            var settings = ApplicationData.Current.LocalSettings;
+            settings.Values["DatabaseRefreshed"] = today.Date.ToString();
+            RefreshedDate = today.Date.ToString();
         }
     }
 }
