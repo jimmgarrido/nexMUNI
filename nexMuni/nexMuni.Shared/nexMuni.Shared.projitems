@@ -11,7 +11,7 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)DataModels\Alert.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModels\Bus.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)DataModels\FavoriteData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataModels\Favorite.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModels\Route.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModels\RouteDirection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModels\Stop.cs" />

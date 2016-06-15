@@ -149,7 +149,7 @@ namespace nexMuni.ViewModels
 
         private void LoadFavoritesAsync()
         {
-            List<FavoriteData> favorites = DatabaseHelper.FavoritesList;
+            List<Favorite> favorites = DatabaseHelper.FavoritesList;
             FavoriteStops.Clear();
 
             if (favorites.Count == 0)
@@ -159,7 +159,7 @@ namespace nexMuni.ViewModels
             else
             {
                 NoFavoritesText = "";
-                foreach (FavoriteData fav in favorites)
+                foreach (Favorite fav in favorites)
                 {
                     Stop favStop = new Stop(fav.Name, "", fav.Routes, fav.Tags, fav.Lat, fav.Lon);
                     favStop.favId = fav.Id;

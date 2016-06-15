@@ -34,6 +34,9 @@ namespace nexMuni.Helpers
             {
                 nearbyCount = (int) settings.Values["NearbyCount"];
             }
+
+            //TODO:Refactor
+            RefreshedDate = (string)ApplicationData.Current.LocalSettings.Values["DatabaseRefreshed"];
         }
 
         public static void LoadLaunchPivotSetting()

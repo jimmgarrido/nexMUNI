@@ -17,13 +17,13 @@ namespace nexMuni.Helpers
 
     public class DatabaseHelper
     {
-        private static List<FavoriteData> _favoritesList;
+        private static List<Favorite> _favoritesList;
         private static string favoriteDbPath = string.Empty;
         private static string muniDbPath = string.Empty;
         public static ChangedEventHandler FavoritesChanged;
         public static SQLiteAsyncConnection favoritesConnection;
 
-        public static List<FavoriteData> FavoritesList
+        public static List<Favorite> FavoritesList
         {
             get
             {
@@ -113,7 +113,7 @@ namespace nexMuni.Helpers
             //var _favoritesAsyncConnection = new SQLiteAsyncConnection(favoriteDbPath);
             favoritesConnection = new SQLiteAsyncConnection(() => DbConnection(favoriteDbPath));
 
-            await favoritesConnection.InsertAsync(new FavoriteData
+            await favoritesConnection.InsertAsync(new Favorite
                 {
                     Name = stop.StopName,
                     Routes = stop.Routes,
@@ -131,7 +131,7 @@ namespace nexMuni.Helpers
             //var _favoritesAsyncConnection = new SQLiteAsyncConnection(favoriteDbPath);
             favoritesConnection = new SQLiteAsyncConnection(() => DbConnection(favoriteDbPath));
 
-            await favoritesConnection.QueryAsync<FavoriteData>(q);
+            await favoritesConnection.QueryAsync<Favorite>(q);
             await LoadFavoritesAsync();
         }
 
@@ -174,7 +174,7 @@ namespace nexMuni.Helpers
             //var _favoritesAsyncConnection = new SQLiteAsyncConnection(favoriteDbPath);
             //var _favoritesAsyncConnection = new SQLiteAsyncConnection(() => new SQLiteConnectionWithLock(new SQLitePlatformWinRT(), new SQLiteConnectionString(favoriteDbPath, false)));
             //var _favoritesAsyncConnection = new SQLiteConnection(new SQLitePlatformWinRT(), favoriteDbPath);
-            FavoritesList = await favoritesConnection.Table<FavoriteData>().ToListAsync();
+            FavoritesList = await favoritesConnection.Table<Favorite>().ToListAsync();
             favoritesConnection = null;
         }
 
@@ -282,9 +282,6 @@ namespace nexMuni.Helpers
                 var favDb = await ApplicationData.Current.RoamingFolder.GetFileAsync("favorites.sqlite");
                 dbExists = true;
                 favoriteDbPath = favDb.Path;
-
-                favoritesConnection = new SQLiteAsyncConnection(() => DbConnection(favoriteDbPath));
-                await LoadFavoritesAsync();
             }
             catch
             {
@@ -292,7 +289,7 @@ namespace nexMuni.Helpers
             }
 
             // Check if there is an exisiting database in the local folder that needs to be migrated
-            if(!dbExists)
+            if (!dbExists)
             {
                 StorageFile localFavDb = null;
 
@@ -320,6 +317,11 @@ namespace nexMuni.Helpers
                     await MakeFavoritesDatabaseAsync();
                 }
             }
+            else
+            {
+                favoritesConnection = new SQLiteAsyncConnection(() => DbConnection(favoriteDbPath));
+                await LoadFavoritesAsync();
+            }
         }
 
         private static async Task MakeFavoritesDatabaseAsync()
@@ -329,7 +331,7 @@ namespace nexMuni.Helpers
             favoriteDbPath = favDb.Path;
 
             favoritesConnection = new SQLiteAsyncConnection(() => DbConnection(favoriteDbPath));
-            await favoritesConnection.CreateTableAsync<FavoriteData>();
+            await favoritesConnection.CreateTableAsync<Favorite>();
             await LoadFavoritesAsync();
         }
 

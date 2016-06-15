@@ -64,17 +64,18 @@ namespace nexMuni.Views
                     PinButton.Icon = new SymbolIcon(Symbol.UnPin);
                 }
 
+                if (!await detailVm.LoadTimes()) //TODO: Make Timer accessible so I do not need to load all times just to restart it.
+                    //TODO: Times do not automatically refresh after navigating back from map page
+                {
+                    Frame.GoBack();
+                }
+
                 alreadyLoaded = true;
             }
 
             await UIHelper.ShowStatusBar("Getting Arrival Times");
 
-            if (!await detailVm.LoadTimes())
-            {
-                Frame.GoBack();
-            }
-
-            if (!detailVm.Alerts.Any()) DetailPivot.Items.RemoveAt(1);
+            //if (!detailVm.Alerts.Any()) DetailPivot.Items.RemoveAt(1);
 
             LoadingRing.IsActive = false;
             await UIHelper.HideStatusBar();
@@ -124,6 +125,9 @@ namespace nexMuni.Views
         {
             this.navigationHelper.OnNavigatedFrom(e);
             detailVm.StopTimer();
+
+            if (e.Content.GetType() != typeof(RouteMapPage))
+                alreadyLoaded = false;
         }
 
         public NavigationHelper NavigationHelper

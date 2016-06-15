@@ -265,7 +265,7 @@ namespace nexMuni.ViewModels
         private void SyncFavoriteIds()
         {
             if (SelectedStop == null) return;
-            FavoriteData tempStop = DatabaseHelper.FavoritesList.ToList().Find(s => s.Name == SelectedStop.StopName);
+            Favorite tempStop = DatabaseHelper.FavoritesList.ToList().Find(s => s.Name == SelectedStop.StopName);
             if (tempStop == null) return;
             SelectedStop.favId = tempStop.Id;
         }
