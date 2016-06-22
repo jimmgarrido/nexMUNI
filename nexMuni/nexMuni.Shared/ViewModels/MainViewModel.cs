@@ -56,8 +56,7 @@ namespace nexMuni.ViewModels
             DatabaseHelper.FavoritesChanged += LoadFavoritesAsync;
 
 
-            SettingsHelper.LoadNearbySetting();
-            SettingsHelper.LoadLaunchPivotSetting();
+            SettingsHelper.LoadSettings();
         }
 
         public async Task LoadAsync()
@@ -68,7 +67,7 @@ namespace nexMuni.ViewModels
 
         public async Task UpdateNearbyStopsAsync()
         {
-            nearbyCount = SettingsHelper.nearbyCount;
+            nearbyCount = SettingsHelper.NearbyCount;
 
             //Make sure user has given permission to access location
             await LocationHelper.UpdateLocation();

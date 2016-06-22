@@ -36,7 +36,7 @@ namespace nexMuni.Views
             PivotBox.SelectionChanged += ChangePivotSetting;
             TileSwitch.Toggled += TileSwitchToggled;
 
-            if(SettingsHelper.nearbyCount == 15)
+            if(SettingsHelper.NearbyCount == 15)
             {
                 CountBox.SelectedIndex = 0;
             }

@@ -36,7 +36,7 @@ namespace nexMuni.Views
             PivotBox.SelectionChanged += ChangePivotSetting;
             TileSwitch.Toggled += TileSwitchToggled;
 
-            if (SettingsHelper.nearbyCount == 15)
+            if (SettingsHelper.NearbyCount == 15)
             {
                 CountBox.SelectedIndex = 0;
             }
@@ -48,7 +48,7 @@ namespace nexMuni.Views
 
             PivotBox.SelectedIndex = SettingsHelper.LaunchPivotIndex;
 
-            if (SettingsHelper.GetTileSetting())
+            if (SettingsHelper.TransparentTile == 1)
             {
                 TileSwitch.IsOn = true;
             }
@@ -57,7 +57,7 @@ namespace nexMuni.Views
                 TileSwitch.IsOn = false;
             }
 
-            RefreshLabel.Text = SettingsHelper.RefreshedDate;
+            RefreshLabel.Text = SettingsHelper.RefreshedDate.Date.ToString("d");
         }
 
         private void TileSwitchToggled(object sender, RoutedEventArgs e)
