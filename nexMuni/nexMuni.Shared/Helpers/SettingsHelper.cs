@@ -11,7 +11,7 @@ namespace nexMuni.Helpers
         public static int NearbyCount { get; set; }
         public static int LaunchPivotIndex { get; set; }
         public static int TransparentTile { get; set; }
-        public static DateTime RefreshedDate { get; set; }
+        public static string RefreshedDate { get; set; }
 
         public static void LoadSettings()
         {
@@ -36,7 +36,7 @@ namespace nexMuni.Helpers
 
             if (localSettings.Values["DatabaseRefreshed"] == null)
             {
-                localSettings.Values["DatabaseRefreshed"] = DateTime.Today;
+                localSettings.Values["DatabaseRefreshed"] = "";
             }
 
 
@@ -49,7 +49,7 @@ namespace nexMuni.Helpers
             else
                 LaunchPivotIndex = 0;
 
-            RefreshedDate = (DateTime) localSettings.Values["DatabaseRefreshed"];
+            RefreshedDate = (string) localSettings.Values["DatabaseRefreshed"];
         }
 
         public static void LoadNearbySetting()
@@ -172,11 +172,20 @@ namespace nexMuni.Helpers
             TileUpdateManager.CreateTileUpdaterForApplication().Update(tileNotification);
         }
 
-        public static void DatabaseRefreshed(DateTime today)
+        public static void DatabaseRefreshed(bool successful)
         {
             var settings = ApplicationData.Current.LocalSettings;
-            settings.Values["DatabaseRefreshed"] = today;
-            RefreshedDate = today;
+
+            if (successful)
+            {
+                settings.Values["DatabaseRefreshed"] = "Last refresh: " + DateTime.Today.ToString("d");
+            }
+            else
+            {
+                settings.Values["DatabaseRefreshed"] = "Last refresh was unsuccessful. Please try again.";
+            }
+
+            RefreshedDate = (string)settings.Values["DatabaseRefreshed"];
         }
     }
 }

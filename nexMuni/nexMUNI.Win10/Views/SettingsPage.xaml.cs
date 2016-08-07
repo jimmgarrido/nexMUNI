@@ -57,7 +57,7 @@ namespace nexMuni.Views
                 TileSwitch.IsOn = false;
             }
 
-            RefreshLabel.Text = SettingsHelper.RefreshedDate.Date.ToString("d");
+            RefreshLabel.Text = SettingsHelper.RefreshedDate;
         }
 
         private void TileSwitchToggled(object sender, RoutedEventArgs e)
@@ -79,10 +79,23 @@ namespace nexMuni.Views
         {
             RefreshButton.IsEnabled = false;
             RefreshRing.IsActive = true;
-            var refreshClient = new DataRefreshHelper();
-            await refreshClient.RefreshDataAsync();
+            //var refreshClient = new DataRefreshHelper();
+            //await refreshClient.RefreshDataAsync();
+
+            //TODO: Use better error handeling for database refresh
+            try
+            {
+                await DatabaseHelper.MakeMuniDatabaseAsync();
+                SettingsHelper.DatabaseRefreshed(true);
+            }
+            catch
+            {
+                SettingsHelper.DatabaseRefreshed(false);
+            }
             RefreshRing.IsActive = false;
-            RefreshButton.IsEnabled = true;          
+            RefreshButton.IsEnabled = true;
+
+            RefreshLabel.Text = SettingsHelper.RefreshedDate;
         }
 
         private void NavigationHelper_LoadState(object sender, LoadStateEventArgs e)

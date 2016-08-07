@@ -91,7 +91,7 @@ namespace nexMuni.Helpers
             return results;
         }
 
-        public static async Task<List<Route>> QueryForRoutes()
+        public static async Task<List<Route>> QueryForRoutesAsync()
         {
             //var list = new List<string>();
             var results = new List<Route>();
@@ -181,14 +181,18 @@ namespace nexMuni.Helpers
         private static async Task CheckStopsDatabaseAsync()
         {
             bool dbExists = true;
-            var expiryDate = DateTime.Today - (new TimeSpan(7, 0, 0, 0)); 
+            var expiryDate = DateTime.Today - (new TimeSpan(7, 0, 0, 0));
+            var isSaturday = (DateTime.Today.DayOfWeek == DayOfWeek.Saturday);
 
             try
             {
                 StorageFile muniDb = await ApplicationData.Current.LocalFolder.GetFileAsync("muni.sqlite");
 
-                if (muniDb.DateCreated.Date <= new DateTime(2016, 1, 23))
+                if (muniDb.DateCreated.Date <= expiryDate ||
+                    (isSaturday && (muniDb.DateCreated.Date != DateTime.Today.Date)))
+                {
                     throw new Exception("Database out of date");
+                }
             }
             catch (Exception ex)
             {
@@ -201,19 +205,24 @@ namespace nexMuni.Helpers
 
                 try
                 {
+                    await UIHelper.ShowStatusBar("Updating database");
                     await MakeMuniDatabaseAsync();
+                    SettingsHelper.DatabaseRefreshed(true);
+                    await UIHelper.HideStatusBar();
                 }
                 catch (Exception e)
                 {
                     dbFile = await Package.Current.InstalledLocation.GetFileAsync("db\\muni.sqlite");
                     await dbFile.CopyAsync(ApplicationData.Current.LocalFolder, "muni.sqlite", NameCollisionOption.ReplaceExisting);
+                    SettingsHelper.DatabaseRefreshed(false);
                 }
             }
 
             muniDbPath = Path.Combine(ApplicationData.Current.LocalFolder.Path, "muni.sqlite");
         }
 
-        private static async Task MakeMuniDatabaseAsync()
+        //TODO:Make backup everytime there's a successful refresh in case it fails next time.
+        public static async Task MakeMuniDatabaseAsync()
         {
             var refreshClient = new DataRefreshHelper();
             await refreshClient.RefreshDataAsync();
@@ -248,7 +257,6 @@ namespace nexMuni.Helpers
                 await _refreshAsyncConnection.InsertAsync(route);
             }
 
-            SettingsHelper.DatabaseRefreshed(DateTime.Today);
             //try
             //{
             //    //StorageFile muniDb = await ApplicationData.Current.LocalFolder.GetFileAsync("muni.sqlite");

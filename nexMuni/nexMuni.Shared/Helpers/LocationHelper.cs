@@ -37,7 +37,7 @@ namespace nexMuni.Helpers
                 Location = await geolocator.GetGeopositionAsync(TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(30));
                 latitude = Point.Position.Latitude;
                 longitude = Point.Position.Longitude;
-                if (LocationChanged != null) LocationChanged();
+                LocationChanged?.Invoke();
             }
 
             await UIHelper.HideStatusBar();

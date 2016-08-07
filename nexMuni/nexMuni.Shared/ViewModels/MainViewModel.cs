@@ -10,6 +10,7 @@ using nexMuni.Views;
 using System.ComponentModel;
 using Windows.UI.Xaml.Controls.Maps;
 using Windows.Devices.Geolocation;
+using System;
 
 namespace nexMuni.ViewModels
 {
@@ -55,13 +56,20 @@ namespace nexMuni.ViewModels
 
             DatabaseHelper.FavoritesChanged += LoadFavoritesAsync;
 
-
-            SettingsHelper.LoadSettings();
+            //SettingsHelper.LoadSettings();
         }
 
         public async Task LoadAsync()
         {
             //LoadFavoritesAsync();
+            await UpdateNearbyStopsAsync();
+        }
+
+        public async Task Init()
+        {
+            SettingsHelper.LoadSettings();
+            await DatabaseHelper.CheckDatabasesAsync();
+
             await UpdateNearbyStopsAsync();
         }
 

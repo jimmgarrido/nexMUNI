@@ -16,6 +16,7 @@ using Windows.UI.Xaml.Navigation;
 using nexMuni.DataModels;
 using nexMuni.Helpers;
 using nexMuni.ViewModels;
+using nexMUNI.Win10.Views;
 
 namespace nexMuni.Views
 {
@@ -32,6 +33,13 @@ namespace nexMuni.Views
         {
             this.InitializeComponent();
             this.NavigationCacheMode = NavigationCacheMode.Required;
+
+            mainVm = new MainViewModel();
+            searchVm = new SearchViewModel();
+
+            NearbyPivot.DataContext = mainVm;
+            FavoritesPivot.DataContext = mainVm;
+            SearchPivot.DataContext = searchVm;
         }
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
@@ -47,24 +55,20 @@ namespace nexMuni.Views
 
             if (!alreadyLoaded)
             {
-                mainVm = new MainViewModel();
-                searchVm = new SearchViewModel();
-                //searchVm.UpdateLocation += LocationUpdated;
-
-                NearbyPivot.DataContext = mainVm;
-                FavoritesPivot.DataContext = mainVm;
-                SearchPivot.DataContext = searchVm;
-                
+                await mainVm.Init();
+                await searchVm.LoadRoutesAsync();
+                   
                 MainPivot.SelectedIndex = SettingsHelper.LaunchPivotIndex;
 
-                await DatabaseHelper.CheckDatabasesAsync();
-                await searchVm.LoadRoutesAsync();
-                await mainVm.LoadAsync();
+                //await DatabaseHelper.CheckDatabasesAsync();
+                //await searchVm.LoadRoutesAsync();
+                //await mainVm.LoadAsync();
 
                 RouteBox.IsEnabled = true;
                 LoadingRing.IsActive = false;
 
                 alreadyLoaded = true;
+
             }
         }
 
@@ -331,14 +335,15 @@ namespace nexMuni.Views
             FavoriteBtn.Icon = new SymbolIcon(Symbol.Favorite);
             FavoriteBtn.Label = "favorite";
         }
+
         private void StopClicked(object sender, ItemClickEventArgs e)
         {
-            this.Frame.Navigate(typeof(StopDetail), e.ClickedItem);
+            Frame.Navigate(typeof(StopDetail), e.ClickedItem);
         }
 
         private void DetailButtonPressed(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(StopDetail), searchVm.SelectedStop);
+            Frame.Navigate(typeof(StopDetail), searchVm.SelectedStop);
         }
 
         private void GoToAbout(object sender, RoutedEventArgs e)
