@@ -25,7 +25,7 @@ namespace nexMuni.Views
         MainViewModel mainVm;
         SearchViewModel searchVm;
 
-        bool alreadyLoaded;
+        bool alreadyLoaded = false, hasSearched= false;
         int vehicleCounter = 0;
         DispatcherTimer refreshTimer;
 
@@ -154,9 +154,13 @@ namespace nexMuni.Views
                     FavoriteBtn.Icon = new SymbolIcon(Symbol.Favorite);
                     FavoriteBtn.Click += FavoriteSearch;
                 }
+
+                FavoriteBtn.Visibility = Visibility.Visible;
+                DetailBtn.Visibility = Visibility.Visible;
                 FavoriteBtn.IsEnabled = true;
                 DetailBtn.IsEnabled = true;
 
+                hasSearched = true;
                 await ShowStopLocation();
             }
             catch(Exception)
@@ -378,8 +382,11 @@ namespace nexMuni.Views
                     DetailBtn.Visibility = Visibility.Collapsed;
                     break;
                 case 2:
-                    FavoriteBtn.Visibility = Visibility.Visible;
-                    DetailBtn.Visibility = Visibility.Visible;
+                    if (hasSearched)
+                    {
+                        FavoriteBtn.Visibility = Visibility.Visible;
+                        DetailBtn.Visibility = Visibility.Visible;
+                    }
                     SortBtn.Visibility = Visibility.Collapsed;
                     RefreshBtn.Visibility = Visibility.Collapsed;
                     break;
