@@ -33,10 +33,10 @@ namespace nexMuni.Helpers
             //Get XML listing all routes of SF Muni
             //var reader = XmlReader.Create("http://webservices.nextbus.com/service/publicXMLFeed?command=routeList&a=sf-muni");
 
-            var routesString = await GetDataString("http://webservices.nextbus.com/service/publicXMLFeed?command=routeList&a=sf-muni");
-            var routeDoc = XDocument.Parse(routesString);
+            //var routesString = await GetDataString("http://webservices.nextbus.com/service/publicXMLFeed?command=routeList&a=sf-muni");
+            //var routeDoc = XDocument.Parse(routesString);
 
-            var routeElements = routeDoc.Element("body").Elements("route");
+            //var routeElements = routeDoc.Element("body").Elements("route");
 
             //Read each XML line and add the route number or letter to a list
             //foreach (var routeElement in routeElements)
@@ -163,7 +163,7 @@ namespace nexMuni.Helpers
         {
             string response = string.Empty;
 
-            using (HttpClient client = new HttpClient())
+            using (var client = new HttpClient())
             {
                 client.DefaultRequestHeaders.AcceptEncoding.TryParseAdd("gzip");
                 client.DefaultRequestHeaders.AcceptEncoding.TryParseAdd("deflate");

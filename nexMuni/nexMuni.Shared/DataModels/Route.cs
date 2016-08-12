@@ -89,6 +89,7 @@ namespace nexMuni.DataModels
                 name = title.Substring(index + 1, (title.Length - (index + 2)));
             }
 
+            //TODO: I don't think this does anything and might be safe to remove...
             if(name.IndexOf('-') == 0)
             {
                 int index = title.IndexOf('-');

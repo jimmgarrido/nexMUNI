@@ -32,10 +32,7 @@ namespace nexMuni.Helpers
             set
             {
                 _favoritesList = value;
-                if (FavoritesChanged != null)
-                {
-                    FavoritesChanged();
-                }
+                FavoritesChanged?.Invoke();
             }
         }
 
@@ -181,7 +178,7 @@ namespace nexMuni.Helpers
         private static async Task CheckStopsDatabaseAsync()
         {
             bool dbExists = true;
-            var expiryDate = DateTime.Today - (new TimeSpan(7, 0, 0, 0));
+            var expiryDate = DateTime.Today - (new TimeSpan(3, 0, 0, 0));
             var isSaturday = (DateTime.Today.DayOfWeek == DayOfWeek.Saturday);
 
             try
