@@ -222,6 +222,7 @@ namespace nexMuni.Helpers
         public static async Task MakeMuniDatabaseAsync()
         {
             var refreshClient = new DataRefreshHelper();
+
             await refreshClient.RefreshDataAsync();
 
             var allStops = refreshClient.stopDictionary;
@@ -233,20 +234,10 @@ namespace nexMuni.Helpers
             var _refreshAsyncConnection = new SQLiteAsyncConnection(() => new SQLiteConnectionWithLock(new SQLitePlatformWinRT(), new SQLiteConnectionString(muniDb.Path, false)));
 
             await _refreshAsyncConnection.CreateTableAsync<Stop>();
-            //foreach(var stop in allStopsList)
-            //{
-            //    await _refreshAsyncConnection.InsertAsync(stop);
-            //}
-
             await _refreshAsyncConnection.RunInTransactionAsync((SQLiteConnection transaction) =>
             {
                 transaction.InsertAll(allStops.Values);
             });
-
-            //foreach (var stop in stopDictionary.Values)
-            //{
-            //    await _refreshAsyncConnection.InsertAsync(stop);
-            //}
 
             await _refreshAsyncConnection.CreateTableAsync<Route>();
             foreach (var route in allRoutes)
@@ -254,22 +245,8 @@ namespace nexMuni.Helpers
                 await _refreshAsyncConnection.InsertAsync(route);
             }
 
-            //try
-            //{
-            //    //StorageFile muniDb = await ApplicationData.Current.LocalFolder.GetFileAsync("muni.sqlite");
-
-            //    StorageFile dbFile = await ApplicationData.Current.LocalFolder.GetFileAsync("refresh.sqlite");
-            //    await dbFile.CopyAsync(ApplicationData.Current.LocalFolder, "muni.sqlite", NameCollisionOption.ReplaceExisting);
-
-            //    //StorageFile muniDb = await ApplicationData.Current.LocalFolder.GetFileAsync("muni.sqlite");
-
-            //    //var messageBox = new MessageDialog(message);
-            //    //await messageBox.ShowAsync();
-            //}
-            //catch
-            //{
-
-            //}
+            ////Create backup file
+            //await muniDb.CopyAsync(ApplicationData.Current.LocalFolder, "backup.sqlite", NameCollisionOption.ReplaceExisting);
         }
 
         private static async Task CheckFavoritesDatabaseAsync()

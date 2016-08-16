@@ -27,7 +27,7 @@ namespace nexMuni.Helpers
             routesList = new List<Route>();
             //var allStopsList = new List<Stop>(1050);
             stopDictionary = new Dictionary<string, Stop>(1100);
-            var baseUrl = "http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=sf-muni&r=";
+            //var baseUrl = "http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=sf-muni&r=";
 
 
             //Get XML listing all routes of SF Muni
@@ -174,7 +174,7 @@ namespace nexMuni.Helpers
                 }
                 catch (Exception ex)
                 {
-
+                    throw ex;
                 }
             }
 
