@@ -55,20 +55,20 @@ namespace nexMuni.Views
 
             if (!alreadyLoaded)
             {
-                await mainVm.Init();
-                await searchVm.LoadRoutesAsync();
+                //await mainVm.Init();
+                //await searchVm.LoadRoutesAsync();
                    
                 MainPivot.SelectedIndex = SettingsHelper.LaunchPivotIndex;
 
-                //await DatabaseHelper.CheckDatabasesAsync();
-                //await searchVm.LoadRoutesAsync();
-                //await mainVm.LoadAsync();
+                SettingsHelper.LoadSettings();
+                await DatabaseHelper.CheckDatabasesAsync();
+                await searchVm.LoadRoutesAsync();
+                await mainVm.LoadAsync();
 
                 RouteBox.IsEnabled = true;
                 LoadingRing.IsActive = false;
 
                 alreadyLoaded = true;
-
             }
         }
 

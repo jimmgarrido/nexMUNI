@@ -184,8 +184,9 @@ namespace nexMuni.Helpers
             try
             {
                 StorageFile muniDb = await ApplicationData.Current.LocalFolder.GetFileAsync("muni.sqlite");
+                var properties = await muniDb.GetBasicPropertiesAsync();
 
-                if (muniDb.DateCreated.Date <= expiryDate ||
+                if (properties.DateModified <= expiryDate ||
                     (isSaturday && (muniDb.DateCreated.Date != DateTime.Today.Date)))
                 {
                     throw new Exception("Database out of date");
@@ -200,19 +201,20 @@ namespace nexMuni.Helpers
             {
                 StorageFile dbFile;
 
+                await UIHelper.ShowStatusBar("Updating database");
                 try
                 {
-                    await UIHelper.ShowStatusBar("Updating database");
                     await MakeMuniDatabaseAsync();
                     SettingsHelper.DatabaseRefreshed(true);
-                    await UIHelper.HideStatusBar();
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
                     dbFile = await Package.Current.InstalledLocation.GetFileAsync("db\\muni.sqlite");
                     await dbFile.CopyAsync(ApplicationData.Current.LocalFolder, "muni.sqlite", NameCollisionOption.ReplaceExisting);
                     SettingsHelper.DatabaseRefreshed(false);
                 }
+
+                await UIHelper.HideStatusBar();
             }
 
             muniDbPath = Path.Combine(ApplicationData.Current.LocalFolder.Path, "muni.sqlite");
@@ -230,7 +232,7 @@ namespace nexMuni.Helpers
 
             await ApplicationData.Current.LocalFolder.CreateFileAsync("muni.sqlite", CreationCollisionOption.ReplaceExisting);
             var muniDb = await ApplicationData.Current.LocalFolder.GetFileAsync("muni.sqlite");
-
+           
             var _refreshAsyncConnection = new SQLiteAsyncConnection(() => new SQLiteConnectionWithLock(new SQLitePlatformWinRT(), new SQLiteConnectionString(muniDb.Path, false)));
 
             await _refreshAsyncConnection.CreateTableAsync<Stop>();
@@ -240,10 +242,14 @@ namespace nexMuni.Helpers
             });
 
             await _refreshAsyncConnection.CreateTableAsync<Route>();
-            foreach (var route in allRoutes)
+            await _refreshAsyncConnection.RunInTransactionAsync((SQLiteConnection transaction) =>
             {
-                await _refreshAsyncConnection.InsertAsync(route);
-            }
+                transaction.InsertAll(allRoutes);
+            });
+            //foreach (var route in allRoutes)
+            //{
+            //    await _refreshAsyncConnection.InsertAsync(route);
+            //}
 
             ////Create backup file
             //await muniDb.CopyAsync(ApplicationData.Current.LocalFolder, "backup.sqlite", NameCollisionOption.ReplaceExisting);

@@ -57,6 +57,7 @@ namespace nexMuni.Views
             FavoritesPivot.DataContext = mainVm;
             SearchPivot.DataContext = searchVm;
 
+            SettingsHelper.LoadSettings();
             await DatabaseHelper.CheckDatabasesAsync();
             await searchVm.LoadRoutesAsync();
             RouteBox.IsEnabled = true;

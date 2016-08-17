@@ -36,7 +36,7 @@ namespace nexMuni.Views
             PivotBox.SelectionChanged += ChangePivotSetting;
             TileSwitch.Toggled += TileSwitchToggled;
 
-            if(SettingsHelper.NearbyCount == 15)
+            if (SettingsHelper.NearbyCount == 15)
             {
                 CountBox.SelectedIndex = 0;
             }
@@ -48,7 +48,7 @@ namespace nexMuni.Views
 
             PivotBox.SelectedIndex = SettingsHelper.LaunchPivotIndex;
 
-            if(SettingsHelper.GetTileSetting())
+            if (SettingsHelper.TransparentTile == 1)
             {
                 TileSwitch.IsOn = true;
             }
@@ -56,6 +56,8 @@ namespace nexMuni.Views
             {
                 TileSwitch.IsOn = false;
             }
+
+            RefreshLabel.Text = SettingsHelper.RefreshedDate;
         }
 
         private void TileSwitchToggled(object sender, RoutedEventArgs e)
@@ -71,6 +73,29 @@ namespace nexMuni.Views
         private void ChangePivotSetting(object sender, SelectionChangedEventArgs e)
         {
             SettingsHelper.SetLaunchPivotSetting(((ComboBox) sender).SelectedIndex);
+        }
+
+        private async void RefreshData(object sender, RoutedEventArgs e)
+        {
+            RefreshButton.IsEnabled = false;
+            RefreshRing.IsActive = true;
+            //var refreshClient = new DataRefreshHelper();
+            //await refreshClient.RefreshDataAsync();
+
+            //TODO: Use better error handeling for database refresh
+            try
+            {
+                await DatabaseHelper.MakeMuniDatabaseAsync();
+                SettingsHelper.DatabaseRefreshed(true);
+            }
+            catch
+            {
+                SettingsHelper.DatabaseRefreshed(false);
+            }
+            RefreshRing.IsActive = false;
+            RefreshButton.IsEnabled = true;
+
+            RefreshLabel.Text = SettingsHelper.RefreshedDate;
         }
 
         private void NavigationHelper_LoadState(object sender, LoadStateEventArgs e)
