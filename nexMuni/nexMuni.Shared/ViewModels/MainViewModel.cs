@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,7 +11,6 @@ using nexMuni.Views;
 using System.ComponentModel;
 using Windows.UI.Xaml.Controls.Maps;
 using Windows.Devices.Geolocation;
-using System;
 
 namespace nexMuni.ViewModels
 {
