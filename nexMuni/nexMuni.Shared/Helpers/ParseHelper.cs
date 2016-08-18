@@ -22,7 +22,7 @@ namespace nexMuni.Helpers
             rootElements = document.Element("body").Elements("predictions");
             foreach(XElement predictionElement in rootElements)
             {
-                string routeTitle = ParseTitle(predictionElement);
+                string routeTitle = predictionElement.Attribute("routeTitle").Value;
                 routeNum = ParseRouteNum(predictionElement);
 
                 //Check to see if the route has already been added to the collection

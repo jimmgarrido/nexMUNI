@@ -1,7 +1,4 @@
-﻿using nexMuni.DataModels;
-using nexMuni.Helpers;
-using nexMuni.ViewModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,6 +13,11 @@ using Windows.UI.Xaml.Controls.Maps;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
+using nexMuni.DataModels;
+using nexMuni.Helpers;
+using nexMuni.ViewModels;
+using nexMUNI.Win10.Views;
+
 namespace nexMuni.Views
 {
     public sealed partial class MainPage : Page
@@ -23,7 +25,7 @@ namespace nexMuni.Views
         MainViewModel mainVm;
         SearchViewModel searchVm;
 
-        bool alreadyLoaded;
+        bool alreadyLoaded = false, hasSearched= false;
         int vehicleCounter = 0;
         DispatcherTimer refreshTimer;
 
@@ -31,36 +33,39 @@ namespace nexMuni.Views
         {
             this.InitializeComponent();
             this.NavigationCacheMode = NavigationCacheMode.Required;
-            MainPivot.SelectionChanged += PivotItemChanged;
-            LocationHelper.LocationChanged += UpdateLocationOnMap;
+
+            mainVm = new MainViewModel();
+            searchVm = new SearchViewModel();
+
+            NearbyPivot.DataContext = mainVm;
+            FavoritesPivot.DataContext = mainVm;
+            SearchPivot.DataContext = searchVm;
         }
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
 
+            //Hook up event handlers
+            MainPivot.SelectionChanged += PivotItemChanged;
+            LocationHelper.LocationChanged += UpdateLocationOnMap;
+            RouteBox.SelectionChanged += RouteSelected;
+            DirBox.SelectionChanged += DirectionSelected;
+            StopBox.SelectionChanged += StopSelected;
+
             if (!alreadyLoaded)
             {
-                mainVm = new MainViewModel();
-                searchVm = new SearchViewModel();
-                //searchVm.UpdateLocation += LocationUpdated;
+                //await mainVm.Init();
+                //await searchVm.LoadRoutesAsync();
+                   
+                MainPivot.SelectedIndex = SettingsHelper.LaunchPivotIndex;
 
-                NearbyPivot.DataContext = mainVm;
-                FavoritesPivot.DataContext = mainVm;
-                SearchPivot.DataContext = searchVm;
-
-                RouteBox.SelectionChanged += RouteSelected;
-                DirBox.SelectionChanged += DirectionSelected;
-                StopBox.SelectionChanged += StopSelected;
-
-                SettingsHelper.LoadNearbySetting();
-                SettingsHelper.LoadLaunchPivotSetting();
-                MainPivot.SelectedIndex = SettingsHelper.launchPivot;
-
+                SettingsHelper.LoadSettings();
                 await DatabaseHelper.CheckDatabasesAsync();
                 await searchVm.LoadRoutesAsync();
-                RouteBox.IsEnabled = true;
                 await mainVm.LoadAsync();
+
+                RouteBox.IsEnabled = true;
                 LoadingRing.IsActive = false;
 
                 alreadyLoaded = true;
@@ -74,7 +79,7 @@ namespace nexMuni.Views
             try {
                 DirBox.SelectedIndex = -1;
                 StopBox.SelectedIndex = -1;
-                await searchVm.LoadDirectionsAsync(((ComboBox)sender).SelectedItem.ToString());
+                await searchVm.LoadDirectionsAsync(((ComboBox)sender).SelectedItem as Route);
 
                 DirBox.Visibility = Visibility.Visible;
                 DirBox.SelectedIndex = 0;
@@ -132,24 +137,30 @@ namespace nexMuni.Views
                     if (FavoriteBtn.Label == "favorite")
                     {
                         FavoriteBtn.Click -= FavoriteSearch;
-                        FavoriteBtn.Click += UnfavoriteSearch;
-                        FavoriteBtn.Label = "unfavorite";
-                        FavoriteBtn.Icon = new SymbolIcon(Symbol.UnFavorite);
                     }
+
+                    FavoriteBtn.Click += UnfavoriteSearch;
+                    FavoriteBtn.Label = "unfavorite";
+                    FavoriteBtn.Icon = new SymbolIcon(Symbol.UnFavorite);
                 }
                 else
                 {
                     if (FavoriteBtn.Label == "unfavorite")
                     {
                         FavoriteBtn.Click -= UnfavoriteSearch;
-                        FavoriteBtn.Click += FavoriteSearch;
-                        FavoriteBtn.Label = "favorite";
-                        FavoriteBtn.Icon = new SymbolIcon(Symbol.Favorite);
                     }
+
+                    FavoriteBtn.Label = "favorite";
+                    FavoriteBtn.Icon = new SymbolIcon(Symbol.Favorite);
+                    FavoriteBtn.Click += FavoriteSearch;
                 }
+
+                FavoriteBtn.Visibility = Visibility.Visible;
+                DetailBtn.Visibility = Visibility.Visible;
                 FavoriteBtn.IsEnabled = true;
                 DetailBtn.IsEnabled = true;
 
+                hasSearched = true;
                 await ShowStopLocation();
             }
             catch(Exception)
@@ -328,14 +339,15 @@ namespace nexMuni.Views
             FavoriteBtn.Icon = new SymbolIcon(Symbol.Favorite);
             FavoriteBtn.Label = "favorite";
         }
+
         private void StopClicked(object sender, ItemClickEventArgs e)
         {
-            this.Frame.Navigate(typeof(StopDetail), e.ClickedItem);
+            Frame.Navigate(typeof(StopDetail), e.ClickedItem);
         }
 
         private void DetailButtonPressed(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(StopDetail), searchVm.SelectedStop);
+            Frame.Navigate(typeof(StopDetail), searchVm.SelectedStop);
         }
 
         private void GoToAbout(object sender, RoutedEventArgs e)
@@ -370,8 +382,11 @@ namespace nexMuni.Views
                     DetailBtn.Visibility = Visibility.Collapsed;
                     break;
                 case 2:
-                    FavoriteBtn.Visibility = Visibility.Visible;
-                    DetailBtn.Visibility = Visibility.Visible;
+                    if (hasSearched)
+                    {
+                        FavoriteBtn.Visibility = Visibility.Visible;
+                        DetailBtn.Visibility = Visibility.Visible;
+                    }
                     SortBtn.Visibility = Visibility.Collapsed;
                     RefreshBtn.Visibility = Visibility.Collapsed;
                     break;
@@ -382,7 +397,14 @@ namespace nexMuni.Views
         {
             base.OnNavigatedFrom(e);
 
-            if(refreshTimer != null && refreshTimer.IsEnabled)
+            //Unhook event handlers and stop timer
+            MainPivot.SelectionChanged -= PivotItemChanged;
+            LocationHelper.LocationChanged -= UpdateLocationOnMap;
+            RouteBox.SelectionChanged -= RouteSelected;
+            DirBox.SelectionChanged -= DirectionSelected;
+            StopBox.SelectionChanged -= StopSelected;
+
+            if (refreshTimer != null && refreshTimer.IsEnabled)
                 refreshTimer.Stop();
         }
     }

@@ -248,7 +248,7 @@
                 </AppBarButton>
                 <AppBarButton x:Name="SortBtn" Icon="Sort" Label="sort" Click="SortFavorites" Visibility="Collapsed" IsEnabled="False" Foreground="White"/>
                 <AppBarButton x:Name="DetailBtn" Icon="Go" Label="details" Click="DetailButtonPressed" Visibility="Collapsed" IsEnabled="False" Foreground="White"/>
-                <AppBarButton x:Name="FavoriteBtn" Icon="Favorite" Label="favorite" Visibility="Collapsed" IsEnabled="False" Foreground="White"/>
+                <AppBarButton x:Name="FavoriteBtn" Visibility="Collapsed" IsEnabled="False" Foreground="White"/>
             </CommandBar.PrimaryCommands>
             <CommandBar.SecondaryCommands>
                 <AppBarButton Label="settings" Click="GoToSettings" Foreground="White"/>
@@ -311,7 +311,21 @@
                 </Grid.RowDefinitions>
 
                 <StackPanel Background="#b31b1b" Padding="19,0,19,0" Grid.Row="0">
-                    <ComboBox x:Name="RouteBox" Header="Select Route" Style="{StaticResource ComboBoxStyle}" ItemsSource="{Binding RoutesList}" HorizontalAlignment="Stretch" IsEnabled="False"/>
+                    <ComboBox x:Name="RouteBox" Header="Select Route" Style="{StaticResource ComboBoxStyle}" ItemsSource="{Binding RoutesList}" HorizontalAlignment="Stretch" IsEnabled="False">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="55"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    
+                                    <TextBlock Text="{Binding RouteNumber}" Grid.Column="0" FontWeight="SemiBold"/>
+                                    <TextBlock Text="{Binding RouteName}" Grid.Column="1"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
                     <ComboBox x:Name="DirBox" Header="Select Direction" Style="{StaticResource ComboBoxStyle}" HorizontalAlignment="Stretch" ItemsSource="{Binding DirectionsList}" Visibility="Collapsed"/>
                     <ComboBox x:Name="StopBox" Header="Select Stop" Style="{StaticResource ComboBoxStyle}" ItemsSource="{Binding StopsList}" HorizontalAlignment="Stretch" Visibility="Collapsed">
                         <ComboBox.ItemTemplate>

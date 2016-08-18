@@ -123,3 +123,10 @@ _scale-100.appx
 [Bb]undle/
 [Bb]undleArtifacts/
 .vs/
+nexMuni/nexMuni.WindowsPhone/Package.StoreAssociation.xml
+nexMuni/nexMuni.WindowsPhone/Package.StoreAssociation.xml
+nexMuni/nexMuni.WindowsPhone/Package.appxmanifest
+nexMuni/nexMuni.WindowsPhone/Package.StoreAssociation.xml
+refresh.sqlite
+nexMuni/nexMUNI.Win10/project.json
+nexMuni/nexMUNI.Win10/project.lock.json

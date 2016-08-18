@@ -11,13 +11,12 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)DataModels\Alert.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModels\Bus.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)DataModels\FavoriteData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataModels\Favorite.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModels\Route.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModels\RouteDirection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModels\Stop.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)db\SQLite.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)db\SQLiteAsync.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\DatabaseHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\DataRefreshHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\ErrorHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\LocationHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\MapHelper.cs" />

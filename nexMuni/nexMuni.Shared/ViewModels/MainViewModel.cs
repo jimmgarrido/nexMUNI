@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -54,6 +55,8 @@ namespace nexMuni.ViewModels
             FavoriteStops = new ObservableCollection<Stop>();
 
             DatabaseHelper.FavoritesChanged += LoadFavoritesAsync;
+
+            //SettingsHelper.LoadSettings();
         }
 
         public async Task LoadAsync()
@@ -62,9 +65,17 @@ namespace nexMuni.ViewModels
             await UpdateNearbyStopsAsync();
         }
 
+        public async Task Init()
+        {
+            SettingsHelper.LoadSettings();
+            await DatabaseHelper.CheckDatabasesAsync();
+
+            await UpdateNearbyStopsAsync();
+        }
+
         public async Task UpdateNearbyStopsAsync()
         {
-            nearbyCount = SettingsHelper.nearbyCount;
+            nearbyCount = SettingsHelper.NearbyCount;
 
             //Make sure user has given permission to access location
             await LocationHelper.UpdateLocation();
@@ -118,9 +129,9 @@ namespace nexMuni.ViewModels
             }
         }
 
-        public async Task<List<List<BasicGeoposition>>> GetRoutePathAsync(string route)
+        public async Task<List<List<BasicGeoposition>>> GetRoutePathAsync(Route route)
         {
-            var xmlDoc = await WebHelper.GetRoutePathAsync(route);
+            var xmlDoc = await WebHelper.GetRoutePathAsync(route.RouteNumber);
             return await Task.Run(() => MapHelper.ParseRoutePath(xmlDoc));
         }
 
@@ -145,7 +156,7 @@ namespace nexMuni.ViewModels
 
         private void LoadFavoritesAsync()
         {
-            List<FavoriteData> favorites = DatabaseHelper.FavoritesList;
+            List<Favorite> favorites = DatabaseHelper.FavoritesList;
             FavoriteStops.Clear();
 
             if (favorites.Count == 0)
@@ -155,7 +166,7 @@ namespace nexMuni.ViewModels
             else
             {
                 NoFavoritesText = "";
-                foreach (FavoriteData fav in favorites)
+                foreach (Favorite fav in favorites)
                 {
                     Stop favStop = new Stop(fav.Name, "", fav.Routes, fav.Tags, fav.Lat, fav.Lon);
                     favStop.favId = fav.Id;

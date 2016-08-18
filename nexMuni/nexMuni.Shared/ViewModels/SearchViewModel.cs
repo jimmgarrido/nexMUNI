@@ -18,8 +18,8 @@ namespace nexMuni.ViewModels
     public class SearchViewModel : INotifyPropertyChanged
     {
         private string _searchTimes;
-        private string _selectedRoute;
-        private List<string> _routesList;
+        private Route _selectedRoute;
+        private List<Route> _routesList;
         private List<string> _directionsList;
         private List<Stop> _stopsList;
         private Stop _selectedStop;
@@ -42,7 +42,7 @@ namespace nexMuni.ViewModels
                 NotifyPropertyChanged("SearchTimes");
             }
         }
-        public string SelectedRoute
+        public Route SelectedRoute
         {
             get
             {
@@ -67,7 +67,7 @@ namespace nexMuni.ViewModels
             }
         }
 
-        public List<string> RoutesList
+        public List<Route> RoutesList
         {
             get
             {
@@ -130,24 +130,24 @@ namespace nexMuni.ViewModels
 
         public async Task LoadRoutesAsync()
         {
-            RoutesList = await DatabaseHelper.QueryForRoutes();
+            RoutesList = await DatabaseHelper.QueryForRoutesAsync();
         }
 
-        public async Task LoadDirectionsAsync(string route)
+        public async Task LoadDirectionsAsync(Route route)
         {
             SelectedRoute = route;
             SelectedStop = null;
 
-            if (route.Equals("Powell/Mason Cable Car")) route = "59";
-            else if (route.Equals("Powell/Hyde Cable Car")) route = "60";
-            else if (route.Equals("California Cable Car")) route = "61";
-            else
-            {
-                route = route.Substring(0, route.IndexOf('-'));
-            }
+            //if (route.Equals("Powell/Mason Cable Car")) route = "59";
+            //else if (route.Equals("Powell/Hyde Cable Car")) route = "60";
+            //else if (route.Equals("California Cable Car")) route = "61";
+            //else
+            //{
+            //    route = route.Substring(0, route.IndexOf('-'));
+            //}
 
             try {
-                var xmlDoc = await WebHelper.GetRouteDirections(route);
+                var xmlDoc = await WebHelper.GetRouteDirections(route.RouteNumber);
 
                 if (xmlDoc != null)
                 {
@@ -265,7 +265,7 @@ namespace nexMuni.ViewModels
         private void SyncFavoriteIds()
         {
             if (SelectedStop == null) return;
-            FavoriteData tempStop = DatabaseHelper.FavoritesList.ToList().Find(s => s.Name == SelectedStop.StopName);
+            Favorite tempStop = DatabaseHelper.FavoritesList.ToList().Find(s => s.Name == SelectedStop.StopName);
             if (tempStop == null) return;
             SelectedStop.favId = tempStop.Id;
         }

@@ -1,4 +1,5 @@
-﻿using Windows.Data.Xml.Dom;
+﻿using System;
+using Windows.Data.Xml.Dom;
 using Windows.Storage;
 using Windows.UI.Notifications;
 
@@ -6,13 +7,54 @@ namespace nexMuni.Helpers
 {
     public class SettingsHelper
     {
-        public static int nearbyCount;
-        public static int launchPivot;
+        //TODO: Should load ALL settings at launch. If new setting is set, then modify class property
+        public static int NearbyCount { get; set; }
+        public static int LaunchPivotIndex { get; set; }
+        public static int TransparentTile { get; set; }
+        public static string RefreshedDate { get; set; }
+
+        public static void LoadSettings()
+        {
+            var localSettings = ApplicationData.Current.LocalSettings;
+            var roamingSettings = ApplicationData.Current.RoamingSettings;
+
+            //Set default settings for first install
+            if (roamingSettings.Values["NearbyCount"] == null) 
+            {
+                roamingSettings.Values["NearbyCount"] = 15;
+            }
+
+            if (roamingSettings.Values["LaunchPivot"] == null)
+            {
+                roamingSettings.Values["LaunchPivot"] = "nearby";
+            }
+
+            if (roamingSettings.Values["TransparentTile"] == null)
+            {
+                roamingSettings.Values["TransparentTile"] = 1;
+            }
+
+            if (localSettings.Values["DatabaseRefreshed"] == null)
+            {
+                localSettings.Values["DatabaseRefreshed"] = "";
+            }
+
+
+            //Load settings
+            NearbyCount = (int) roamingSettings.Values["NearbyCount"];
+            TransparentTile = (int)roamingSettings.Values["TransparentTile"];
+
+            if ((string)roamingSettings.Values["LaunchPivot"] == "favorites")
+                LaunchPivotIndex = 1;
+            else
+                LaunchPivotIndex = 0;
+
+            RefreshedDate = (string) localSettings.Values["DatabaseRefreshed"];
+        }
 
         public static void LoadNearbySetting()
         {
             var settings = ApplicationData.Current.RoamingSettings;
-            var test = settings.Values["NearbyCount"];
             if (settings.Values["NearbyCount"] == null)
             {
                 settings.Values["NearbyCount"] = 15;
@@ -20,17 +62,18 @@ namespace nexMuni.Helpers
             else if ((int)settings.Values["NearbyCount"] == 0)
             {
                 settings.Values["NearbyCount"] = 15;
-                nearbyCount = 15;
+                NearbyCount = 15;
             }
             else if ((int)settings.Values["NearbyCount"] == 1)
             {
                 settings.Values["NearbyCount"] = 25;
-                nearbyCount = 25;
+                NearbyCount = 25;
             }
             else
             {
-                nearbyCount = (int) settings.Values["NearbyCount"];
+                NearbyCount = (int) settings.Values["NearbyCount"];
             }
+
         }
 
         public static void LoadLaunchPivotSetting()
@@ -43,11 +86,11 @@ namespace nexMuni.Helpers
 
             if ((string)settings.Values["LaunchPivot"] == "favorites")
             {
-                launchPivot = 1;
+                LaunchPivotIndex = 1;
             }
             else
             {
-                launchPivot = 0;
+                LaunchPivotIndex = 0;
             } 
         }
 
@@ -68,12 +111,12 @@ namespace nexMuni.Helpers
             if (index == 1)
             {
                 settings.Values["NearbyCount"] = 25;
-                nearbyCount = 25;
+                NearbyCount = 25;
             }
             else
             {
                 settings.Values["NearbyCount"] = 15;
-                nearbyCount = 15;
+                NearbyCount = 15;
             }
         }
 
@@ -83,12 +126,12 @@ namespace nexMuni.Helpers
             if (index == 1)
             {
                 settings.Values["LaunchPivot"] = "favorites";
-                launchPivot = 1;
+                LaunchPivotIndex = 1;
             }
             else
             {
                 settings.Values["LaunchPivot"] = "nearby";
-                launchPivot = 0;
+                LaunchPivotIndex = 0;
             }
         }
 
@@ -127,6 +170,22 @@ namespace nexMuni.Helpers
             TileNotification tileNotification = new TileNotification(mediumTileXml);
 
             TileUpdateManager.CreateTileUpdaterForApplication().Update(tileNotification);
+        }
+
+        public static void DatabaseRefreshed(bool successful)
+        {
+            var settings = ApplicationData.Current.LocalSettings;
+
+            if (successful)
+            {
+                settings.Values["DatabaseRefreshed"] = "Last refresh: " + DateTime.Today.ToString("d");
+            }
+            else
+            {
+                settings.Values["DatabaseRefreshed"] = "Last refresh was unsuccessful. Please try again.";
+            }
+
+            RefreshedDate = (string)settings.Values["DatabaseRefreshed"];
         }
     }
 }

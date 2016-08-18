@@ -38,7 +38,7 @@ namespace nexMuni.ViewModels
 
         public async Task<List<Bus>> GetBusLocations()
         {
-            var xmlDoc = await WebHelper.GetBusLocationsAsync(SelectedRoute.RouteNumber);
+            var xmlDoc = await WebHelper.GetBusLocationsAsync(SelectedRoute);
             return MapHelper.ParseBusLocations(xmlDoc);
         }
 

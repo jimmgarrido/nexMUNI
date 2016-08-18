@@ -1,14 +1,15 @@
-﻿using SQLite;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Windows.Devices.Geolocation;
 using System.Collections.ObjectModel;
+using SQLite.Net.Attributes;
 
 namespace nexMuni.DataModels
 {
+    [Table("RouteData")]
     public class Route : INotifyPropertyChanged, IDisposable
     {
         [PrimaryKey, AutoIncrement]
@@ -16,6 +17,7 @@ namespace nexMuni.DataModels
         public string Title { get; set; }
         public string RouteName { get; private set; }
         public string RouteNumber { get; private set; }
+        public string Color { get; private set; }
         //public List<RouteDirection> Directions { get
         //    {
         //        return _directions;
@@ -26,6 +28,7 @@ namespace nexMuni.DataModels
         //        NotifyPropertyChanged("Directions");
         //    }
         //}
+        [Ignore]
         public ObservableCollection<RouteDirection> Directions { get; set; }
 
         private string predictions1 = String.Empty;
@@ -37,9 +40,10 @@ namespace nexMuni.DataModels
 
         public Route(string name, string num)
         {
-            RouteName = name;
+            RouteName = ParseTitle(name);
             RouteNumber = num;
-            Title = string.Format("{0}-{1}", num, name);
+            Title = string.Join("-", RouteNumber, RouteName);
+            //Title = string.Format("{0}-{1}", num, name);
             //Directions = new List<RouteDirection>();
             Directions = new ObservableCollection<RouteDirection>();
         }
@@ -70,6 +74,31 @@ namespace nexMuni.DataModels
             stopLocation = new Geopoint(new BasicGeoposition { Latitude = lat, Longitude = lon });
         }
 
+        private string ParseTitle(string title)
+        {
+            var name = string.Empty;
+
+            if (title.Contains("-"))
+            {
+                int index = title.IndexOf('-');
+                name = title.Substring(index + 1, title.Length - (index + 1));
+            }
+            else
+            {
+                int index = title.IndexOf('"');
+                name = title.Substring(index + 1, (title.Length - (index + 2)));
+            }
+
+            //TODO: I don't think this does anything and might be safe to remove...
+            if(name.IndexOf('-') == 0)
+            {
+                int index = title.IndexOf('-');
+                name = title.Substring(index + 1, title.Length - (index + 1));
+            }
+
+            return name;
+        }
+
         #region INotify Methods
         private void NotifyPropertyChanged(string property)
         {
@@ -80,6 +109,7 @@ namespace nexMuni.DataModels
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+        #endregion
 
         #region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls
@@ -115,7 +145,6 @@ namespace nexMuni.DataModels
             // TODO: uncomment the following line if the finalizer is overridden above.
             // GC.SuppressFinalize(this);
         }
-        #endregion
         #endregion
     }
 }

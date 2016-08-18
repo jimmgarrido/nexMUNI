@@ -1,11 +1,12 @@
-﻿using SQLite;
+﻿using SQLite.Net.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace nexMuni.DataModels
 {
-    public class FavoriteData
+    [Table("FavoriteData")]
+    public class Favorite
     {
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
@@ -15,9 +16,9 @@ namespace nexMuni.DataModels
         public double Lat { get; set; }
         public double Lon { get; set; }
 
-        public FavoriteData() { }
+        public Favorite() { }
 
-        public FavoriteData(string stopName, string routes, string _tags, string d)
+        public Favorite(string stopName, string routes, string _tags, string d)
         {
             Name = stopName;
             this.Tags = _tags;

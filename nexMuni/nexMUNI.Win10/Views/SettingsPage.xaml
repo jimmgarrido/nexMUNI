@@ -33,18 +33,27 @@
             <TextBlock Text="settings" FontSize="36" Style="{ThemeResource HeaderTextBlockStyle}" Foreground="White"/>
         </StackPanel>
 
+        <!-- Content Area -->
         <StackPanel Grid.Row="1" Margin="19,0,19,0">
-            <ComboBox x:Name="CountBox" Header="Number of nearby stops" HorizontalAlignment="Stretch" Margin="0,0,0,5">
+            <ComboBox x:Name="CountBox" Header="Number of nearby stops" HorizontalAlignment="Stretch" Margin="0,0,0,10">
                 <ComboBoxItem Content="15" />
                 <ComboBoxItem Content="25" />
             </ComboBox>
 
-            <ComboBox x:Name="PivotBox" Header="Launch app into" HorizontalAlignment="Stretch" >
+            <ComboBox x:Name="PivotBox" Header="Launch app into" HorizontalAlignment="Stretch" Margin="0,0,0,15" >
                 <ComboBoxItem Content="nearby stops" />
                 <ComboBoxItem Content="favorites" />
             </ComboBox>
             
-            <ToggleSwitch x:Name="TileSwitch" Header="Use transperant tile" Margin="0,15,0,0" Grid.Row="1" />   
+            <ToggleSwitch x:Name="TileSwitch" Header="Use transperant tile" Margin="0,0,0,15" />
+
+            <StackPanel>
+                <Grid HorizontalAlignment="Left" Margin="0,0,0,5">
+                    <Button x:Name="RefreshButton" Content="Refresh Muni Data" Click="RefreshData"/>
+                    <ProgressRing x:Name="RefreshRing" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                </Grid>
+                <TextBlock x:Name="RefreshLabel" VerticalAlignment="Center"/>
+            </StackPanel>
         </StackPanel>
     </Grid>
 </Page>

@@ -203,6 +203,8 @@
     <Language Code="ky-kg" InMinimumRequirementSet="true" />
     <Language Code="lb" InMinimumRequirementSet="true" />
     <Language Code="lb-lu" InMinimumRequirementSet="true" />
+    <Language Code="lo" InMinimumRequirementSet="true" />
+    <Language Code="lo-la" InMinimumRequirementSet="true" />
     <Language Code="lt" InMinimumRequirementSet="true" />
     <Language Code="lt-lt" InMinimumRequirementSet="true" />
     <Language Code="lv" InMinimumRequirementSet="true" />
@@ -366,6 +368,8 @@
     <MainPackageIdentityName>10642JimmyGarrido.nexBART</MainPackageIdentityName>
     <MainPackageIdentityName>10642JimmyGarrido.nexBARTBeta</MainPackageIdentityName>
     <MainPackageIdentityName>10642JimmyGarrido.nexMuniBeta</MainPackageIdentityName>
+    <MainPackageIdentityName>10642JimmyGarrido.nexRide</MainPackageIdentityName>
+    <MainPackageIdentityName>10642JimmyGarrido.nexTransit</MainPackageIdentityName>
   </AccountPackageIdentityNames>
   <PackageInfoList LandingUrl="https://dev.windows.com/dashboard/Application?appId=9WZDNCRDQPQH" />
 </StoreAssociation>

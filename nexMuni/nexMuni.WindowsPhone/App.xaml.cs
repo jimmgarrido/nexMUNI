@@ -9,7 +9,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 using nexMuni.Views;
-using Microsoft.ApplicationInsights;
+using Microsoft.HockeyApp;
 
 namespace nexMuni.WindowsPhone
 {
@@ -26,12 +26,13 @@ namespace nexMuni.WindowsPhone
         public App()
         {
 #if !DEBUG
-            WindowsAppInitializer.InitializeAsync("1181ae3c-8eb6-4dd2-bb31-33e80f390dc7");
+            Microsoft.HockeyApp.HockeyClient.Current.Configure("1409ce6415594fb7acb3edad0ea0295e");
 #endif
 
             this.InitializeComponent();
             this.Suspending += this.OnSuspending;
         }
+
 
         /// <summary>
         /// Invoked when the application is launched normally by the end user.  Other entry points
@@ -49,6 +50,7 @@ namespace nexMuni.WindowsPhone
 #endif
 
             Frame rootFrame = Window.Current.Content as Frame;
+            await HockeyClient.Current.SendCrashesAsync(/* sendWithoutAsking: true */);
 
             // Do not repeat app initialization when the Window already has content,
             // just ensure that the window is active

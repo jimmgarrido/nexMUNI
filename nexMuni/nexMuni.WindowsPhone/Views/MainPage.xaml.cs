@@ -12,7 +12,6 @@ using Windows.UI.Xaml.Navigation;
 using nexMuni.DataModels;
 using nexMuni.Helpers;
 using nexMuni.ViewModels;
-using Microsoft.ApplicationInsights;
 using System.Collections.Generic;
 using Windows.UI;
 using Windows.UI.ViewManagement;
@@ -49,7 +48,7 @@ namespace nexMuni.Views
 
             SettingsHelper.LoadNearbySetting();
             SettingsHelper.LoadLaunchPivotSetting();
-            MainPivot.SelectedIndex = SettingsHelper.launchPivot;
+            MainPivot.SelectedIndex = SettingsHelper.LaunchPivotIndex;
 
             mainVm = new MainViewModel();
             searchVm = new SearchViewModel();
@@ -58,6 +57,7 @@ namespace nexMuni.Views
             FavoritesPivot.DataContext = mainVm;
             SearchPivot.DataContext = searchVm;
 
+            SettingsHelper.LoadSettings();
             await DatabaseHelper.CheckDatabasesAsync();
             await searchVm.LoadRoutesAsync();
             RouteBox.IsEnabled = true;
@@ -109,7 +109,7 @@ namespace nexMuni.Views
 #endif
             DirBox.SelectedIndex = -1;
             StopBox.SelectedIndex = -1;
-            await searchVm.LoadDirectionsAsync(((ComboBox)sender).SelectedItem.ToString());
+            await searchVm.LoadDirectionsAsync(((ComboBox)sender).SelectedItem as Route);
 
             DirLabel.Visibility = Visibility.Visible;
             DirBox.Visibility = Visibility.Visible;
@@ -296,7 +296,6 @@ namespace nexMuni.Views
 
         private async Task ShowStopLocation()
         {
-            var telemetry = new TelemetryClient();
             var stopLocation =  new Geopoint(new BasicGeoposition() { Latitude = searchVm.SelectedStop.Latitude, Longitude = searchVm.SelectedStop.Longitude });
             MapControl.SetNormalizedAnchorPoint(StopIcon, new Point(0.5, 1.0));
             MapControl.SetLocation(StopIcon, stopLocation);
@@ -307,7 +306,6 @@ namespace nexMuni.Views
             }
             catch(Exception ex)
             {
-                telemetry.TrackException(ex);
             }
         }
 
