@@ -50,7 +50,11 @@ namespace nexMuni.WindowsPhone
 #endif
 
             Frame rootFrame = Window.Current.Content as Frame;
+
+#if !DEBUG
             await HockeyClient.Current.SendCrashesAsync(/* sendWithoutAsking: true */);
+#endif
+
 
             // Do not repeat app initialization when the Window already has content,
             // just ensure that the window is active
