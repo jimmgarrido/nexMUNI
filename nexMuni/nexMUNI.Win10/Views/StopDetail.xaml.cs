@@ -127,7 +127,14 @@ namespace nexMuni.Views
             detailVm.StopTimer();
 
             if (e.Content.GetType() != typeof(RouteMapPage))
+            {
                 alreadyLoaded = false;
+
+                if (FavButton.Label == "favorite")
+                    FavButton.Click -= FavoriteBtnPressed;
+                else
+                    FavButton.Click -= UnfavoriteBtnPressed;
+            }
         }
 
         public NavigationHelper NavigationHelper
