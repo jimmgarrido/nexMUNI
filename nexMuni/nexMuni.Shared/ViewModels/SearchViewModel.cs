@@ -120,7 +120,7 @@ namespace nexMuni.ViewModels
         public SearchViewModel()
         {
             DatabaseHelper.FavoritesChanged += SyncFavoriteIds;
-            //MapCenter = new Geopoint(new BasicGeoposition() { Latitude = 37.7480, Longitude = -122.437 });
+            MapCenter = new Geopoint(new BasicGeoposition() { Latitude = 37.7480, Longitude = -122.437 });
 
             allStopsList = new List<Stop>();
             outboundStops = new List<string>();

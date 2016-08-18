@@ -428,7 +428,15 @@
                               ItemsSource="{Binding RoutesList}" IsEnabled="False" >
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
-                                <ContentControl Width="350" Content="{Binding}"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="55"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock Text="{Binding RouteNumber}" Grid.Column="0" FontWeight="SemiBold"/>
+                                    <TextBlock Text="{Binding RouteName}" Grid.Column="1"/>
+                                </Grid>
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
