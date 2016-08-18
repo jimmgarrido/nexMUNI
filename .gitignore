@@ -130,3 +130,5 @@ nexMuni/nexMuni.WindowsPhone/Package.StoreAssociation.xml
 refresh.sqlite
 nexMuni/nexMUNI.Win10/project.json
 nexMuni/nexMUNI.Win10/project.lock.json
+*.appxmanifest
+nexMuni/nexMuni.WindowsPhone/Package.appxmanifest
