@@ -415,8 +415,8 @@
             </Grid>
         </PivotItem>
 
-        <PivotItem x:Name="SearchPivot" Header="search" Foreground="White" Padding="-19">
-            <Grid HorizontalAlignment="Center" Width="400" Margin="0,0,0,0">
+        <PivotItem x:Name="SearchPivot" Header="search" Foreground="White" Padding="-20">
+            <Grid HorizontalAlignment="Stretch">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="260"/>
                     <RowDefinition Height="350"/>
@@ -430,12 +430,12 @@
                             <DataTemplate>
                                 <Grid>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="55"/>
+                                        <ColumnDefinition Width="70"/>
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
 
-                                    <TextBlock Text="{Binding RouteNumber}" Grid.Column="0" FontWeight="SemiBold"/>
-                                    <TextBlock Text="{Binding RouteName}" Grid.Column="1"/>
+                                    <TextBlock Text="{Binding RouteNumber}" FontSize="21.5" Grid.Column="0" FontWeight="SemiBold"/>
+                                    <TextBlock Text="{Binding RouteName}" FontSize="23" Grid.Column="1"/>
                                 </Grid>
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
