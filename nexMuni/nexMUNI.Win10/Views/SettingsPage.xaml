@@ -14,8 +14,8 @@
             <Setter Property="Margin" Value="0,5,0,5"/>
         </Style>
     </Page.Resources>
-    
-    <Grid x:Name="LayoutRoot">
+
+    <Grid x:Name="LayoutRoot" Background="#b31b1b">
 
         <Grid.ChildrenTransitions>
             <TransitionCollection>
@@ -54,6 +54,12 @@
                 </Grid>
                 <TextBlock x:Name="RefreshLabel" VerticalAlignment="Center"/>
             </StackPanel>
+
+            <TextBlock x:Name="LocationSettingsLink" Margin="0,25,0,0">
+                <Hyperlink NavigateUri="ms-settings:privacy-location" Foreground="#FFFFFFFF">
+                    <Run Text="Change location settings" />
+                </Hyperlink>
+            </TextBlock>
         </StackPanel>
     </Grid>
 </Page>

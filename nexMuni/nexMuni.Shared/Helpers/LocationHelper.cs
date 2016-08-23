@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Windows.Devices.Geolocation;
 using Windows.UI.ViewManagement;
 using nexMuni.DataModels;
+using System.Diagnostics;
 
 namespace nexMuni.Helpers
 {
@@ -33,26 +34,42 @@ namespace nexMuni.Helpers
             switch(accessStatus)
             {
                 case GeolocationAccessStatus.Allowed:
-                    if (geolocator == null) geolocator = new Geolocator { DesiredAccuracyInMeters = 50 };
-                    Location = await geolocator.GetGeopositionAsync(TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(30));
-                    latitude = Point.Position.Latitude;
-                    longitude = Point.Position.Longitude;
-                    LocationChanged?.Invoke();
+                    if (geolocator == null) geolocator = new Geolocator { DesiredAccuracyInMeters = 150 };
+
+                    try
+                    {
+                        Location = await geolocator.GetGeopositionAsync(TimeSpan.FromSeconds(15), TimeSpan.FromSeconds(20));
+                        Debug.WriteLine("Got Location");
+                        latitude = Point.Position.Latitude;
+                        longitude = Point.Position.Longitude;
+                        LocationChanged?.Invoke();
+                    }
+                    catch (Exception)
+                    {
+
+                    }
                     break;                    
             }
 #else
 
-            if (geolocator == null) geolocator = new Geolocator { DesiredAccuracyInMeters = 50 };
+            if (geolocator == null) geolocator = new Geolocator { DesiredAccuracy = PositionAccuracy.Default };
             if (geolocator.LocationStatus == PositionStatus.Disabled)
             {
                 //MainPage.noNearbyText.Text = "Location services disabled";
             }
             else
             {
-                Location = await geolocator.GetGeopositionAsync(TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(30));
-                latitude = Point.Position.Latitude;
-                longitude = Point.Position.Longitude;
-                LocationChanged?.Invoke();
+                try
+                {
+                    Location = await geolocator.GetGeopositionAsync(TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(30));
+                    latitude = Point.Position.Latitude;
+                    longitude = Point.Position.Longitude;
+                    LocationChanged?.Invoke();
+                }
+                catch (Exception)
+                {
+
+                }
             }
 #endif
 

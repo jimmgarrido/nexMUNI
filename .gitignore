@@ -132,3 +132,5 @@ nexMuni/nexMUNI.Win10/project.json
 nexMuni/nexMUNI.Win10/project.lock.json
 *.appxmanifest
 nexMuni/nexMuni.WindowsPhone/Package.appxmanifest
+nexMuni/nexMUNI.Win10/_scale-125.appx
+nexMuni/nexMUNI.Win10/_scale-400.appx

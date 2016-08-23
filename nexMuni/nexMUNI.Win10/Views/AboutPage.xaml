@@ -8,7 +8,7 @@
     mc:Ignorable="d"
     Background="#FFB31B1B" Foreground="White">
 
-    <Grid x:Name="LayoutRoot">
+    <Grid x:Name="LayoutRoot" Background="#b31b1b">
 
         <Grid.ChildrenTransitions>
             <TransitionCollection>

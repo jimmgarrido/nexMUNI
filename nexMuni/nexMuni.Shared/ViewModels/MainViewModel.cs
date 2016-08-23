@@ -54,7 +54,7 @@ namespace nexMuni.ViewModels
             NearbyStops = new ObservableCollection<Stop>();
             FavoriteStops = new ObservableCollection<Stop>();
 
-            DatabaseHelper.FavoritesChanged += LoadFavoritesAsync;
+            DatabaseHelper.FavoritesChanged += LoadFavorites;
 
             //SettingsHelper.LoadSettings();
         }
@@ -154,7 +154,7 @@ namespace nexMuni.ViewModels
             sorted = true;
         }
 
-        private void LoadFavoritesAsync()
+        private void LoadFavorites()
         {
             List<Favorite> favorites = DatabaseHelper.FavoritesList;
             FavoriteStops.Clear();
@@ -176,7 +176,7 @@ namespace nexMuni.ViewModels
             
             //Check if any stops in NearbyStops are also favorites so users have the ability to remove them
             SyncFavoriteIds();
-            FavoritesDistances();
+            //FavoritesDistances();
             if (sorted) SortFavorites();
         }
 
