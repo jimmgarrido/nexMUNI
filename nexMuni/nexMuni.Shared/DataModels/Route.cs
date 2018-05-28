@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using Windows.Devices.Geolocation;
 using System.Collections.ObjectModel;
-using SQLite.Net.Attributes;
+using SQLite;
 
 namespace nexMuni.DataModels
 {

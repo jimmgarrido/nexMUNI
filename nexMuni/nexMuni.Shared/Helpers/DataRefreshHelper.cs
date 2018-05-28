@@ -1,8 +1,5 @@
 ﻿using nexMuni.DataModels;
 using SQLite;
-using SQLite.Net;
-using SQLite.Net.Async;
-using SQLite.Net.Platform.WinRT;
 using System;
 using System.Collections.Generic;
 using System.IO;

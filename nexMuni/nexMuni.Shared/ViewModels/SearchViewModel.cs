@@ -130,7 +130,7 @@ namespace nexMuni.ViewModels
 
         public async Task LoadRoutesAsync()
         {
-            RoutesList = await DatabaseHelper.QueryForRoutesAsync();
+            //RoutesList = await DatabaseHelper.QueryForRoutesAsync();
         }
 
         public async Task LoadDirectionsAsync(Route route)

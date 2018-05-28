@@ -1,7 +1,6 @@
 ﻿<Page
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:nexMuni.ViewModels"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Class="nexMuni.Views.StopDetail"
@@ -107,11 +106,11 @@
             </Grid>
         </DataTemplate>
 
-        <local:TimesTemplateSelector x:Key="TemplateSelector"
+        <!--<local:TimesTemplateSelector x:Key="TemplateSelector"
                                      oneDirection="{StaticResource OneDirection}"
                                      twoDirection="{StaticResource TwoDirection}"
                                      threeDirection="{StaticResource ThreeDirection}"
-                                     fourDirection="{StaticResource FourDirection}"/>
+                                     fourDirection="{StaticResource FourDirection}"/>-->
         
         <Thickness x:Key="PivotPortraitThemePadding">19,38,0,0</Thickness>
         <Thickness x:Key="PivotLandscapeThemePadding">19,25,0,0</Thickness>

@@ -14,11 +14,9 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-
-using Microsoft.HockeyApp;
 using nexMuni.Views;
 
-namespace nexMUNI.Win10
+namespace nexMUNI
 {
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
@@ -31,9 +29,6 @@ namespace nexMUNI.Win10
         /// </summary>
         public App()
         {
-#if !DEBUG
-            Microsoft.HockeyApp.HockeyClient.Current.Configure("1409ce6415594fb7acb3edad0ea0295e");
-#endif
             this.InitializeComponent();
             this.Suspending += OnSuspending;
         }

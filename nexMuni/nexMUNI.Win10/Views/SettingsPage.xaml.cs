@@ -1,5 +1,4 @@
 ﻿using nexMuni.Common;
-using nexMuni.Helpers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -35,67 +34,22 @@ namespace nexMuni.Views
             CountBox.SelectionChanged += ChangeNearbyCount;
             PivotBox.SelectionChanged += ChangePivotSetting;
             TileSwitch.Toggled += TileSwitchToggled;
-
-            if (SettingsHelper.NearbyCount == 15)
-            {
-                CountBox.SelectedIndex = 0;
-            }
-            else
-            {
-                CountBox.SelectedIndex = 1;
-            }
-
-
-            PivotBox.SelectedIndex = SettingsHelper.LaunchPivotIndex;
-
-            if (SettingsHelper.TransparentTile == 1)
-            {
-                TileSwitch.IsOn = true;
-            }
-            else
-            {
-                TileSwitch.IsOn = false;
-            }
-
-            RefreshLabel.Text = SettingsHelper.RefreshedDate;
         }
 
         private void TileSwitchToggled(object sender, RoutedEventArgs e)
         {
-            SettingsHelper.TileSwitchToggled(((ToggleSwitch)sender).IsOn);
         }
 
         private void ChangeNearbyCount(object sender, SelectionChangedEventArgs e)
         {
-            SettingsHelper.SetNearbySetting(((ComboBox) sender).SelectedIndex);
         }
 
         private void ChangePivotSetting(object sender, SelectionChangedEventArgs e)
         {
-            SettingsHelper.SetLaunchPivotSetting(((ComboBox) sender).SelectedIndex);
         }
 
         private async void RefreshData(object sender, RoutedEventArgs e)
         {
-            RefreshButton.IsEnabled = false;
-            RefreshRing.IsActive = true;
-            //var refreshClient = new DataRefreshHelper();
-            //await refreshClient.RefreshDataAsync();
-
-            //TODO: Use better error handeling for database refresh
-            try
-            {
-                await DatabaseHelper.MakeMuniDatabaseAsync();
-                SettingsHelper.DatabaseRefreshed(true);
-            }
-            catch
-            {
-                SettingsHelper.DatabaseRefreshed(false);
-            }
-            RefreshRing.IsActive = false;
-            RefreshButton.IsEnabled = true;
-
-            RefreshLabel.Text = SettingsHelper.RefreshedDate;
         }
 
         private void NavigationHelper_LoadState(object sender, LoadStateEventArgs e)

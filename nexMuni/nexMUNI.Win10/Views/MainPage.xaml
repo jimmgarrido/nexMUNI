@@ -6,10 +6,13 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:Maps="using:Windows.UI.Xaml.Controls.Maps"
+    xmlns:vm="using:NexMuni.ViewModels"
     mc:Ignorable="d"
     Background="#b31b1b">
     
     <Page.Resources>
+        <vm:SearchViewModel x:Key="SearchVM" x:Name="SearchVM"/>
+        
         <Style x:Key="MainPivotStyle" TargetType="Pivot">
             <Setter Property="Margin" Value="0"/>
             <Setter Property="Padding" Value="0"/>
@@ -34,7 +37,9 @@
                                     <Setter Property="Template">
                                         <Setter.Value>
                                             <ControlTemplate TargetType="ContentControl">
-                                                <ContentPresenter ContentTemplate="{TemplateBinding ContentTemplate}" ContentTransitions="{TemplateBinding ContentTransitions}" Content="{TemplateBinding Content}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" OpticalMarginAlignment="TrimSideBearings" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                                <ContentPresenter ContentTemplate="{TemplateBinding ContentTemplate}" ContentTransitions="{TemplateBinding ContentTransitions}" 
+                                                                  Content="{TemplateBinding Content}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" 
+                                                                  OpticalMarginAlignment="TrimSideBearings" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
                                             </ControlTemplate>
                                         </Setter.Value>
                                     </Setter>
@@ -270,7 +275,7 @@
         </VisualStateGroup>
     </VisualStateManager.VisualStateGroups>
 
-    <Pivot x:Name="MainPivot" Background="White" Margin="0,-5,0,0" Style="{StaticResource MainPivotStyle}">
+    <Pivot x:Name="MainPivot" Background="White" Style="{StaticResource MainPivotStyle}">
         <PivotItem x:Name="NearbyPivot" Header="nearby">
             <Grid>
                 <ProgressRing x:Name="LoadingRing" Visibility="Visible" Foreground="#b31b1b" Height="40" Width="40" IsActive="True" />
@@ -303,7 +308,7 @@
             </Grid>
         </PivotItem>
 
-        <PivotItem x:Name="SearchPivot" Header="search" Padding="-19,0,-19,0">
+        <PivotItem x:Name="SearchPivot" Header="search" Padding="-12,0,-12,0" DataContext="{StaticResource SearchVM}">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="240"/>
@@ -311,7 +316,8 @@
                 </Grid.RowDefinitions>
 
                 <StackPanel Background="#b31b1b" Padding="19,0,19,0" Grid.Row="0">
-                    <ComboBox x:Name="RouteBox" Header="Select Route" Style="{StaticResource ComboBoxStyle}" ItemsSource="{Binding RoutesList}" HorizontalAlignment="Stretch" IsEnabled="False">
+                    <ComboBox x:Name="RouteBox" Header="Select Route" Style="{StaticResource ComboBoxStyle}" IsEnabled="{Binding RouteBoxEnabled}"
+                              ItemsSource="{Binding Routes}" HorizontalAlignment="Stretch" SelectedItem="{Binding SelectedRoute, Mode=TwoWay}" SelectionChanged="RouteSelected">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <Grid>
@@ -320,18 +326,28 @@
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
                                     
-                                    <TextBlock Text="{Binding RouteNumber}" Grid.Column="0" FontWeight="SemiBold"/>
-                                    <TextBlock Text="{Binding RouteName}" Grid.Column="1"/>
+                                    <TextBlock Text="{Binding Tag}" Grid.Column="0" FontWeight="SemiBold"/>
+                                    <TextBlock Text="{Binding Title}" Grid.Column="1"/>
                                 </Grid>
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
-                    <ComboBox x:Name="DirBox" Header="Select Direction" Style="{StaticResource ComboBoxStyle}" HorizontalAlignment="Stretch" ItemsSource="{Binding DirectionsList}" Visibility="Collapsed"/>
-                    <ComboBox x:Name="StopBox" Header="Select Stop" Style="{StaticResource ComboBoxStyle}" ItemsSource="{Binding StopsList}" HorizontalAlignment="Stretch" Visibility="Collapsed">
+
+                    <ComboBox x:Name="DirBox" Header="Select Direction" Style="{StaticResource ComboBoxStyle}" IsEnabled="{Binding DirBoxEnabled}"
+                              HorizontalAlignment="Stretch" ItemsSource="{Binding RouteConfig.Directions}" SelectedItem="{Binding SelectedDirection, Mode=TwoWay}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
-                                <ContentControl Content="{Binding Path=StopName}"/>
+                                <TextBlock Text="{Binding Title}"/>
                             </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+
+                    <ComboBox x:Name="StopBox" Header="Select Stop" Style="{StaticResource ComboBoxStyle}" IsEnabled="{Binding StopBoxEnabled}"
+                              HorizontalAlignment="Stretch" ItemsSource="{Binding Stops}">
+                        <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Title}"/>
+                        </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
 
