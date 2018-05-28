@@ -148,9 +148,26 @@ namespace NexMuni.ViewModels
             }
         }
 
+        public Stop SelectedStop
+        {
+            get
+            {
+                return selectedStop;
+            }
+            set
+            {
+                if (value != selectedStop)
+                {
+                    selectedStop = value;
+                    LoadTimesForStop();
+                }
+            }
+        }       
+
         Route selectedRoute;
         RouteConfiguration routeConfig;
         Direction selectedDirection;
+        Stop selectedStop;
 
         public Geopoint MapCenter
         {
@@ -165,7 +182,21 @@ namespace NexMuni.ViewModels
             }
         }
 
+        public string PredictionTimes
+        {
+            get { return predictionTimes; }
+            set
+            {
+                if(value != predictionTimes)
+                {
+                    predictionTimes = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
         Geopoint mapCenter;
+        string predictionTimes;
 
         public SearchViewModel()
         {
@@ -195,6 +226,21 @@ namespace NexMuni.ViewModels
             }
 
             Stops = stops;
+        }
+
+        async void LoadTimesForStop()
+        {
+            var test = await WebHelper.Client.GetPredictionForStopTag(SelectedRoute.Tag, SelectedStop.Tag);
+
+            var predictions = test?.Direction?.Predictions?.Take(3);
+            var times = String.Empty;
+
+            foreach(var p in predictions)
+            {
+                times += p.Minutes + ","; 
+            }
+
+            PredictionTimes = times;
         }
     }
 }

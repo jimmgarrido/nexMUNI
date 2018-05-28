@@ -310,12 +310,12 @@
 
         <PivotItem x:Name="SearchPivot" Header="search" Padding="-12,0,-12,0" DataContext="{StaticResource SearchVM}">
             <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="240"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="500"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
 
-                <StackPanel Background="#b31b1b" Padding="19,0,19,0" Grid.Row="0">
+                <StackPanel Background="#b31b1b" Padding="19,0,19,0" Grid.Column="0">
                     <ComboBox x:Name="RouteBox" Header="Select Route" Style="{StaticResource ComboBoxStyle}" IsEnabled="{Binding RouteBoxEnabled}"
                               ItemsSource="{Binding Routes}" HorizontalAlignment="Stretch" SelectedItem="{Binding SelectedRoute, Mode=TwoWay}" SelectionChanged="RouteSelected">
                         <ComboBox.ItemTemplate>
@@ -343,7 +343,7 @@
                     </ComboBox>
 
                     <ComboBox x:Name="StopBox" Header="Select Stop" Style="{StaticResource ComboBoxStyle}" IsEnabled="{Binding StopBoxEnabled}"
-                              HorizontalAlignment="Stretch" ItemsSource="{Binding Stops}">
+                              HorizontalAlignment="Stretch" ItemsSource="{Binding Stops}" SelectedItem="{Binding SelectedStop, Mode=TwoWay}">
                         <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Title}"/>
@@ -351,10 +351,10 @@
                         </ComboBox.ItemTemplate>
                     </ComboBox>
 
-                    <TextBlock x:Name="SearchTimes" Text="{Binding SearchTimes}" HorizontalAlignment="Center" Margin="0,5,0,0" FontSize="21" FontWeight="SemiBold" Visibility="Collapsed" />
+                    <TextBlock x:Name="SearchTimes" Text="{Binding PredictionTimes}" HorizontalAlignment="Center" Margin="0,5,0,0" FontSize="21" FontWeight="SemiBold" />
                 </StackPanel>
 
-                <Maps:MapControl x:Name="SearchMap" Center="{Binding MapCenter}" Grid.Row="1"
+                <Maps:MapControl x:Name="SearchMap" Center="{Binding MapCenter}" Grid.Column="1"
                                 VerticalAlignment="Stretch" HorizontalAlignment="Stretch" ZoomLevel="11.40"
                                 MapServiceToken="s2f4CjGPV6MOUDb98nLK~DmNiG9uHKyAyOF5haOKLCA~AkTKqZV2aw9t9mH8w5KYONdnKnBGBL80hdNNSKY6YsC0HAc_qm3o9lgxui2Eu7Sr" >
                     <Maps:MapControl.Children>
