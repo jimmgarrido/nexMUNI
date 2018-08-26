@@ -109,8 +109,18 @@ namespace NexMuni.ViewModels
                 if(value != selectedRoute)
                 {
                     selectedRoute = value;
-                    LoadRouteConfig();
+
+                    if( selectedRoute == null)
+                    {
+                        SelectedDirection = null;
+                    }
+                    else
+                    {
+                        LoadRouteConfig();
+                    }
+
                     DirBoxEnabled = true;
+                    RaisePropertyChanged();
                 }
             }
         }
@@ -142,8 +152,14 @@ namespace NexMuni.ViewModels
                 if (value != selectedDirection)
                 {
                     selectedDirection = value;
-                    LoadStopsForDirection();
+
+                    if (selectedDirection == null)
+                        SelectedStop = null;
+                    else
+                        LoadStopsForDirection();
+
                     StopBoxEnabled = true;
+                    RaisePropertyChanged();
                 }
             }
         }
@@ -159,7 +175,11 @@ namespace NexMuni.ViewModels
                 if (value != selectedStop)
                 {
                     selectedStop = value;
-                    LoadTimesForStop();
+
+                    if (selectedStop != null)
+                        LoadTimesForStop();
+
+                    RaisePropertyChanged();
                 }
             }
         }       
@@ -235,12 +255,19 @@ namespace NexMuni.ViewModels
             var predictions = test?.Direction?.Predictions?.Take(3);
             var times = String.Empty;
 
-            foreach(var p in predictions)
+            if (predictions == null)
             {
-                times += p.Minutes + ","; 
+                PredictionTimes = "No currently running";
             }
+            else
+            {
+                foreach (var p in predictions)
+                {
+                    times += p.Minutes + ",";
+                }
 
-            PredictionTimes = times;
+                PredictionTimes = times;
+            }
         }
     }
 }
