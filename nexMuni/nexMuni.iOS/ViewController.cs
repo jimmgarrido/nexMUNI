@@ -15,7 +15,9 @@ namespace NexMuni.iOS
         CLLocationCoordinate2D mapCenter = new CLLocationCoordinate2D(37.769031, -122.460487);
         List<Vehicle> vehicleList;
         List<Vehicle> newVehicleList;
-        bool isToggled = false;
+        List<Vehicle> redesignedList;
+        UIBarButtonItem filterBtn;
+        List<int> redesignedIds = new List<int> { 1448, 1423, 1440, 1412, 1510, 1442, 1474, 1421, 1455, 1447, 1537, 1446 };
 
         public ViewController (IntPtr handle) : base (handle)
         {
@@ -31,7 +33,8 @@ namespace NexMuni.iOS
             mapView.SetRegion(MKCoordinateRegion.FromDistance(mapCenter, 11500, 11500), false);
             mapView.Delegate = new MapDelegate();
 
-            SetToolbarItems(new UIBarButtonItem[] { new UIBarButtonItem("Filter", UIBarButtonItemStyle.Plain, ShowFilters) }, true);
+            filterBtn = new UIBarButtonItem("Showing all", UIBarButtonItemStyle.Plain, ShowFilters);
+            SetToolbarItems(new UIBarButtonItem[] { filterBtn }, true);
         }
 
         public override void DidReceiveMemoryWarning ()
@@ -48,6 +51,7 @@ namespace NexMuni.iOS
             vehicleList = await client.GetVehicleLocations("N");
 
             newVehicleList = vehicleList.FindAll(x => x.Id.ToString().StartsWith("2") && !string.IsNullOrEmpty(x.Direction));
+            redesignedList = vehicleList.FindAll(x => redesignedIds.Contains(x.Id));
 
             AddVehiclesToMap(vehicleList);
         }
@@ -61,7 +65,6 @@ namespace NexMuni.iOS
             foreach (var v in vehicles)
             {
                 coord = new CLLocationCoordinate2D(v.Latitude, v.Longitude);
-
                 mapView.AddAnnotation(new VehicleMapAnnotation(v, coord));
             }
         }
@@ -84,9 +87,15 @@ namespace NexMuni.iOS
             {
                 case "all":
                     AddVehiclesToMap(vehicleList);
+                    filterBtn.Title = "Showing all";
                     break;
                 case "new":
                     AddVehiclesToMap(newVehicleList);
+                    filterBtn.Title = "Showing new";
+                    break;
+                case "redesigned":
+                    AddVehiclesToMap(redesignedList);
+                    filterBtn.Title = "Showing new";
                     break;
             }
         }
@@ -115,11 +124,11 @@ namespace NexMuni.iOS
                     if (view == null)
                     {
                         view = new MKAnnotationView(annotation, inbound);
-                        view.Image = UIImage.FromFile("inbound.png");
+                        view.Image = UIImage.FromBundle("Inbound");
                     }
 
                     view.Transform = CGAffineTransform.MakeIdentity();
-                    view.Transform = CGAffineTransform.MakeRotation(currentAnnotation.Vehicle.Heading);
+                    view.Transform = CGAffineTransform.MakeRotation((nfloat)(currentAnnotation.Vehicle.Heading * (Math.PI/180)));
                     return view;
                 }
                 else
@@ -128,12 +137,12 @@ namespace NexMuni.iOS
 
                     if (view == null)
                     {
-                        view = new MKAnnotationView(annotation, inbound);
-                        view.Image = UIImage.FromFile("outbound.png");
+                        view = new MKAnnotationView(annotation, outbound);
+                        view.Image = UIImage.FromBundle("Outbound");
                     }
 
                     view.Transform = CGAffineTransform.MakeIdentity();
-                    view.Transform = CGAffineTransform.MakeRotation(currentAnnotation.Vehicle.Heading);
+                    view.Transform = CGAffineTransform.MakeRotation((nfloat)(currentAnnotation.Vehicle.Heading * (Math.PI / 180)));
                     return view;
                 }
             }
@@ -143,7 +152,7 @@ namespace NexMuni.iOS
             if (view == null)
             {
                 view = new MKAnnotationView(annotation, unknown);
-                view.Image = UIImage.FromFile("marker.png");
+                view.Image = UIImage.FromBundle("Marker");
             }
 
             return view;

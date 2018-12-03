@@ -1,0 +1,24 @@
+{
+  "images": [
+    {
+      "scale": "1x",
+      "idiom": "universal",
+      "filename": "outbound.png"
+    },
+    {
+      "scale": "2x",
+      "idiom": "universal",
+      "filename": "outbound1.png"
+    },
+    {
+      "scale": "3x",
+      "idiom": "universal",
+      "filename": "outbound2.png"
+    }
+  ],
+  "properties": {},
+  "info": {
+    "version": 1,
+    "author": ""
+  }
+}
