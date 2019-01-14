@@ -7,6 +7,7 @@ using System;
 using UIKit;
 using NextBus.Models;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace NexMuni.iOS
 {
@@ -16,8 +17,10 @@ namespace NexMuni.iOS
         List<Vehicle> vehicleList;
         List<Vehicle> newVehicleList;
         List<Vehicle> redesignedList;
-        UIBarButtonItem filterBtn;
+        UIBarButtonItem filterBtn, refreshBtn, routeBtn, flexSpace;
         List<int> redesignedIds = new List<int> { 1448, 1423, 1440, 1412, 1510, 1442, 1474, 1421, 1455, 1447, 1537, 1446 };
+        NextBusClient client;
+        string currentFilter, currentRoute;
 
         public ViewController (IntPtr handle) : base (handle)
         {
@@ -34,7 +37,16 @@ namespace NexMuni.iOS
             mapView.Delegate = new MapDelegate();
 
             filterBtn = new UIBarButtonItem("Showing all", UIBarButtonItemStyle.Plain, ShowFilters);
-            SetToolbarItems(new UIBarButtonItem[] { filterBtn }, true);
+            refreshBtn = new UIBarButtonItem("Refresh", UIBarButtonItemStyle.Plain, RefreshVehicles);
+            routeBtn = new UIBarButtonItem("Route", UIBarButtonItemStyle.Plain, ShowRoutes);
+            flexSpace = new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace);
+
+            SetToolbarItems(new UIBarButtonItem[] { filterBtn, flexSpace, refreshBtn}, true);
+
+            NavigationItem.SetRightBarButtonItem(routeBtn, true);
+
+            currentFilter = "all";
+            currentRoute = "N";
         }
 
         public override void DidReceiveMemoryWarning ()
@@ -47,12 +59,7 @@ namespace NexMuni.iOS
         {
             base.ViewDidAppear(animated);
 
-            var client = new NextBusClient("sf-muni");
-            vehicleList = await client.GetVehicleLocations("N");
-
-            newVehicleList = vehicleList.FindAll(x => x.Id.ToString().StartsWith("2") && !string.IsNullOrEmpty(x.Direction));
-            redesignedList = vehicleList.FindAll(x => redesignedIds.Contains(x.Id));
-
+            await LoadRouteData();
             AddVehiclesToMap(vehicleList);
         }
 
@@ -81,23 +88,79 @@ namespace NexMuni.iOS
             PresentViewController(alert, true, null);
         }
 
-        void FilterVehicles(string filter)
+        void ShowRoutes(object sender, EventArgs args)
         {
-            switch (filter)
+            var alert = UIAlertController.Create("", "Select Route", UIAlertControllerStyle.ActionSheet);
+
+            alert.AddAction(UIAlertAction.Create("E", UIAlertActionStyle.Default, a => ChangeRoute("E")));
+            alert.AddAction(UIAlertAction.Create("F", UIAlertActionStyle.Default, a => ChangeRoute("F")));
+            alert.AddAction(UIAlertAction.Create("J", UIAlertActionStyle.Default, a => ChangeRoute("J")));
+            alert.AddAction(UIAlertAction.Create("K", UIAlertActionStyle.Default, a => ChangeRoute("K")));
+            alert.AddAction(UIAlertAction.Create("L", UIAlertActionStyle.Default, a => ChangeRoute("L")));
+            alert.AddAction(UIAlertAction.Create("M", UIAlertActionStyle.Default, a => ChangeRoute("M")));
+            alert.AddAction(UIAlertAction.Create("N", UIAlertActionStyle.Default, a => ChangeRoute("N")));
+            alert.AddAction(UIAlertAction.Create("Cancel", UIAlertActionStyle.Cancel, null));
+
+            PresentViewController(alert, true, null);
+        }
+
+        async void ChangeRoute(string route)
+        {
+            currentRoute = route;
+            await LoadRouteData();
+            AddVehiclesToMap(vehicleList);
+        }
+
+        async void RefreshVehicles(object sender, EventArgs args)
+        {
+            vehicleList = await client.GetVehicleLocations("N");
+
+            newVehicleList = vehicleList.FindAll(x => x.Id.ToString().StartsWith("2") && !string.IsNullOrEmpty(x.Direction));
+            redesignedList = vehicleList.FindAll(x => redesignedIds.Contains(x.Id));
+
+            switch (currentFilter)
             {
                 case "all":
                     AddVehiclesToMap(vehicleList);
-                    filterBtn.Title = "Showing all";
                     break;
                 case "new":
                     AddVehiclesToMap(newVehicleList);
-                    filterBtn.Title = "Showing new";
                     break;
                 case "redesigned":
                     AddVehiclesToMap(redesignedList);
-                    filterBtn.Title = "Showing new";
                     break;
             }
+        }
+
+        void FilterVehicles(string filter)
+        {
+            currentFilter = filter;
+            filterBtn.Title = $"Showing {currentFilter}";
+
+            switch (currentFilter)
+            {
+                case "all":
+                    AddVehiclesToMap(vehicleList);
+                    break;
+                case "new":
+                    AddVehiclesToMap(newVehicleList);
+                    break;
+                case "redesigned":
+                    AddVehiclesToMap(redesignedList);
+                    break;
+            }
+        }
+
+        async Task LoadRouteData()
+        {
+            client = new NextBusClient("sf-muni");
+            vehicleList = await client.GetVehicleLocations(currentRoute);
+
+            var data = await client.GetRouteConfig(currentRoute);
+            Title = data.Title;
+
+            newVehicleList = vehicleList.FindAll(x => x.Id.ToString().StartsWith("2") && !string.IsNullOrEmpty(x.Direction));
+            redesignedList = vehicleList.FindAll(x => redesignedIds.Contains(x.Id));
         }
     }
 
