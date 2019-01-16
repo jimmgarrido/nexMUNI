@@ -15,10 +15,11 @@ namespace NexMuni.iOS
     {
         CLLocationCoordinate2D mapCenter = new CLLocationCoordinate2D(37.769031, -122.460487);
         List<Vehicle> vehicleList;
+        List<MyVehicle> testList;
         List<Vehicle> newVehicleList;
         List<Vehicle> redesignedList;
-        UIBarButtonItem filterBtn, refreshBtn, routeBtn, flexSpace;
-        List<int> redesignedIds = new List<int> { 1448, 1423, 1440, 1412, 1510, 1442, 1474, 1421, 1455, 1447, 1537, 1446 };
+        UIBarButtonItem filterBtn, refreshBtn, routeBtn, flexSpace, trainsBtn;
+        List<int> redesignedIds = new List<int> { 1448, 1423, 1440, 1412, 1510, 1442, 1474, 1421, 1455, 1447, 1537, 1446, 1409 };
         NextBusClient client;
         string currentFilter, currentRoute;
 
@@ -39,11 +40,13 @@ namespace NexMuni.iOS
             filterBtn = new UIBarButtonItem("Showing all", UIBarButtonItemStyle.Plain, ShowFilters);
             refreshBtn = new UIBarButtonItem("Refresh", UIBarButtonItemStyle.Plain, RefreshVehicles);
             routeBtn = new UIBarButtonItem("Route", UIBarButtonItemStyle.Plain, ShowRoutes);
+            trainsBtn = new UIBarButtonItem("Trains", UIBarButtonItemStyle.Plain, EditTrains);
             flexSpace = new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace);
 
             SetToolbarItems(new UIBarButtonItem[] { filterBtn, flexSpace, refreshBtn}, true);
 
             NavigationItem.SetRightBarButtonItem(routeBtn, true);
+            NavigationItem.SetLeftBarButtonItem(trainsBtn, true);
 
             currentFilter = "all";
             currentRoute = "N";
@@ -59,7 +62,7 @@ namespace NexMuni.iOS
         {
             base.ViewDidAppear(animated);
 
-            await LoadRouteData();
+            await LoadRouteDataAsync();
             AddVehiclesToMap(vehicleList);
         }
 
@@ -104,10 +107,23 @@ namespace NexMuni.iOS
             PresentViewController(alert, true, null);
         }
 
+        void EditTrains(object sender, EventArgs args)
+        {
+            var controller = Storyboard.InstantiateViewController("TrainsController") as TrainsViewController;
+            controller.Parent = NavigationController;
+
+            if (controller != null)
+            {
+                var nav = new UINavigationController(controller);
+                PresentViewController(nav, true, null);
+
+            }
+        }
+
         async void ChangeRoute(string route)
         {
             currentRoute = route;
-            await LoadRouteData();
+            await LoadRouteDataAsync();
             AddVehiclesToMap(vehicleList);
         }
 
@@ -151,12 +167,12 @@ namespace NexMuni.iOS
             }
         }
 
-        async Task LoadRouteData()
+        async Task LoadRouteDataAsync()
         {
             client = new NextBusClient("sf-muni");
-            vehicleList = await client.GetVehicleLocations(currentRoute);
-
+            vehicleList= await client.GetVehicleLocations(currentRoute);
             var data = await client.GetRouteConfig(currentRoute);
+
             Title = data.Title;
 
             newVehicleList = vehicleList.FindAll(x => x.Id.ToString().StartsWith("2") && !string.IsNullOrEmpty(x.Direction));
@@ -192,6 +208,8 @@ namespace NexMuni.iOS
 
                     view.Transform = CGAffineTransform.MakeIdentity();
                     view.Transform = CGAffineTransform.MakeRotation((nfloat)(currentAnnotation.Vehicle.Heading * (Math.PI/180)));
+
+                    view.CanShowCallout = true;
                     return view;
                 }
                 else
@@ -206,6 +224,8 @@ namespace NexMuni.iOS
 
                     view.Transform = CGAffineTransform.MakeIdentity();
                     view.Transform = CGAffineTransform.MakeRotation((nfloat)(currentAnnotation.Vehicle.Heading * (Math.PI / 180)));
+
+                    view.CanShowCallout = true;
                     return view;
                 }
             }
@@ -218,7 +238,13 @@ namespace NexMuni.iOS
                 view.Image = UIImage.FromBundle("Marker");
             }
 
+            view.CanShowCallout = true;
             return view;
         }
+    }
+
+    class MyVehicle : Vehicle
+    {
+        public string Kind { get; set; }
     }
 }

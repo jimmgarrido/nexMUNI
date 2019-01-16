@@ -171,6 +171,10 @@
     <Compile Include="Main.cs" />
     <Compile Include="AppDelegate.cs" />
     <Compile Include="MapIcon.cs" />
+    <Compile Include="TrainsViewController.cs" />
+    <Compile Include="TrainsViewController.designer.cs">
+      <DependentUpon>TrainsViewController.cs</DependentUpon>
+    </Compile>
     <Compile Include="ViewController.cs" />
     <Compile Include="ViewController.designer.cs">
       <DependentUpon>ViewController.cs</DependentUpon>

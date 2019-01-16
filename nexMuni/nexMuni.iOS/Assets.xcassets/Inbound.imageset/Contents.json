@@ -12,8 +12,7 @@
     },
     {
       "scale": "3x",
-      "idiom": "universal",
-      "filename": "inbound2.png"
+      "idiom": "universal"
     }
   ],
   "properties": {},

@@ -16,6 +16,8 @@ namespace NexMuni.iOS
         CLLocationCoordinate2D coordinate;
         public override CLLocationCoordinate2D Coordinate => coordinate;
 
+        public override string Title => "Test";
+
         public Vehicle Vehicle { get; private set; }
         public VehicleMapAnnotation(Vehicle v, CLLocationCoordinate2D coord)
         {
