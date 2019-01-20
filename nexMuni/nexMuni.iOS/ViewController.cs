@@ -23,7 +23,6 @@ namespace NexMuni.iOS
         //List<int> redesignedIds = new List<int> { 1448, 1423, 1440, 1412, 1510, 1442, 1474, 1421, 1455, 1447, 1537, 1446, 1409 };
         NextBusClient client;
         string currentFilter, currentRoute;
-        AzureService service;
         Task sync;
 
         public ViewController (IntPtr handle) : base (handle)
@@ -35,8 +34,7 @@ namespace NexMuni.iOS
             base.ViewDidLoad ();
             // Perform any additional setup after loading the view, typically from a nib.
 
-            service = new AzureService();
-            sync = service.InitializeAsync();
+            sync = AzureService.Instance.InitializeAsync();
 
             mapView.ShowsUserLocation = true;
             mapView.CenterCoordinate = mapCenter;
@@ -133,7 +131,7 @@ namespace NexMuni.iOS
         {
             var controller = Storyboard.InstantiateViewController("TrainsController") as TrainsViewController;
             controller.Parent = NavigationController;
-            controller.Items = redesignedList;
+            controller.Source = new TrainsSource(redesignedList);
 
             if (controller != null)
             {
@@ -201,7 +199,7 @@ namespace NexMuni.iOS
 
             newVehicleList = vehicleList.FindAll(x => x.Id.ToString().StartsWith("2") && !string.IsNullOrEmpty(x.Direction));
             //redesignedList = vehicleList.FindAll(x => redesignedIds.Contains(x.Id));
-            redesignedList = await service.GetItemsAsync();
+            redesignedList = await AzureService.Instance.GetItemsAsync();
         }
     }
 

@@ -19,7 +19,9 @@ namespace NexMuni.iOS
         MobileServiceClient client;
         IMobileServiceSyncTable<RedesignedInfoItem> redesignedTable;
 
-        public AzureService()
+        public static AzureService Instance { get; } = new AzureService();
+
+        private AzureService()
         {
             client = new MobileServiceClient("https://nexmuni.azurewebsites.net/");
         }
@@ -56,6 +58,11 @@ namespace NexMuni.iOS
         public async Task<List<RedesignedInfoItem>> GetItemsAsync()
         {
             return await redesignedTable.ToListAsync();
+        }
+
+        public async Task AddTrainInfo(RedesignedInfoItem item)
+        {
+            await redesignedTable.InsertAsync(item);
         }
     }
 }
