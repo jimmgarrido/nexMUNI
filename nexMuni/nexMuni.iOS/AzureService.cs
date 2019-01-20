@@ -32,9 +32,7 @@ namespace NexMuni.iOS
 
             // Uses the default conflict handler, which fails on conflict
             await client.SyncContext.InitializeAsync(store);
-
             await SyncService();
-
         }
 
         public async Task SyncService()
@@ -53,6 +51,11 @@ namespace NexMuni.iOS
             {
                 Console.Error.WriteLine(@"Sync Failed: {0}", e.Message);
             }
+        }
+
+        public async Task<List<RedesignedInfoItem>> GetItemsAsync()
+        {
+            return await redesignedTable.ToListAsync();
         }
     }
 }

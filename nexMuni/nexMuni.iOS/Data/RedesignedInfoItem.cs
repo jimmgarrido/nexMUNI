@@ -9,7 +9,7 @@ using UIKit;
 
 namespace NexMuni.iOS.Data
 {
-    class RedesignedInfoItem
+    public class RedesignedInfoItem
     {
         public string Id { get; set; }
 

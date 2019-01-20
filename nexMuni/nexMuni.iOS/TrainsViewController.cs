@@ -1,4 +1,5 @@
 using Foundation;
+using NexMuni.iOS.Data;
 using System;
 using System.Collections.Generic;
 using UIKit;
@@ -8,15 +9,17 @@ namespace NexMuni.iOS
     public partial class TrainsViewController : UITableViewController
     {
         public UINavigationController Parent { get; set; }
+        public List<RedesignedInfoItem> Items { get; set; }
 
         public TrainsViewController (IntPtr handle) : base (handle)
         {
-            TableView.Source = new TrainsSource();
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
+
+            TableView.Source = new TrainsSource(Items);
 
             var closeBtn = new UIBarButtonItem("Close", UIBarButtonItemStyle.Plain, (s, e) => Parent.DismissViewController(true, null));
             NavigationItem.SetLeftBarButtonItem(closeBtn, true);
@@ -25,24 +28,24 @@ namespace NexMuni.iOS
 
     class TrainsSource : UITableViewSource
     {
-        List<string> items;
+        List<RedesignedInfoItem> redesignedInfoItems;
 
-        public TrainsSource()
+        public TrainsSource(List<RedesignedInfoItem> items)
         {
-            items = new List<string>() { "item", "Item2", "item3" };
+            redesignedInfoItems = items;
         }
 
         public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
         {
             var cell = new UITableViewCell(UITableViewCellStyle.Default, "cell");
-            cell.TextLabel.Text = items[indexPath.Row];
+            cell.TextLabel.Text = redesignedInfoItems[indexPath.Row].TrainId.ToString();
 
             return cell;
         }
 
         public override nint RowsInSection(UITableView tableview, nint section)
         {
-            return items.Count;
+            return redesignedInfoItems.Count;
         }
     }
 }
