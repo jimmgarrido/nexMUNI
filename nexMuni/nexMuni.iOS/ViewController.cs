@@ -8,6 +8,7 @@ using UIKit;
 using NextBus.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.WindowsAzure.MobileServices;
 
 namespace NexMuni.iOS
 {
@@ -19,18 +20,22 @@ namespace NexMuni.iOS
         List<Vehicle> newVehicleList;
         List<Vehicle> redesignedList;
         UIBarButtonItem filterBtn, refreshBtn, routeBtn, flexSpace, trainsBtn;
-        List<int> redesignedIds = new List<int> { 1448, 1423, 1440, 1412, 1510, 1442, 1474, 1421, 1455, 1447, 1537, 1446, 1409 };
+        //List<int> redesignedIds = new List<int> { 1448, 1423, 1440, 1412, 1510, 1442, 1474, 1421, 1455, 1447, 1537, 1446, 1409 };
         NextBusClient client;
         string currentFilter, currentRoute;
+        AzureService service;
 
         public ViewController (IntPtr handle) : base (handle)
         {
         }
 
-        public override void ViewDidLoad ()
+        public override async void ViewDidLoad ()
         {
             base.ViewDidLoad ();
             // Perform any additional setup after loading the view, typically from a nib.
+
+            service = new AzureService();
+            await service.InitializeAsync();
 
             mapView.ShowsUserLocation = true;
             mapView.CenterCoordinate = mapCenter;
@@ -47,9 +52,6 @@ namespace NexMuni.iOS
 
             NavigationItem.SetRightBarButtonItem(routeBtn, true);
             NavigationItem.SetLeftBarButtonItem(trainsBtn, true);
-
-            currentFilter = "all";
-            currentRoute = "N";
         }
 
         public override void DidReceiveMemoryWarning ()
@@ -61,6 +63,9 @@ namespace NexMuni.iOS
         public async override void ViewDidAppear(bool animated)
         {
             base.ViewDidAppear(animated);
+
+            currentFilter = "all";
+            currentRoute = "N";
 
             await LoadRouteDataAsync();
             AddVehiclesToMap(vehicleList);
@@ -132,7 +137,7 @@ namespace NexMuni.iOS
             vehicleList = await client.GetVehicleLocations("N");
 
             newVehicleList = vehicleList.FindAll(x => x.Id.ToString().StartsWith("2") && !string.IsNullOrEmpty(x.Direction));
-            redesignedList = vehicleList.FindAll(x => redesignedIds.Contains(x.Id));
+            //redesignedList = vehicleList.FindAll(x => redesignedIds.Contains(x.Id));
 
             switch (currentFilter)
             {
@@ -176,7 +181,7 @@ namespace NexMuni.iOS
             Title = data.Title;
 
             newVehicleList = vehicleList.FindAll(x => x.Id.ToString().StartsWith("2") && !string.IsNullOrEmpty(x.Direction));
-            redesignedList = vehicleList.FindAll(x => redesignedIds.Contains(x.Id));
+            //redesignedList = vehicleList.FindAll(x => redesignedIds.Contains(x.Id));
         }
     }
 
