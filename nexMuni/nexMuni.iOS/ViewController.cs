@@ -66,7 +66,7 @@ namespace NexMuni.iOS
             base.ViewDidAppear(animated);
 
             currentFilter = "all";
-            currentRoute = "N";
+            currentRoute = "NBUS";
 
             await LoadRouteDataAsync();
             AddVehiclesToMap();

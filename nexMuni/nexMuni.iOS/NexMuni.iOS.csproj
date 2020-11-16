@@ -147,16 +147,10 @@
     <ImageAsset Include="Assets.xcassets\Inbound.imageset\inbound1.png">
       <Visible>false</Visible>
     </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\Inbound.imageset\inbound2.png">
-      <Visible>false</Visible>
-    </ImageAsset>
     <ImageAsset Include="Assets.xcassets\Outbound.imageset\outbound.png">
       <Visible>false</Visible>
     </ImageAsset>
     <ImageAsset Include="Assets.xcassets\Outbound.imageset\outbound1.png">
-      <Visible>false</Visible>
-    </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\Outbound.imageset\outbound2.png">
       <Visible>false</Visible>
     </ImageAsset>
   </ItemGroup>
